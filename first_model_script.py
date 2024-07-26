@@ -203,7 +203,6 @@ def evaluate(dataloaders, training_args):
 
     predictions = []
     labels = []
-    torch.manual_seed(seed)
     model = GPT2forSeq2Seq(model_name=model_name, training_args=training_args)
     model.to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=training_args.learning_rate,
