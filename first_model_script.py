@@ -60,7 +60,7 @@ print(training_args)
 
 class FineTuneGPT2(AutoModelForCausalLM):
     def __init__(self, model, tokenizer, training_args):
-        super().__init__(model.from_config(config))
+        super().__init__(config)
         self.model = model
         self.tokenizer = tokenizer
         self.tokenizer.pad_token = self.tokenizer.eos_token
