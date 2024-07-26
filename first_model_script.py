@@ -164,7 +164,7 @@ def train_test(model, dataloader, optimizer, training):
         #prediction_list.extend(predictions)
         label_list.extend(target_labels)
         print(loss_value.item())
-        break
+
 
     if training == "train":
         print("mean training loss:", cumulative_loss/len(dataloader))
