@@ -54,10 +54,12 @@ class TrainingArguments:
         for key, value in self.__dict__.items():
             print(f"| {key}: {value}")
         return "--------------------------------"
+training_args = TrainingArguments()
+print(training_args)
 
 class FineTuneGPT2(AutoModelForCausalLM):
-    def __init__(self, model_name, training_args):
-        super(AutoModelForCausalLM.from_pretrained(model_name), self).__init__()
+    def __init__(self, model_name):
+        super(AutoModelForCausalLM, self).__init__()
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.tokenizer.pad_token = self.tokenizer.eos_token
@@ -311,8 +313,6 @@ def main():
 
     seed = 42
     seed_everything(seed)
-    training_args = TrainingArguments()
-    print(training_args)
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
