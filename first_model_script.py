@@ -163,7 +163,6 @@ def train_test(model, dataloader, optimizer, training):
         target_labels = labels.to('cpu').detach().numpy()
         #prediction_list.extend(predictions)
         label_list.extend(target_labels)
-        print(loss_value.item())
 
 
     if training == "train":
