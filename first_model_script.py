@@ -21,6 +21,7 @@ import os
 import sys
 assert len(sys.argv) == 2, "Please provide a device as an argument"
 device = sys.argv[1]
+torch.cuda.set_device(int(device))
 model_name = 'gpt2'
 model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
