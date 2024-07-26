@@ -204,7 +204,7 @@ def evaluate(dataloaders, training_args):
 
     predictions = []
     labels = []
-    model = FineTuneGPT2(model_name, training_args)
+    model = FineTuneGPT2(model_name)
     model.to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=training_args.learning_rate,
                                   betas=(training_args.adam_beta1, training_args.adam_beta2), 
