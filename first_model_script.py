@@ -18,15 +18,7 @@ data_location = './data/wikilarge/'
 #training_args = TrainingArguments("test=trainer", evaluation_strategy="epoch")#TrainingArguments(output_dir=f"{data_location}training_args")
 import os
 
-def get_freer_gpu():
-    os.system('nvidia-smi -q -d Memory |grep -Tesla GPU|grep Free >tmp')
-    memory_available = [int(x.split()[2]) for x in open('tmp', 'r').readlines()]
-    return np.argmax(memory_available)
-
-free_gpu_id = get_freer_gpu()
-torch.cuda.set_device(free_gpu_id)
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = 1
 model_name = 'gpt2'
 model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
