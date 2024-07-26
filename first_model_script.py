@@ -12,7 +12,6 @@ warnings.filterwarnings("ignore")
 from evaluate import load
 sari = load("sari")
 
-from readability import Readability
 from tqdm import tqdm
 
 data_location = './data/wikilarge/'
