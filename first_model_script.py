@@ -56,7 +56,7 @@ class TrainingArguments:
             print(f"| {key}: {value}")
         return "--------------------------------"
 
-class GPT2forSeq2Seq(pl.LightningModule):
+class GPT2forSeq2Seq(AutoModelForCausalLM):
     def __init__(self, model_name, training_args):
         super(GPT2forSeq2Seq, self).__init__()
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
