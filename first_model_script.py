@@ -55,7 +55,7 @@ class TrainingArguments:
             print(f"| {key}: {value}")
         return "--------------------------------"
 
-class GPT2forSeq2Seq(AutoModelForCausalLM):
+class FineTuneGPT2(AutoModelForCausalLM):
     def __init__(self, model_name, training_args):
         super(AutoModelForCausalLM, self).__init__()
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
@@ -202,7 +202,7 @@ def evaluate(dataloaders, training_args):
 
     predictions = []
     labels = []
-    model = GPT2forSeq2Seq(model_name, training_args)
+    model = FineTuneGPT2(model_name, training_args)
     model.to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=training_args.learning_rate,
                                   betas=(training_args.adam_beta1, training_args.adam_beta2), 
