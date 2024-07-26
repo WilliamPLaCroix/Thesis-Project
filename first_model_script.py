@@ -21,7 +21,6 @@ import os
 import sys
 assert len(sys.argv) == 2, "Please provide a device as an argument"
 device = sys.argv[1]
-torch.cuda.set_device(int(device))
 model_name = 'gpt2'
 model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -149,7 +148,7 @@ def train_test(model, dataloader, optimizer, training):
     loss_function = torch.nn.CrossEntropyLoss()
 
     for sample in tqdm(dataloader): # iterate over batches in the DataLoader
-        sample.to(device)
+        sample.to(f'cuda:{device}')
         input, attention_mask, labels = sample["input_ids"], sample["attention_mask"], sample['labels']
         output = model(input, attention_mask, labels) # forward pass
         loss_value = output.loss
@@ -211,7 +210,7 @@ def evaluate(dataloaders, training_args):
     predictions = []
     labels = []
     gpt_new = FineTuneGPT2(model, tokenizer, training_args)
-    gpt_new.to(device)
+    gpt_new.to(f'cuda:{device}')
     optimizer = torch.optim.AdamW(gpt_new.parameters(), lr=training_args.learning_rate,
                                   betas=(training_args.adam_beta1, training_args.adam_beta2), 
                                   weight_decay=training_args.adam_epsilon)
