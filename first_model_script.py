@@ -18,7 +18,9 @@ data_location = './data/wikilarge/'
 #training_args = TrainingArguments("test=trainer", evaluation_strategy="epoch")#TrainingArguments(output_dir=f"{data_location}training_args")
 import os
 
-device = 1
+import sys
+assert len(sys.argv) == 2, "Please provide a device as an argument"
+device = sys.argv[1]
 model_name = 'gpt2'
 model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
