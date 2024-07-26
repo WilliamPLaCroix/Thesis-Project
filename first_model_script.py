@@ -60,7 +60,7 @@ print(training_args)
 
 class FineTuneGPT2(nn.Module):
     def __init__(self, model, tokenizer, training_args):
-        super().__init__(config)
+        super(FineTuneGPT2, self).__init__()
         self.model = model
         self.tokenizer = tokenizer
         self.tokenizer.pad_token = self.tokenizer.eos_token
