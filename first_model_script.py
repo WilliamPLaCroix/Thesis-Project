@@ -6,13 +6,6 @@ import torch
 import numpy as np
 import torch.nn as nn
 
-
-import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint
-seed = 42
-pl.seed_everything(seed)
-
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -301,7 +294,25 @@ def find_max_len(tokenized_dataset):
                 target = example['labels']
     return max(longest_source, longest_target)
 
+def seed_everything(seed: int):
+    import random, os
+    import numpy as np
+    import torch
+    
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = True
+    
+
+
 def main():
+
+    seed = 42
+    seed_everything(seed)
     training_args = TrainingArguments()
     print(training_args)
 
