@@ -57,7 +57,7 @@ class TrainingArguments:
 
 class FineTuneGPT2(AutoModelForCausalLM.from_pretrained(model_name)):
     def __init__(self, model_name, training_args):
-        super(AutoModelForCausalLM.from_pretrained(model_name), self).__init__()
+        super(AutoModelForCausalLM, self).__init__()
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.tokenizer.pad_token = self.tokenizer.eos_token
