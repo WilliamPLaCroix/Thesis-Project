@@ -18,6 +18,7 @@ data_location = './data/wikilarge/'
 #training_args = TrainingArguments("test=trainer", evaluation_strategy="epoch")#TrainingArguments(output_dir=f"{data_location}training_args")
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model_name = 'gpt2'
+model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 tokenizer.pad_token = tokenizer.eos_token
 config = AutoConfig.from_pretrained(model_name,
@@ -58,10 +59,10 @@ training_args = TrainingArguments()
 print(training_args)
 
 class FineTuneGPT2(AutoModelForCausalLM):
-    def __init__(self, model_name):
-        super().__init__()
-        self.model = AutoModelForCausalLM.from_pretrained(model_name)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+    def __init__(self, model, tokenizer, training_args):
+        super().__init__(model.config)
+        self.model = model
+        self.tokenizer = tokenizer
         self.tokenizer.pad_token = self.tokenizer.eos_token
         self.training_args = training_args
         # self.save_hyperparameters()
@@ -204,9 +205,9 @@ def evaluate(dataloaders, training_args):
 
     predictions = []
     labels = []
-    model = FineTuneGPT2(model_name)
-    model.to(device)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=training_args.learning_rate,
+    gpt_new = FineTuneGPT2(model, tokenizer, training_args)
+    gpt_new.to(device)
+    optimizer = torch.optim.AdamW(gpt_new.parameters(), lr=training_args.learning_rate,
                                   betas=(training_args.adam_beta1, training_args.adam_beta2), 
                                   weight_decay=training_args.adam_epsilon)
 
@@ -215,14 +216,14 @@ def evaluate(dataloaders, training_args):
 
     max_patience = 2
     last_loss = 1000000
-    PATH = f"./models/model.pt"
+    PATH = f"./models/gpt_new.pt"
     for epoch in range(max_epochs):
         print(f"Epoch {epoch}")
         # training
-        train_test(model, train_data_loader, optimizer, training="train")
+        train_test(gpt_new, train_data_loader, optimizer, training="train")
         # validation at end of epoch
         with torch.no_grad():
-            validation_loss = train_test(model, eval_data_loader, optimizer, training="validation")
+            validation_loss = train_test(gpt_new, eval_data_loader, optimizer, training="validation")
 
         if validation_loss < last_loss:
             last_loss = validation_loss
@@ -231,7 +232,7 @@ def evaluate(dataloaders, training_args):
             if current_patience == 0:
                 torch.save({
                     'epoch': epoch,
-                    'model_state_dict': model.state_dict(),
+                    'model_state_dict': gpt_new.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                     'loss': last_loss,
                     }, PATH)
@@ -242,7 +243,7 @@ def evaluate(dataloaders, training_args):
     # # Testing once patience is reached
     # torch.manual_seed(seed)
     # model = TuneableModel(input_size, parameters["hidden_size"], parameters["dropout"], parameters["n_hidden"])
-    # model.to(device)
+    # gpt_new.to(device)
     # optimizer = torch.optim.AdamW(model.parameters(), lr=parameters["learning_rate"], betas=(0.99, 0.99), weight_decay=1e-4)
     # checkpoint = torch.load(PATH)
     # model.load_state_dict(checkpoint['model_state_dict'])
