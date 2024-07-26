@@ -16,23 +16,14 @@ from tqdm import tqdm
 
 data_location = './data/wikilarge/'
 #training_args = TrainingArguments("test=trainer", evaluation_strategy="epoch")#TrainingArguments(output_dir=f"{data_location}training_args")
-import subprocess
-from io import StringIO
+import os
 
-def get_free_gpu():
-    gpu_stats = subprocess.check_output(["nvidia-smi", "--format=csv", "--query-gpu=memory.used,memory.free"])
-    gpu_df = pd.read_csv(StringIO(gpu_stats),
-                         names=['memory.used', 'memory.free'],
-                         skiprows=1)
-    print('GPU usage:\n{}'.format(gpu_df))
-    gpu_df = pd.read_csv(StringIO(u"".join(gpu_stats)),
-                         names=['memory.used', 'memory.free'],
-                         skiprows=1)
-    idx = gpu_df['memory.free'].idxmax()
-    print('Returning GPU{} with {} free MiB'.format(idx, gpu_df.iloc[idx]['memory.free']))
-    return idx
+def get_freer_gpu():
+    os.system('nvidia-smi -q -d Memory |grep -A4 GPU|grep Free >tmp')
+    memory_available = [int(x.split()[2]) for x in open('tmp', 'r').readlines()]
+    return np.argmax(memory_available)
 
-free_gpu_id = get_free_gpu()
+free_gpu_id = get_freer_gpu()
 torch.cuda.set_device(free_gpu_id)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
