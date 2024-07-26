@@ -25,7 +25,9 @@ def get_free_gpu():
                          names=['memory.used', 'memory.free'],
                          skiprows=1)
     print('GPU usage:\n{}'.format(gpu_df))
-    gpu_df['memory.free'] = gpu_df['memory.free'].map(lambda x: x.rstrip(' [MiB]'))
+    gpu_df = pd.read_csv(StringIO(u"".join(gpu_stats)),
+                         names=['memory.used', 'memory.free'],
+                         skiprows=1)
     idx = gpu_df['memory.free'].idxmax()
     print('Returning GPU{} with {} free MiB'.format(idx, gpu_df.iloc[idx]['memory.free']))
     return idx
