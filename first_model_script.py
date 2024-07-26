@@ -58,7 +58,7 @@ class TrainingArguments:
 training_args = TrainingArguments()
 print(training_args)
 
-class FineTuneGPT2(AutoModelForCausalLM):
+class FineTuneGPT2(nn.Module):
     def __init__(self, model, tokenizer, training_args):
         super().__init__(config)
         self.model = model
