@@ -133,9 +133,9 @@ def train_test(model, dataloader, optimizer, training):
         input_list.extend(input.to('cpu').detach().numpy())
         prediction_list.extend(torch.argmax(output.logits, dim=-1).to('cpu').detach().numpy())
         label_list.extend(labels_temp)
-        if first_loop == False:
-            break
-        first_loop = False
+        # if first_loop == False:
+        #     break
+        # first_loop = False
 
 
     if training == "train":
