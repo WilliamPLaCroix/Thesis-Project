@@ -192,7 +192,7 @@ def evaluate(dataloaders, training_args):
     train_data_loader = dataloaders['train']
     eval_data_loader = dataloaders['eval']
 
-    max_patience = 2
+    max_patience = 10
     last_loss = 1000000
     PATH = f"./models/gpt_new.pt"
     for epoch in range(max_epochs):
