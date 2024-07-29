@@ -1,14 +1,18 @@
 import pandas as pd
 from datasets import Dataset
 import pickle
-from transformers import AutoConfig, AutoTokenizer, AutoModelForCausalLM, DataCollatorForSeq2Seq, AutoModelForSeq2SeqLM
+from transformers import AutoConfig
+from transformers import AutoTokenizer
+from transformers import AutoModelForCausalLM
+from transformers import DataCollatorForSeq2Seq
+from transformers import AutoModelForSeq2SeqLM
+from transformers.utils import PaddingStrategy
 import torch
 import numpy as np
 import torch.nn as nn
 import random
 import os
 from tqdm import tqdm
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -33,7 +37,7 @@ class TrainingArguments:
     def __init__(self):
         self.output_dir = "./output/"
         self.evaluation_strategy = "epoch"
-        self.batch_size = 8
+        self.batch_size = 32
         self.adam_beta1 = 0.9
         self.adam_beta2 = 0.999
         self.adam_epsilon = 1e-8
@@ -46,6 +50,7 @@ class TrainingArguments:
         self.seed = 42
         self.warmup_steps = 0
         self.weight_decay = 0.0
+        self.max_sequence_length = 126
         # self.logging_dir = "./logs"
         # self.logging_first_step = False
         # self.logging_steps = 500
@@ -65,50 +70,13 @@ class FineTuneGPT2(nn.Module):
     def __init__(self, model, tokenizer, training_args):
         super(FineTuneGPT2, self).__init__()
         self.model = model
-        self.tokenizer = tokenizer
-        self.tokenizer.pad_token = self.tokenizer.eos_token
-        self.training_args = training_args
-        # self.save_hyperparameters()
-        self.loss = nn.CrossEntropyLoss()
 
     def forward(self, input_ids, attention_mask, labels=None):
         # print("input shape:", input_ids.shape)
         # print("attn shape:", attention_mask.shape)
         # print("labels shape:", labels.shape)
+
         return self.model(input_ids, attention_mask=attention_mask, labels=labels)
-
-    def training_step(self, batch):
-        input_ids = batch['input_ids']
-        attention_mask = batch['attention_mask']
-        labels = batch['labels']
-        # target_grade = batch['target_grade']
-        outputs = self(input_ids, attention_mask, labels=labels)
-        print("training_step output:", outputs)
-        loss = outputs.loss
-        return loss
-
-    def validation_step(self, batch):
-        input_ids = batch['input_ids']
-        attention_mask = batch['attention_mask']
-        labels = batch['labels']
-        # target_grade = batch['target_grade']
-        outputs = self(input_ids, attention_mask, labels=labels)
-        print("validation_step output:", outputs)
-        loss = outputs.loss
-        return loss
-
-    def training_epoch_end(self, outputs):
-        avg_loss = torch.stack([x for x in outputs]).mean()
-        self.log('train_loss', avg_loss)
-
-    def validation_epoch_end(self, outputs):
-        avg_loss = torch.stack([x for x in outputs]).mean()
-        self.log('val_loss', avg_loss)
-
-    def configure_optimizers(self):
-        optimizer = torch.optim.AdamW(self.parameters(), lr=self.training_args.learning_rate)
-        return optimizer
-
 
 
 def train_test(model, dataloader, optimizer, training):
@@ -142,11 +110,14 @@ def train_test(model, dataloader, optimizer, training):
         raise ValueError("training argument must be either 'train', 'validation' or 'test'")
 
     cumulative_loss = 0
+    input_list = [] # store inputs accross folds for calculating metrics
     prediction_list = [] # store predictions accross folds for calculating accuracy and f1
     label_list = [] # store labels accross folds for calculating accuracy and f1
-    loss_function = torch.nn.CrossEntropyLoss()
+    first_loop = True
 
     for sample in tqdm(dataloader): # iterate over batches in the DataLoader
+
+
         sample.to(device)
         input, attention_mask, labels = sample["input_ids"], sample["attention_mask"], sample['labels']
         output = model(input, attention_mask, labels) # forward pass
@@ -157,18 +128,23 @@ def train_test(model, dataloader, optimizer, training):
             optimizer.zero_grad()
             loss_value.backward()
             optimizer.step()
-
-        #predictions = [round(x) for x in sigmoid(output).to('cpu').detach().squeeze(1).numpy().tolist()] # gets {0,1} predictions from 1d logits
-        target_labels = labels.to('cpu').detach().numpy()
-        #prediction_list.extend(predictions)
-        label_list.extend(target_labels)
+        labels_temp = []
+        labels_temp.append(labels.to('cpu').detach().numpy())
+        input_list.extend(input.to('cpu').detach().numpy())
+        prediction_list.extend(torch.argmax(output.logits, dim=-1).to('cpu').detach().numpy())
+        label_list.extend(labels_temp)
+        if first_loop == False:
+            break
+        first_loop = False
 
 
     if training == "train":
-        print("mean training loss:", cumulative_loss/len(dataloader))
+        print("cumulative training loss:", cumulative_loss)
+        print(compute_metrics((input, torch.argmax(output.logits, dim=-1), labels)))
         return cumulative_loss
     elif training == "validation":
-        print("mean validation loss:", cumulative_loss/len(dataloader))
+        print("cumulative validation loss:", cumulative_loss)
+        print(compute_metrics((input, torch.argmax(output.logits, dim=-1), labels)))
         return cumulative_loss
     elif training == "test":
         return label_list, prediction_list
@@ -210,7 +186,7 @@ def evaluate(dataloaders, training_args):
     gpt_new = FineTuneGPT2(model, tokenizer, training_args)
     gpt_new.to(device)
     optimizer = torch.optim.AdamW(gpt_new.parameters(), lr=training_args.learning_rate,
-                                  betas=(training_args.adam_beta1, training_args.adam_beta2), 
+                                  betas=(training_args.adam_beta1, training_args.adam_beta2),
                                   weight_decay=training_args.adam_epsilon)
 
     train_data_loader = dataloaders['train']
@@ -261,15 +237,15 @@ def evaluate(dataloaders, training_args):
 
 
 def compute_metrics(prediction):
-
     source_ids, pred_ids, labels_ids = prediction
     sources = []
     labels = []
     predictions = []
 
-    pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
     label_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
     source_str = tokenizer.batch_decode(source_ids, skip_special_tokens=True)
+    pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
+
     sources.append(''.join(source_str))
     labels.append([''.join(label_str)])
     predictions.append(''.join(pred_str))
@@ -278,7 +254,7 @@ def compute_metrics(prediction):
     return sari.compute(sources=sources, predictions=predictions, references=labels)
 
 def tokenize_function(examples):
-    return tokenizer(text=examples["source"], text_target=examples['target'], padding=True, max_length=128, return_tensors="pt")
+    return tokenizer(text=examples["source"], text_target=examples['target'], padding=True, max_length=training_args.max_sequence_length, return_tensors="pt")
 
 def find_max_len(tokenized_dataset):
     longest_source = 0
@@ -297,9 +273,10 @@ def find_max_len(tokenized_dataset):
                 target = example['labels']
     return max(longest_source, longest_target)
 
+
 def seed_everything(seed: int):
 
-    
+
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
     np.random.seed(seed)
@@ -307,7 +284,6 @@ def seed_everything(seed: int):
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
-    
 
 
 def main():
@@ -324,16 +300,17 @@ def main():
         datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.2)
     print("datasets created")
     
-    tokenized_dataset_6 = datasets[6].map(tokenize_function, batched=True, batch_size=training_args.batch_size,
+    tokenized_dataset = datasets[6].map(tokenize_function, batched=True, batch_size=training_args.batch_size,
                                       remove_columns=['source', 'target', '__index_level_0__'])
+
     
-    max_len = find_max_len(tokenized_dataset_6)
-    print("max_len:", max_len)
+    training_args.max_sequence_length = find_max_len(tokenized_dataset)
 
-    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=max_len, label_pad_token_id=tokenizer.pad_token_id)
 
-    train_data_loader = torch.utils.data.DataLoader(tokenized_dataset_6['train'], batch_size=training_args.batch_size, shuffle=True, collate_fn=data_collator)
-    eval_data_loader = torch.utils.data.DataLoader(tokenized_dataset_6['test'], batch_size=training_args.batch_size, shuffle=False, collate_fn=data_collator)
+    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=training_args.max_sequence_length, label_pad_token_id=tokenizer.pad_token_id)
+
+    train_data_loader = torch.utils.data.DataLoader(tokenized_dataset['train'], batch_size=training_args.batch_size, shuffle=True, collate_fn=data_collator)
+    eval_data_loader = torch.utils.data.DataLoader(tokenized_dataset['test'], batch_size=training_args.batch_size, shuffle=False, collate_fn=data_collator)
     dataloaders = {'train': train_data_loader, 'eval': eval_data_loader}
 
     for batch in train_data_loader:
