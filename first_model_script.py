@@ -5,6 +5,9 @@ from transformers import AutoConfig, AutoTokenizer, AutoModelForCausalLM, DataCo
 import torch
 import numpy as np
 import torch.nn as nn
+import random
+import os
+from tqdm import tqdm
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -12,12 +15,8 @@ warnings.filterwarnings("ignore")
 from evaluate import load
 sari = load("sari")
 
-from tqdm import tqdm
 
 data_location = './data/wikilarge/'
-#training_args = TrainingArguments("test=trainer", evaluation_strategy="epoch")#TrainingArguments(output_dir=f"{data_location}training_args")
-import os
-
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -34,7 +33,7 @@ class TrainingArguments:
     def __init__(self):
         self.output_dir = "./output/"
         self.evaluation_strategy = "epoch"
-        self.batch_size = 32
+        self.batch_size = 8
         self.adam_beta1 = 0.9
         self.adam_beta2 = 0.999
         self.adam_epsilon = 1e-8
@@ -299,9 +298,7 @@ def find_max_len(tokenized_dataset):
     return max(longest_source, longest_target)
 
 def seed_everything(seed: int):
-    import random, os
-    import numpy as np
-    import torch
+
     
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -315,8 +312,7 @@ def seed_everything(seed: int):
 
 def main():
 
-    seed = 42
-    seed_everything(seed)
+    seed_everything(training_args.seed)
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
@@ -339,6 +335,13 @@ def main():
     train_data_loader = torch.utils.data.DataLoader(tokenized_dataset_6['train'], batch_size=training_args.batch_size, shuffle=True, collate_fn=data_collator)
     eval_data_loader = torch.utils.data.DataLoader(tokenized_dataset_6['test'], batch_size=training_args.batch_size, shuffle=False, collate_fn=data_collator)
     dataloaders = {'train': train_data_loader, 'eval': eval_data_loader}
+
+    for batch in train_data_loader:
+        print(batch['input_ids'].shape)
+        print(batch['attention_mask'].shape)
+        print(batch['labels'].shape)
+        print(batch['target_grade'].shape)
+        break
     print("data collated")
 
     evaluate(dataloaders, training_args)
