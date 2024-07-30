@@ -37,6 +37,7 @@ class TrainingArguments:
     def __init__(self):
         self.output_dir = "./output/"
         self.evaluation_strategy = "epoch"
+        ### debug
         self.batch_size = 32
         self.adam_beta1 = 0.9
         self.adam_beta2 = 0.999
@@ -133,6 +134,8 @@ def train_test(model, dataloader, optimizer, training):
         input_list.extend(input.to('cpu').detach().numpy())
         prediction_list.extend(torch.argmax(output.logits, dim=-1).to('cpu').detach().numpy())
         label_list.extend(labels_temp)
+        ### debug
+        break
         # if first_loop == False:
         #     break
         # first_loop = False
@@ -250,6 +253,10 @@ def compute_metrics(prediction):
     labels.append([''.join(label_str)])
     predictions.append(''.join(pred_str))
 
+    ### debug
+    print("source:", sources[0])
+    print("label:", labels[0][0])
+    print("prediction:", predictions[0])
 
     return sari.compute(sources=sources, predictions=predictions, references=labels)
 
