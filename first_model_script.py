@@ -255,19 +255,19 @@ def compute_metrics(prediction):
     source_str = tokenizer.batch_decode(source_ids, skip_special_tokens=True)
     pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
 
-    print("decoded label:", label_str)
-    print("decoded source:", source_str)
-    print("decoded label:", pred_str)
+    # print("decoded label:", label_str)
+    # print("decoded source:", source_str)
+    # print("decoded label:", pred_str)
 
 
-    sources.append(''.join(source_str))
-    labels.append([''.join(label_str)])
-    predictions.append(''.join(pred_str))
+    sources.append(source_str)
+    labels.append(label_str)
+    predictions.append(pred_str)
 
     ### debug
-    # print("source:", sources[0])
-    # print("label:", labels[0][0])
-    # print("prediction:", predictions[0])
+    print("source:", sources[0])
+    print("label:", labels[0][0])
+    print("prediction:", predictions[0])
 
     return sari.compute(sources=sources, predictions=predictions, references=labels)
 
