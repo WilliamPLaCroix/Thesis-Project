@@ -255,6 +255,11 @@ def compute_metrics(prediction):
     source_str = tokenizer.batch_decode(source_ids, skip_special_tokens=True)
     pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
 
+    print("decoded label:", label_str)
+    print("decoded source:", source_str)
+    print("decoded label:", pred_str)
+
+
     sources.append(''.join(source_str))
     labels.append([''.join(label_str)])
     predictions.append(''.join(pred_str))
