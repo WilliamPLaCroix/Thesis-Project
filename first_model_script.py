@@ -130,6 +130,10 @@ def train_test(model, dataloader, optimizer, training):
             loss_value.backward()
             optimizer.step()
         labels_temp = []
+
+        print("label shape:", label_list.shape)
+        print("input shape:", input_list.shape)
+        print("prediction shape:", torch.argmax(output.logits, dim=-1).shape)
         label_list.append(labels.to('cpu').detach().numpy())
         label_list.append(labels_temp)
         input_list.append(input.to('cpu').detach().numpy())
@@ -207,6 +211,7 @@ def evaluate(dataloaders, training_args):
         with torch.no_grad():
             validation_loss = train_test(gpt_new, eval_data_loader, optimizer, training="validation")
 
+        break
         if validation_loss < last_loss:
             last_loss = validation_loss
             current_patience = 0
