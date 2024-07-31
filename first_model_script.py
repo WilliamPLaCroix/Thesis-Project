@@ -130,10 +130,11 @@ def train_test(model, dataloader, optimizer, training):
             loss_value.backward()
             optimizer.step()
         labels_temp = []
-        labels_temp.append(labels.to('cpu').detach().numpy())
-        input_list.extend(input.to('cpu').detach().numpy())
-        prediction_list.extend(torch.argmax(output.logits, dim=-1).to('cpu').detach().numpy())
-        label_list.extend(labels_temp)
+        label_list.append(labels.to('cpu').detach().numpy())
+        label_list.append(labels_temp)
+        input_list.append(input.to('cpu').detach().numpy())
+        prediction_list.append(torch.argmax(output.logits, dim=-1).to('cpu').detach().numpy())
+
         ### debug
         break
         # if first_loop == False:
@@ -254,9 +255,9 @@ def compute_metrics(prediction):
     predictions.append(''.join(pred_str))
 
     ### debug
-    print("source:", sources[0][0])
-    print("label:", labels[0][0][0])
-    print("prediction:", predictions[0][0])
+    print("source:", sources[0])
+    print("label:", labels[0][0])
+    print("prediction:", predictions[0])
 
     return sari.compute(sources=sources, predictions=predictions, references=labels)
 
