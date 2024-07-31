@@ -28,7 +28,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model_name = 'gpt2'
 model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
-tokenizer.pad_token = -100
+tokenizer.pad_token = tokenizer.eos_token
 tokenizer.add_special_tokens([-100])
 
 
