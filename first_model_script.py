@@ -5,6 +5,7 @@ from datasets import Dataset
 from transformers import AutoTokenizer
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
+from transformers import T5ForConditionalGeneration
 # from transformers import AutoModelForSeq2SeqLM
 # from transformers.utils import PaddingStrategy
 import torch
@@ -25,8 +26,10 @@ data_location = './data/wikilarge/'
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-model_name = 'gpt2'
-model = AutoModelForCausalLM.from_pretrained(model_name)
+# model_name = 'gpt2' :(
+model_name = 'google-t5/t5-small'
+# model = AutoModelForCausalLM.from_pretrained(model_name)
+model = T5ForConditionalGeneration.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 tokenizer.pad_token = tokenizer.eos_token
 
