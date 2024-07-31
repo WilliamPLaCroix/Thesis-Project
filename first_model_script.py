@@ -247,28 +247,26 @@ def evaluate(dataloaders, training_args):
 
 
 def compute_metrics(prediction):
-    source_ids, pred_ids, labels_ids = prediction
-    sources = []
-    labels = []
-    predictions = []
+    input_ids, output_ids, labels_ids = prediction
 
     label_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
-    source_str = tokenizer.batch_decode(source_ids, skip_special_tokens=True)
-    pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
+    references = [[reference] for reference in label_str]
+    source_str = tokenizer.batch_decode(input_ids, skip_special_tokens=True)
+    predictions = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
 
     # print("decoded label:", label_str)
     # print("decoded source:", source_str)
     # print("decoded label:", pred_str)
 
     ### debug
-    print("source ids:", source_ids)
+    print("source ids:", input_ids)
     print("source:", source_str[0])
     print("labels_ids:", labels_ids)
-    print("label:", pred_str[0])
-    print("pred_ids:", pred_ids)
+    print("label:", output_ids[0])
+    print("pred_ids:", output_ids)
     print("prediction:", label_str[0])
 
-    return sari.compute(sources=source_str, predictions=pred_str, references=label_str)
+    return sari.compute(sources=source_str, predictions=predictions, references=references)
 
 def tokenize_function(examples):
     return tokenizer(text=examples["source"], text_target=examples['target'], padding=True, max_length=training_args.max_sequence_length, return_tensors="pt")
