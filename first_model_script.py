@@ -260,9 +260,9 @@ def compute_metrics(prediction):
     predictions.append(''.join(pred_str))
 
     ### debug
-    print("source:", sources[0])
-    print("label:", labels[0][0])
-    print("prediction:", predictions[0])
+    # print("source:", sources[0])
+    # print("label:", labels[0][0])
+    # print("prediction:", predictions[0])
 
     return sari.compute(sources=sources, predictions=predictions, references=labels)
 
