@@ -259,11 +259,11 @@ def compute_metrics(prediction):
     # print("decoded label:", pred_str)
 
     ### debug
-    print("source ids:", input_ids)
+    print("source ids:", input_ids.shape)
     print("source:", source_str[0])
-    print("labels_ids:", labels_ids)
+    print("labels_ids:", labels_ids.shape)
     print("label:", references[0][0])
-    print("pred_ids:", output_ids)
+    print("pred_ids:", output_ids.shape)
     print("prediction:", predictions[0])
 
     return sari.compute(sources=source_str, predictions=predictions, references=references)
