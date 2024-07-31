@@ -29,7 +29,6 @@ model_name = 'gpt2'
 model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 tokenizer.pad_token = tokenizer.eos_token
-tokenizer.add_special_tokens([-100])
 
 
 # define new class called training_arguements
