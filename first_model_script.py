@@ -131,24 +131,22 @@ def train_test(tuneable_model, dataloader, optimizer, training):
             optimizer.zero_grad()
             loss_value.backward()
             optimizer.step()
-        labels_temp = []
 
         # print("label shape:", labels.shape)
         # print("input shape:", input.shape)
         # print("prediction shape:", torch.argmax(output.logits, dim=-1).shape)
-        label_list.append(labels.to('cpu').detach().numpy())
-        label_list.append(labels_temp)
-        input_list.append(input.to('cpu').detach().numpy())
-        prediction_list.append(torch.argmax(output.logits, dim=-1).to('cpu').detach().numpy())
+        label_list.extend(labels.to('cpu').detach().numpy())
+        input_list.extend(input.to('cpu').detach().numpy())
+        prediction_list.extend(torch.argmax(output.logits, dim=-1).to('cpu').detach().numpy())
         
 
     if training == "train":
         print("cumulative training loss:", cumulative_loss)
-        print(compute_metrics((input, torch.argmax(output.logits, dim=-1), labels)))
+        print(compute_metrics((input_list, prediction_list, label_list)))
         return cumulative_loss
     elif training == "validation":
         print("cumulative validation loss:", cumulative_loss)
-        print(compute_metrics((input, torch.argmax(output.logits, dim=-1), labels)))
+        print(compute_metrics((input_list, prediction_list, label_list)))
         return cumulative_loss
     elif training == "test":
         return label_list, prediction_list
