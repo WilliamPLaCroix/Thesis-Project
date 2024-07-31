@@ -1,12 +1,12 @@
 import pandas as pd
 from datasets import Dataset
-import pickle
-from transformers import AutoConfig
+# import pickle
+# from transformers import AutoConfig
 from transformers import AutoTokenizer
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
-from transformers import AutoModelForSeq2SeqLM
-from transformers.utils import PaddingStrategy
+# from transformers import AutoModelForSeq2SeqLM
+# from transformers.utils import PaddingStrategy
 import torch
 import numpy as np
 import torch.nn as nn
@@ -28,10 +28,9 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model_name = 'gpt2'
 model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
-tokenizer.pad_token = tokenizer.eos_token
-config = AutoConfig.from_pretrained(model_name,
-    max_new_tokens=1024
-)
+tokenizer.pad_token = -100
+tokenizer.add_special_tokens([-100])
+
 
 # define new class called training_arguements
 class TrainingArguments:
@@ -52,7 +51,7 @@ class TrainingArguments:
         self.seed = 42
         self.warmup_steps = 0
         self.weight_decay = 0.0
-        self.max_sequence_length = 126
+        self.max_sequence_length = 128
         # self.logging_dir = "./logs"
         # self.logging_first_step = False
         # self.logging_steps = 500
@@ -73,15 +72,15 @@ class FineTuneGPT2(nn.Module):
         super(FineTuneGPT2, self).__init__()
         self.model = model
 
-    def forward(self, input_ids, attention_mask, labels=None):
+    def forward(self, sample):
         # print("input shape:", input_ids.shape)
         # print("attn shape:", attention_mask.shape)
         # print("labels shape:", labels.shape)
+        # self.model(input_ids, attention_mask=attention_mask, labels=labels)
+        return self.model(**sample)
 
-        return self.model(input_ids, attention_mask=attention_mask, labels=labels)
 
-
-def train_test(model, dataloader, optimizer, training):
+def train_test(tuneable_model, dataloader, optimizer, training):
     """
     Performs a single epoch of training, validation, or testing on the given model using the specified DataLoader.
     This function adapts its behavior based on the 'training' parameter to correctly handle the model's state and
@@ -103,11 +102,11 @@ def train_test(model, dataloader, optimizer, training):
     # BCEWithLogitsLoss combines sigmoid with BCELoss for better stability, and handles class imbalance via pos_weight
 
     if training == "train":
-        model.train()
+        tuneable_model.train()
     elif training == "validation":
-        model.eval()
+        tuneable_model.eval()
     elif training == "test":
-        model.eval()
+        tuneable_model.eval()
     else:
         raise ValueError("training argument must be either 'train', 'validation' or 'test'")
 
@@ -122,7 +121,8 @@ def train_test(model, dataloader, optimizer, training):
 
         sample.to(device)
         input, attention_mask, labels = sample["input_ids"], sample["attention_mask"], sample['labels']
-        output = model(input, attention_mask, labels) # forward pass
+        #output = tuneable_model(input, attention_mask, labels) # forward pass
+        output = tuneable_model(sample)
         loss_value = output.loss
         cumulative_loss += loss_value.item()
 
