@@ -270,7 +270,7 @@ def compute_metrics(prediction):
     print("label:", labels[0][0])
     print("prediction:", predictions[0])
 
-    return sari.compute(sources=sources, predictions=predictions, references=labels)
+    return sari.compute(sources=source_str, predictions=pred_str, references=label_str)
 
 def tokenize_function(examples):
     return tokenizer(text=examples["source"], text_target=examples['target'], padding=True, max_length=training_args.max_sequence_length, return_tensors="pt")
