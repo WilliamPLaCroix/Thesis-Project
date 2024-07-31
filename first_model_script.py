@@ -140,7 +140,7 @@ def train_test(tuneable_model, dataloader, optimizer, training):
         label_list.append(labels_temp)
         input_list.append(input.to('cpu').detach().numpy())
         prediction_list.append(torch.argmax(output.logits, dim=-1).to('cpu').detach().numpy())
-        break
+        
 
     if training == "train":
         print("cumulative training loss:", cumulative_loss)
