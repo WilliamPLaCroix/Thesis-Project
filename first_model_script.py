@@ -116,7 +116,6 @@ def train_test(tuneable_model, dataloader, optimizer, training):
     input_list = [] # store inputs accross folds for calculating metrics
     prediction_list = [] # store predictions accross folds for calculating accuracy and f1
     label_list = [] # store labels accross folds for calculating accuracy and f1
-    first_loop = True
 
     for sample in tqdm(dataloader): # iterate over batches in the DataLoader
 
@@ -134,19 +133,13 @@ def train_test(tuneable_model, dataloader, optimizer, training):
             optimizer.step()
         labels_temp = []
 
-        print("label shape:", labels.shape)
-        print("input shape:", input.shape)
-        print("prediction shape:", torch.argmax(output.logits, dim=-1).shape)
+        # print("label shape:", labels.shape)
+        # print("input shape:", input.shape)
+        # print("prediction shape:", torch.argmax(output.logits, dim=-1).shape)
         label_list.append(labels.to('cpu').detach().numpy())
         label_list.append(labels_temp)
         input_list.append(input.to('cpu').detach().numpy())
         prediction_list.append(torch.argmax(output.logits, dim=-1).to('cpu').detach().numpy())
-
-        ### debug
-        break
-        # if first_loop == False:
-        #     break
-        # first_loop = False
 
 
     if training == "train":
@@ -214,7 +207,6 @@ def evaluate(dataloaders, training_args):
         with torch.no_grad():
             validation_loss = train_test(gpt_new, eval_data_loader, optimizer, training="validation")
 
-        break
         if validation_loss < last_loss:
             last_loss = validation_loss
             current_patience = 0
@@ -256,22 +248,17 @@ def compute_metrics(prediction):
     source_str = tokenizer.batch_decode(input_ids, skip_special_tokens=True)
     predictions = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
 
-    # print("decoded label:", label_str)
-    # print("decoded source:", source_str)
-    # print("decoded label:", pred_str)
+    # print("input_ids shape:", input_ids.shape)
+    # print("input_ids:", input_ids[0])
+    # print("input:", source_str[0])
 
-    ### debug
-    print("input_ids shape:", input_ids.shape)
-    print("input_ids:", input_ids[0])
-    print("input:", source_str[0])
+    # print("output_ids shape:", output_ids.shape)
+    # print("output_ids:", output_ids[0])
+    # print("prediction:", predictions[0])
 
-    print("output_ids shape:", output_ids.shape)
-    print("output_ids:", output_ids[0])
-    print("prediction:", predictions[0])
-
-    print("labels_ids shape:", labels_ids.shape)
-    print("labels_ids:", labels_ids[0])
-    print("label:", references[0][0])
+    # print("labels_ids shape:", labels_ids.shape)
+    # print("labels_ids:", labels_ids[0])
+    # print("label:", references[0][0])
 
     return sari.compute(sources=source_str, predictions=predictions, references=references)
 
