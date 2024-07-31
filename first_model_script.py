@@ -131,8 +131,8 @@ def train_test(model, dataloader, optimizer, training):
             optimizer.step()
         labels_temp = []
 
-        print("label shape:", label_list.shape)
-        print("input shape:", input_list.shape)
+        print("label shape:", labels.shape)
+        print("input shape:", input.shape)
         print("prediction shape:", torch.argmax(output.logits, dim=-1).shape)
         label_list.append(labels.to('cpu').detach().numpy())
         label_list.append(labels_temp)
