@@ -12,6 +12,7 @@ import numpy as np
 import torch.nn as nn
 import random
 import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
