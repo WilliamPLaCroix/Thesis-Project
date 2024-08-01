@@ -261,7 +261,7 @@ def compute_metrics(prediction):
     return sari.compute(sources=source_str, predictions=predictions, references=references)
 
 def tokenize_function(examples):
-    return tokenizer(text=examples["source"], text_target=examples['target'], padding=True, max_length=training_args.max_sequence_length, return_tensors="pt")
+    return tokenizer(text=examples["source"], text_target=examples['target'], padding=True, truncation=True, max_length=1024, return_tensors="pt")
 
 def find_max_len(tokenized_dataset):
     longest_source = 0
