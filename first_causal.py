@@ -3,6 +3,7 @@ from datasets import Dataset
 # import pickle
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
+from transformers import AutoConfig
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
@@ -25,11 +26,10 @@ sari = load("sari")
 data_location = './data/wikilarge/'
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-model_name = 'gpt2'
-#model_name = 'google-t5/t5-small'
-model = AutoModelForCausalLM.from_pretrained(model_name)
-#model = T5ForConditionalGeneration.from_pretrained(model_name)
+model_name = "openai-community/gpt2"
+config = AutoConfig.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_config(config)
+#model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 tokenizer.pad_token = tokenizer.eos_token
 
