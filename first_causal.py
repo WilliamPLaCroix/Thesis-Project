@@ -7,7 +7,7 @@ from transformers import AutoConfig
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
-# from transformers import AutoModelForSeq2SeqLM
+from transformers import GPT2LMHeadModel
 # from transformers.utils import PaddingStrategy
 import torch
 import numpy as np
@@ -19,6 +19,9 @@ from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
 
+from huggingface_hub import login
+login()
+
 from evaluate import load
 sari = load("sari")
 
@@ -28,8 +31,8 @@ data_location = './data/wikilarge/'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model_name = "openai-community/gpt2"
 config = AutoConfig.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_config(config)
-#model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16)
+#model = AutoModelForCausalLM.from_config(config)
+model = GPT2LMHeadModel.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 tokenizer.pad_token = tokenizer.eos_token
 
@@ -336,6 +339,7 @@ def main():
         learning_rate=2e-5,
         weight_decay=0.01,
         push_to_hub=True,
+
     )
 
     trainer = Trainer(
@@ -344,6 +348,7 @@ def main():
         train_dataset=tokenized_dataset["train"],
         eval_dataset=tokenized_dataset["test"],
         data_collator=data_collator,
+        seed=42,
     )
 
     trainer.train()
