@@ -339,7 +339,7 @@ def main():
         learning_rate=2e-5,
         weight_decay=0.01,
         push_to_hub=True,
-
+        seed=42,
     )
 
     trainer = Trainer(
@@ -348,7 +348,6 @@ def main():
         train_dataset=tokenized_dataset["train"],
         eval_dataset=tokenized_dataset["test"],
         data_collator=data_collator,
-        seed=42,
     )
 
     trainer.train()
