@@ -26,7 +26,7 @@ data_location = './data/wikilarge/'
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-model_name = '"distilbert/distilgpt2"'
+model_name = 'gpt2'
 #model_name = 'google-t5/t5-small'
 model = AutoModelForCausalLM.from_pretrained(model_name)
 #model = T5ForConditionalGeneration.from_pretrained(model_name)
