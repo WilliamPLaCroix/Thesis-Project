@@ -20,7 +20,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from huggingface_hub import login
-login()
+login(token="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")
 
 from evaluate import load
 sari = load("sari")
