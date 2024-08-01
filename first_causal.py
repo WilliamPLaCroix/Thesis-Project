@@ -1,11 +1,11 @@
 import pandas as pd
 from datasets import Dataset
 # import pickle
-# from transformers import AutoConfig
+from transformers import TrainingArguments
 from transformers import AutoTokenizer
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
-from transformers import T5ForConditionalGeneration
+from transformers import Trainer
 # from transformers import AutoModelForSeq2SeqLM
 # from transformers.utils import PaddingStrategy
 import torch
@@ -26,48 +26,48 @@ data_location = './data/wikilarge/'
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-# model_name = 'gpt2' :(
-model_name = 'google-t5/t5-small'
-# model = AutoModelForCausalLM.from_pretrained(model_name)
-model = T5ForConditionalGeneration.from_pretrained(model_name)
+model_name = '"distilbert/distilgpt2"'
+#model_name = 'google-t5/t5-small'
+model = AutoModelForCausalLM.from_pretrained(model_name)
+#model = T5ForConditionalGeneration.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 tokenizer.pad_token = tokenizer.eos_token
 
 
 # define new class called training_arguements
-class TrainingArguments:
-    def __init__(self):
-        self.output_dir = "./output/"
-        self.evaluation_strategy = "epoch"
-        ### debug
-        self.batch_size = 32
-        self.adam_beta1 = 0.9
-        self.adam_beta2 = 0.999
-        self.adam_epsilon = 1e-8
-        self.gradient_accumulation_steps = 1
-        self.learning_rate = 5e-5
-        self.lr_scheduler_type = "linear"
-        self.max_grad_norm = 1.0
-        self.max_steps = -1
-        self.num_train_epochs = 3
-        self.seed = 42
-        self.warmup_steps = 0
-        self.weight_decay = 0.0
-        self.max_sequence_length = 128
-        # self.logging_dir = "./logs"
-        # self.logging_first_step = False
-        # self.logging_steps = 500
-        # self.save_steps = 500
-        # self.save_total_limit = 1
+# class TrainingArguments:
+#     def __init__(self):
+#         self.output_dir = "./output/"
+#         self.evaluation_strategy = "epoch"
+#         ### debug
+#         self.batch_size = 32
+#         self.adam_beta1 = 0.9
+#         self.adam_beta2 = 0.999
+#         self.adam_epsilon = 1e-8
+#         self.gradient_accumulation_steps = 1
+#         self.learning_rate = 5e-5
+#         self.lr_scheduler_type = "linear"
+#         self.max_grad_norm = 1.0
+#         self.max_steps = -1
+#         self.num_train_epochs = 3
+#         self.seed = 42
+#         self.warmup_steps = 0
+#         self.weight_decay = 0.0
+#         self.max_sequence_length = 128
+#         # self.logging_dir = "./logs"
+#         # self.logging_first_step = False
+#         # self.logging_steps = 500
+#         # self.save_steps = 500
+#         # self.save_total_limit = 1
 
-    def __str__(self):
-        print("Training Arguments / Hyperparameters:")
-        print("---------------------------------")
-        for key, value in self.__dict__.items():
-            print(f"| {key}: {value}")
-        return "--------------------------------"
-training_args = TrainingArguments()
-print(training_args)
+#     def __str__(self):
+#         print("Training Arguments / Hyperparameters:")
+#         print("---------------------------------")
+#         for key, value in self.__dict__.items():
+#             print(f"| {key}: {value}")
+#         return "--------------------------------"
+# training_args = TrainingArguments()
+# print(training_args)
 
 class FineTuneGPT2(nn.Module):
     def __init__(self, model, tokenizer, training_args):
@@ -79,7 +79,7 @@ class FineTuneGPT2(nn.Module):
         # print("attn shape:", attention_mask.shape)
         # print("labels shape:", labels.shape)
         
-        return self.model(input_ids, attention_mask=attention_mask, labels=labels)
+        return self.model(input_ids, attention_mask=attention_mask)#, labels=labels)
 
 
 def train_test(tuneable_model, dataloader, optimizer, training):
@@ -295,7 +295,7 @@ def seed_everything(seed: int):
 
 def main():
 
-    seed_everything(training_args.seed)
+    #seed_everything(training_args.seed)
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
@@ -307,28 +307,46 @@ def main():
         datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.2)
     print("datasets created")
     
-    tokenized_dataset = datasets[6].map(tokenize_function, batched=True, batch_size=training_args.batch_size,
+    tokenized_dataset = datasets[6].map(tokenize_function, batched=True, batch_size=32,
                                       remove_columns=['source', 'target', '__index_level_0__'])
 
     
-    training_args.max_sequence_length = find_max_len(tokenized_dataset)
+    #training_args.max_sequence_length = find_max_len(tokenized_dataset)
 
 
-    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=training_args.max_sequence_length, label_pad_token_id=tokenizer.pad_token_id)
+    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=tokenizer.pad_token_id)
 
-    train_data_loader = torch.utils.data.DataLoader(tokenized_dataset['train'], batch_size=training_args.batch_size, shuffle=True, collate_fn=data_collator)
-    eval_data_loader = torch.utils.data.DataLoader(tokenized_dataset['test'], batch_size=training_args.batch_size, shuffle=False, collate_fn=data_collator)
-    dataloaders = {'train': train_data_loader, 'eval': eval_data_loader}
+    # train_data_loader = torch.utils.data.DataLoader(tokenized_dataset['train'], batch_size=training_args.batch_size, shuffle=True, collate_fn=data_collator)
+    # eval_data_loader = torch.utils.data.DataLoader(tokenized_dataset['test'], batch_size=training_args.batch_size, shuffle=False, collate_fn=data_collator)
+    # dataloaders = {'train': train_data_loader, 'eval': eval_data_loader}
 
-    for batch in train_data_loader:
-        print(batch['input_ids'].shape)
-        print(batch['attention_mask'].shape)
-        print(batch['labels'].shape)
-        print(batch['target_grade'].shape)
-        break
+    # for batch in train_data_loader:
+    #     print(batch['input_ids'].shape)
+    #     print(batch['attention_mask'].shape)
+    #     print(batch['labels'].shape)
+    #     print(batch['target_grade'].shape)
+    #     break
     print("data collated")
 
-    evaluate(dataloaders, training_args)
+    # evaluate(dataloaders, training_args)
+
+    training_args = TrainingArguments(
+        output_dir="my_awesome_eli5_clm-model",
+        eval_strategy="epoch",
+        learning_rate=2e-5,
+        weight_decay=0.01,
+        push_to_hub=True,
+    )
+
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=tokenized_dataset["train"],
+        eval_dataset=tokenized_dataset["test"],
+        data_collator=data_collator,
+    )
+
+    trainer.train()
     return
 
 if __name__ == "__main__":

@@ -1,13 +1,8 @@
 import pandas as pd
 from datasets import Dataset
-# import pickle
-# from transformers import AutoConfig
 from transformers import AutoTokenizer
-from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import T5ForConditionalGeneration
-# from transformers import AutoModelForSeq2SeqLM
-# from transformers.utils import PaddingStrategy
 import torch
 import numpy as np
 import torch.nn as nn
@@ -194,7 +189,7 @@ def evaluate(dataloaders, training_args):
     train_data_loader = dataloaders['train']
     eval_data_loader = dataloaders['eval']
 
-    max_patience = 10
+    max_patience = 2
     last_loss = 1000000
     PATH = f"./models/gpt_new.pt"
     for epoch in range(max_epochs):
