@@ -22,7 +22,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 device = "cuda" # the device to load the model onto
 
-model = AutoModelForCausalLM.from_pretrained("gpt2", torch_dtype=torch.float16, attn_implementation="flash_attention_2")
+model = AutoModelForCausalLM.from_pretrained("gpt2", torch_dtype=torch.float16)
 tokenizer = AutoTokenizer.from_pretrained("gpt2")
 
 prompt = "def hello_world():"
