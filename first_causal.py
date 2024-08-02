@@ -82,7 +82,7 @@ class FineTuneGPT2(nn.Module):
         # print("attn shape:", attention_mask.shape)
         # print("labels shape:", labels.shape)
         
-        return self.model(input_ids, attention_mask=attention_mask)#, labels=labels)
+        return self.model(input_ids, labels=input_ids, attention_mask=attention_mask)#, labels=labels)
 
 
 def train_test(tuneable_model, dataloader, optimizer, training):
