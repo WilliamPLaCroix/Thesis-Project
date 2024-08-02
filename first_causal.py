@@ -77,7 +77,7 @@ class FineTuneGPT2(nn.Module):
         super(FineTuneGPT2, self).__init__()
         self.model = model
 
-    def forward(self, input_ids, attention_mask, labels):
+    def forward(self, input_ids, attention_mask):
         # print("input shape:", input_ids.shape)
         # print("attn shape:", attention_mask.shape)
         # print("labels shape:", labels.shape)
