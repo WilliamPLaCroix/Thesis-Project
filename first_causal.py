@@ -82,7 +82,7 @@ class FineTuneGPT2(nn.Module):
         # print("attn shape:", attention_mask.shape)
         # print("labels shape:", labels.shape)
         
-        return self.model(input_ids, labels=input_ids, attention_mask=attention_mask)#, labels=labels)
+        return self.model(input_ids, labels=input_ids, attention_mask=attention_mask)
 
 
 def train_test(tuneable_model, dataloader, optimizer, training):
@@ -157,7 +157,7 @@ def train_test(tuneable_model, dataloader, optimizer, training):
         raise ValueError("Ya Done Fuck'd up, son!")
 
 # Training sample
-def evaluate(dataloaders, training_args):
+def evaluate(dataloaders, training_args, tuneable_model):
     """
     Evaluates neural model's performance on a given task using specified parameters.
     The function preprocesses the data, splits it according to the task, initializes a TuneableModel,
@@ -188,9 +188,8 @@ def evaluate(dataloaders, training_args):
 
     predictions = []
     labels = []
-    gpt_new = FineTuneGPT2(model, tokenizer, training_args)
-    gpt_new.to(device)
-    optimizer = torch.optim.AdamW(gpt_new.parameters(), lr=training_args.learning_rate,
+    tuneable_model.to(device)
+    optimizer = torch.optim.AdamW(tuneable_model.parameters(), lr=training_args.learning_rate,
                                   betas=(training_args.adam_beta1, training_args.adam_beta2),
                                   weight_decay=training_args.adam_epsilon)
 
@@ -203,10 +202,10 @@ def evaluate(dataloaders, training_args):
     for epoch in range(max_epochs):
         print(f"Epoch {epoch}")
         # training
-        train_test(gpt_new, train_data_loader, optimizer, training="train")
+        train_test(tuneable_model, train_data_loader, optimizer, training="train")
         # validation at end of epoch
         with torch.no_grad():
-            validation_loss = train_test(gpt_new, eval_data_loader, optimizer, training="validation")
+            validation_loss = train_test(tuneable_model, eval_data_loader, optimizer, training="validation")
 
         if validation_loss < last_loss:
             last_loss = validation_loss
@@ -215,7 +214,7 @@ def evaluate(dataloaders, training_args):
             if current_patience == 0:
                 torch.save({
                     'epoch': epoch,
-                    'model_state_dict': gpt_new.state_dict(),
+                    'model_state_dict': tuneable_model.state_dict(),
                     'optimizer_state_dict': optimizer.state_dict(),
                     'loss': last_loss,
                     }, PATH)
@@ -351,10 +350,13 @@ def main():
         weight_decay=0.01,
         push_to_hub=True,
         seed=42,
+        num_train_epochs=10
     )
 
+    gpt_new = FineTuneGPT2(model, tokenizer, training_args)
+
     trainer = Trainer(
-        model=model,
+        model=gpt_new,
         args=training_args,
         train_dataset=tokenized_dataset["train"],
         eval_dataset=tokenized_dataset["test"],
