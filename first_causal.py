@@ -263,8 +263,19 @@ def compute_metrics(prediction):
 
     return sari.compute(sources=source_str, predictions=predictions, references=references)
 
+"""
+Below function tokenizes parallel corpus into source:target pairs for Seq2Seq training
+"""
+# def tokenize_function(examples):
+#     return tokenizer(text=examples["source"], text_target=examples['target'], padding=True, truncation=True, max_length=1024, return_tensors="pt")
+
+"""
+Below function tokenizes parallel corpus into target only inputs for unsupervised fine-tuning
+"""
 def tokenize_function(examples):
-    return tokenizer(text=examples["source"], text_target=examples['target'], padding=True, truncation=True, max_length=1024, return_tensors="pt")
+    return tokenizer(text=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
+
+
 
 def find_max_len(tokenized_dataset):
     longest_source = 0
