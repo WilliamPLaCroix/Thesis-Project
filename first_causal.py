@@ -352,10 +352,10 @@ def main():
         overwrite_output_dir=True,
         save_safetensors=False, # this is a temporary fix for a bug in the transformers library
         eval_strategy="epoch",
-        learning_rate=2e-5,
-        weight_decay=0.01,
+        learning_rate=1e-5,
+        #weight_decay=0.01,
         seed=42,
-        num_train_epochs=3
+        num_train_epochs=10
     )
 
     gpt_new = FineTuneGPT2(model, tokenizer, training_args)
