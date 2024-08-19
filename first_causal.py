@@ -313,11 +313,9 @@ def compute_metrics(prediction):
     metric_name = "sari"
     metric = load(metric_name)
 
-    print(prediction.keys())
-
     labels_ids = prediction.label_ids
     pred_ids = prediction.predictions
-    input_ids = prediction.input_ids
+    input_ids = prediction.inputs
 
     # all unnecessary tokens are removed
     label_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
