@@ -3,12 +3,12 @@ from datasets import Dataset
 from datasets import load_metric
 from evaluate import load
 
-from transformers import TrainingArguments
+from transformers import TrainingArguments, Seq2SeqTrainingArguments
 from transformers import AutoTokenizer
 from transformers import AutoConfig
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
-from transformers import Trainer
+from transformers import Trainer, Seq2SeqTrainer
 from transformers import GPT2LMHeadModel
 from transformers import EarlyStoppingCallback
 import torch
@@ -385,7 +385,7 @@ def main():
 
     # evaluate(dataloaders, training_args)
 
-    training_args = TrainingArguments(
+    training_args = Seq2SeqTrainingArguments(
         save_strategy="epoch", # turn off saving while testing
         output_dir="./models",
         overwrite_output_dir=True,
@@ -410,7 +410,7 @@ def main():
 
     gpt_new = FineTuneGPT2(model, tokenizer, training_args)
     
-    trainer = Trainer(
+    trainer = Seq2SeqTrainer(
         model=gpt_new,
         args=training_args,
         train_dataset=tokenized_dataset['train'],
