@@ -8,7 +8,7 @@ from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
 from transformers import GPT2LMHeadModel
-# from transformers.utils import PaddingStrategy
+from transformers import EarlyStoppingCallback
 import torch
 import numpy as np
 import torch.nn as nn
@@ -347,15 +347,18 @@ def main():
     # evaluate(dataloaders, training_args)
 
     training_args = TrainingArguments(
-        save_strategy="no", # turn off saving while testing
+        #save_strategy="no", # turn off saving while testing
         output_dir="./models",
         overwrite_output_dir=True,
         save_safetensors=False, # this is a temporary fix for a bug in the transformers library
+        save_only_model=True,
+        save_total_limit=1,
         eval_strategy="epoch",
-        learning_rate=1e-5,
-        #weight_decay=0.01,
+        learning_rate=2e-5,
+        weight_decay=0.01,
         seed=42,
-        num_train_epochs=10
+        num_train_epochs=20,
+        load_best_model_at_end=True,
     )
 
     gpt_new = FineTuneGPT2(model, tokenizer, training_args)
@@ -366,10 +369,11 @@ def main():
         train_dataset=tokenized_dataset['train'],
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
     )
 
     trainer.train()
-    #trainer.save_model("./models/gpt_new")
+    trainer.save_model("./models/gpt_new-grade_12")
     return
 
 if __name__ == "__main__":
