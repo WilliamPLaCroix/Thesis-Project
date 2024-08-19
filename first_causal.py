@@ -315,11 +315,12 @@ def compute_metrics(prediction):
 
     labels_ids = prediction.label_ids
     pred_ids = prediction.predictions
+    input_ids = prediction.input_ids
 
     # all unnecessary tokens are removed
     label_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
     references = [[reference] for reference in label_str]
-    source_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
+    source_str = tokenizer.batch_decode(input_ids, skip_special_tokens=True)
     predictions_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
 
     score = metric.compute(sources=source_str, predictions=predictions_str, references=references)
@@ -398,7 +399,7 @@ def main():
         num_train_epochs=10,
         load_best_model_at_end=True,
         #prediction_loss_only=True,
-        # metric_for_best_model="train_loss",
+        metric_for_best_model="sari",
         #greater_is_better=False,
         #label_names=["labels"],
         include_inputs_for_metrics=True,
