@@ -337,6 +337,7 @@ def main():
     # dataloaders = {'train': train_data_loader, 'eval': eval_data_loader}
 
     for batch in train_data_loader:
+        print(batch.keys())
         print(batch['input_ids'].shape)
         print(batch['attention_mask'].shape)
         print(batch['labels'].shape)
