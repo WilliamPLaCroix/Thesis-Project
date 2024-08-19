@@ -313,6 +313,8 @@ def compute_metrics(prediction):
     metric_name = "sari"
     metric = load(metric_name)
 
+    print(prediction.keys())
+
     labels_ids = prediction.label_ids
     pred_ids = prediction.predictions
     input_ids = prediction.input_ids
