@@ -1,5 +1,6 @@
 import pandas as pd
 from datasets import Dataset
+from datasets import load_metric
 
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
@@ -362,7 +363,7 @@ def main():
         load_best_model_at_end=True,
         #prediction_loss_only=True,
         #metric_for_best_model="train_loss",
-        greater_is_better=False,
+        #greater_is_better=False,
         #label_names=["labels"],
 
     )
@@ -377,6 +378,7 @@ def main():
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
         #callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
+        compute_metrics=load_metric("exact_match"),
     )
 
     trainer.train()
