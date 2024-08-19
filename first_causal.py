@@ -306,6 +306,16 @@ def seed_everything(seed: int):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
 
+# def compute_metrics(prediction):
+#     labels_ids = prediction.label_ids
+#     pred_ids = prediction.predictions
+
+#     # all unnecessary tokens are removed
+#     pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
+#     label_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
+
+#     return {"sari": sari.compute(predictions=pred_str, references=label_str)}
+
 
 def main():
 
@@ -379,7 +389,7 @@ def main():
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
         #callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
-        compute_metrics=metric,
+        compute_metrics=compute_metrics,
     )
 
     trainer.train()
