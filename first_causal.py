@@ -30,14 +30,11 @@ sari = load("sari")
 
 data_location = './data/wikilarge/'
 
-config = AutoConfig.from_pretrained(
-    "openai-community/gpt2",
-  max_new_tokens=1024
-)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model_name = "openai-community/gpt2"
 config = AutoConfig.from_pretrained(model_name)
+config.update({"max_length": 1024})
 model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
 #model = GPT2LMHeadModel.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
