@@ -365,6 +365,7 @@ def main():
         #metric_for_best_model="train_loss",
         #greater_is_better=False,
         #label_names=["labels"],
+        include_inputs_for_metrics=True,
 
     )
 
