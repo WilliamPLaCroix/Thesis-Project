@@ -347,6 +347,7 @@ def main():
     # evaluate(dataloaders, training_args)
 
     training_args = TrainingArguments(
+        save_strategy="no", # turn off saving while testing
         output_dir="./models",
         overwrite_output_dir=True,
         save_safetensors=False, # this is a temporary fix for a bug in the transformers library
