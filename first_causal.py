@@ -1,6 +1,7 @@
 import pandas as pd
 from datasets import Dataset
 from datasets import load_metric
+from evaluate import load
 
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
@@ -240,28 +241,30 @@ def evaluate(dataloaders, training_args, tuneable_model):
 
 
 
+"""
+Below function computes the SARI score for the model
+"""
+# def compute_metrics(prediction):
+#     input_ids, output_ids, labels_ids = prediction
 
-def compute_metrics(prediction):
-    input_ids, output_ids, labels_ids = prediction
+#     label_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
+#     references = [[reference] for reference in label_str]
+#     source_str = tokenizer.batch_decode(input_ids, skip_special_tokens=True)
+#     predictions = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
 
-    label_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
-    references = [[reference] for reference in label_str]
-    source_str = tokenizer.batch_decode(input_ids, skip_special_tokens=True)
-    predictions = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
+#     # print("input_ids shape:", input_ids.shape)
+#     # print("input_ids:", input_ids[0])
+#     # print("input:", source_str[0])
 
-    # print("input_ids shape:", input_ids.shape)
-    # print("input_ids:", input_ids[0])
-    # print("input:", source_str[0])
+#     # print("output_ids shape:", output_ids.shape)
+#     # print("output_ids:", output_ids[0])
+#     # print("prediction:", predictions[0])
 
-    # print("output_ids shape:", output_ids.shape)
-    # print("output_ids:", output_ids[0])
-    # print("prediction:", predictions[0])
+#     # print("labels_ids shape:", labels_ids.shape)
+#     # print("labels_ids:", labels_ids[0])
+#     # print("label:", references[0][0])
 
-    # print("labels_ids shape:", labels_ids.shape)
-    # print("labels_ids:", labels_ids[0])
-    # print("label:", references[0][0])
-
-    return sari.compute(sources=source_str, predictions=predictions, references=references)
+#     return sari.compute(sources=source_str, predictions=predictions, references=references)
 
 """
 Below function tokenizes parallel corpus into source:target pairs for Seq2Seq training
@@ -306,15 +309,36 @@ def seed_everything(seed: int):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
 
-# def compute_metrics(prediction):
-#     labels_ids = prediction.label_ids
-#     pred_ids = prediction.predictions
+def compute_metrics(prediction):
+    metric_name = "sari"
+    metric = load(metric_name)
 
-#     # all unnecessary tokens are removed
-#     pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
-#     label_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
+    labels_ids = prediction.label_ids
+    pred_ids = prediction.predictions
 
-#     return {"sari": sari.compute(predictions=pred_str, references=label_str)}
+    # all unnecessary tokens are removed
+    label_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
+    references = [[reference] for reference in label_str]
+    source_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
+    predictions_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
+
+    return metric.compute(sources=label_str, predictions=predictions_str, references=label_str)
+
+
+
+    # print("input_ids shape:", input_ids.shape)
+    # print("input_ids:", input_ids[0])
+    # print("input:", source_str[0])
+
+    # print("output_ids shape:", output_ids.shape)
+    # print("output_ids:", output_ids[0])
+    # print("prediction:", predictions[0])
+
+    # print("labels_ids shape:", labels_ids.shape)
+    # print("labels_ids:", labels_ids[0])
+    # print("label:", references[0][0])
+
+    return sari.compute(sources=source_str, predictions=predictions, references=references)
 
 
 def main():
@@ -381,7 +405,7 @@ def main():
 
 
     gpt_new = FineTuneGPT2(model, tokenizer, training_args)
-    metric = load_metric("exact_match")
+    
     trainer = Trainer(
         model=gpt_new,
         args=training_args,
