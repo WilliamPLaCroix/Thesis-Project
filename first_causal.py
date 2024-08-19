@@ -38,8 +38,9 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 tokenizer.pad_token = tokenizer.eos_token
 
 config = AutoConfig.from_pretrained(model_name)
-config.update({"max_new_tokens": 1024, "pad_token_id": tokenizer.eos_token})
+config.update({"max_new_tokens": 1024})
 model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
+model.generation_config.pad_token_id = tokenizer.pad_token_id
 #model = GPT2LMHeadModel.from_pretrained(model_name)
 
 
