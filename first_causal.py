@@ -323,6 +323,9 @@ def main():
     ### change dataset[N] where N is the grade group you want to train on
     tokenized_dataset = datasets[12].map(tokenize_function, batched=True, batch_size=32,
                                       remove_columns=['source', 'target', '__index_level_0__'])
+    
+    train = tokenized_dataset['train'][:10]
+    test = tokenized_dataset['test'][:10]
 
     
     #training_args.max_sequence_length = find_max_len(tokenized_dataset)
@@ -358,8 +361,8 @@ def main():
     trainer = Trainer(
         model=gpt_new,
         args=training_args,
-        train_dataset=tokenized_dataset["train"][:10],
-        eval_dataset=tokenized_dataset["test"],
+        train_dataset=train,
+        eval_dataset=test,
         data_collator=data_collator,
     )
 
