@@ -33,12 +33,15 @@ data_location = './data/wikilarge/'
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model_name = "openai-community/gpt2"
-config = AutoConfig.from_pretrained(model_name)
-config.update({"max_new_tokens": 1024})
-model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
-#model = GPT2LMHeadModel.from_pretrained(model_name)
+
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 tokenizer.pad_token = tokenizer.eos_token
+
+config = AutoConfig.from_pretrained(model_name)
+config.update({"max_new_tokens": 1024, "pad_token_id": tokenizer.eos_token})
+model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
+#model = GPT2LMHeadModel.from_pretrained(model_name)
+
 
 
 # define new class called training_arguements
