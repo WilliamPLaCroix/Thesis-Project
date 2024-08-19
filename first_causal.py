@@ -79,12 +79,12 @@ class FineTuneGPT2(nn.Module):
         super(FineTuneGPT2, self).__init__()
         self.model = model
 
-    def forward(self, input_ids, attention_mask):
+    def forward(self, input_ids, attention_mask, labels):
         # print("input shape:", input_ids.shape)
         # print("attn shape:", attention_mask.shape)
         # print("labels shape:", labels.shape)
         
-        return self.model(input_ids, attention_mask=attention_mask)#, labels=input_ids)
+        return self.model(input_ids, attention_mask=attention_mask, labels=labels)
 
 
 def train_test(tuneable_model, dataloader, optimizer, training):
