@@ -317,10 +317,10 @@ def main():
 
     datasets = {}
     for i, (grade, group) in enumerate(grade_groups):
-        datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.2)
+        ### [:320] is to limit the number of examples per grade group to 320 for batch subsetting
+        datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']][:320]).train_test_split(test_size=0.1)
     print("datasets created")
     
-    data = datasets[12][:32]
 
     ### change dataset[N] where N is the grade group you want to train on
     tokenized_dataset = datasets[12].map(tokenize_function, batched=True, batch_size=32,
