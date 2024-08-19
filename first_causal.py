@@ -403,6 +403,7 @@ def main():
         #greater_is_better=False,
         label_names=["labels"],
         include_inputs_for_metrics=True,
+        predict_with_generate=True,
 
     )
 
