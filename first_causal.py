@@ -272,7 +272,7 @@ Below function tokenizes parallel corpus into source:target pairs for Seq2Seq tr
 Below function tokenizes parallel corpus into target only inputs for unsupervised fine-tuning
 """
 def tokenize_function(examples):
-    return tokenizer(text=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
+    return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
 
 
 
