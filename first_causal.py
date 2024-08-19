@@ -322,7 +322,9 @@ def compute_metrics(prediction):
     source_str = tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
     predictions_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
 
-    return metric.compute(sources=label_str, predictions=predictions_str, references=label_str)
+    score = metric.compute(sources=source_str, predictions=predictions_str, references=references)
+    print(score)
+    return score
 
 
 
