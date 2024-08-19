@@ -348,6 +348,7 @@ def main():
 
     training_args = TrainingArguments(
         output_dir="./models",
+        overwrite_output_dir=True,
         save_safetensors=False, # this is a temporary fix for a bug in the transformers library
         eval_strategy="epoch",
         learning_rate=2e-5,
