@@ -377,7 +377,7 @@ def main():
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
         #callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
-        teturn_loss=True,
+        return_loss=True,
     )
 
     trainer.train()
