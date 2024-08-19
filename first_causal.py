@@ -31,6 +31,7 @@ sari = load("sari")
 data_location = './data/wikilarge/'
 
 config = AutoConfig.from_pretrained(
+    "openai-community/gpt2",
   max_new_tokens=1024
 )
 
