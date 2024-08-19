@@ -347,12 +347,12 @@ def main():
     # evaluate(dataloaders, training_args)
 
     training_args = TrainingArguments(
-        output_dir="./models",
+        #output_dir="./models",
         eval_strategy="epoch",
         learning_rate=2e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=10
+        num_train_epochs=3
     )
 
     gpt_new = FineTuneGPT2(model, tokenizer, training_args)
@@ -366,6 +366,7 @@ def main():
     )
 
     trainer.train()
+    #trainer.save_model("./models/gpt_new")
     return
 
 if __name__ == "__main__":
