@@ -358,7 +358,7 @@ def main():
     trainer = Trainer(
         model=gpt_new,
         args=training_args,
-        train_dataset=tokenized_dataset["train"],
+        train_dataset=tokenized_dataset["train"][:10],
         eval_dataset=tokenized_dataset["test"],
         data_collator=data_collator,
     )
