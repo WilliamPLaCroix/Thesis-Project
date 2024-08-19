@@ -1,6 +1,6 @@
 import pandas as pd
 from datasets import Dataset
-# import pickle
+
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
 from transformers import AutoConfig
@@ -330,18 +330,18 @@ def main():
     #training_args.max_sequence_length = find_max_len(tokenized_dataset)
 
 
-    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=tokenizer.pad_token_id, return_loss=True)
+    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=tokenizer.pad_token_id)
 
-    # train_data_loader = torch.utils.data.DataLoader(tokenized_dataset['train'], batch_size=training_args.batch_size, shuffle=True, collate_fn=data_collator)
+    train_data_loader = torch.utils.data.DataLoader(tokenized_dataset['train'], batch_size=training_args.batch_size, shuffle=True, collate_fn=data_collator)
     # eval_data_loader = torch.utils.data.DataLoader(tokenized_dataset['test'], batch_size=training_args.batch_size, shuffle=False, collate_fn=data_collator)
     # dataloaders = {'train': train_data_loader, 'eval': eval_data_loader}
 
-    # for batch in train_data_loader:
-    #     print(batch['input_ids'].shape)
-    #     print(batch['attention_mask'].shape)
-    #     print(batch['labels'].shape)
-    #     print(batch['target_grade'].shape)
-    #     break
+    for batch in train_data_loader:
+        print(batch['input_ids'].shape)
+        print(batch['attention_mask'].shape)
+        print(batch['labels'].shape)
+        print(batch['target_grade'].shape)
+        break
     print("data collated")
 
     # evaluate(dataloaders, training_args)
