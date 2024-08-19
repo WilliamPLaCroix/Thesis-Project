@@ -320,7 +320,8 @@ def main():
         datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.2)
     print("datasets created")
     
-    tokenized_dataset = datasets[6].map(tokenize_function, batched=True, batch_size=32,
+    ### change dataset[N] where N is the grade group you want to train on
+    tokenized_dataset = datasets[12].map(tokenize_function, batched=True, batch_size=32,
                                       remove_columns=['source', 'target', '__index_level_0__'])
 
     
@@ -344,7 +345,7 @@ def main():
     # evaluate(dataloaders, training_args)
 
     training_args = TrainingArguments(
-        output_dir="my_awesome_eli5_clm-model",
+        output_dir="/models",
         eval_strategy="epoch",
         learning_rate=2e-5,
         weight_decay=0.01,
