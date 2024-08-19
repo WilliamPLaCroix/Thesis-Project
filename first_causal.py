@@ -352,7 +352,7 @@ def main():
         output_dir="./models",
         overwrite_output_dir=True,
         save_safetensors=False, # this is a temporary fix for a bug in the transformers library
-        save_only_model=True,
+        #save_only_model=True,
         save_total_limit=1,
         eval_strategy="epoch",
         learning_rate=2e-5,
@@ -364,6 +364,7 @@ def main():
         #metric_for_best_model="train_loss",
         greater_is_better=False,
         label_names=["labels"],
+
     )
 
 
@@ -376,6 +377,7 @@ def main():
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
+        teturn_loss=True,
     )
 
     trainer.train()
