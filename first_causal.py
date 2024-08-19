@@ -324,8 +324,8 @@ def main():
     tokenized_dataset = datasets[12].map(tokenize_function, batched=True, batch_size=32,
                                       remove_columns=['source', 'target', '__index_level_0__'])
     
-    train = tokenized_dataset['train'][:10]
-    test = tokenized_dataset['test'][:10]
+    train = tokenized_dataset['train'][:32]
+    test = tokenized_dataset['test'][:32]
 
     
     #training_args.max_sequence_length = find_max_len(tokenized_dataset)
