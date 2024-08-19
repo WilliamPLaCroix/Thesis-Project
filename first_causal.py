@@ -361,8 +361,9 @@ def main():
         num_train_epochs=20,
         load_best_model_at_end=True,
         #prediction_loss_only=True,
-        metric_for_best_model="train_loss",
+        #metric_for_best_model="train_loss",
         greater_is_better=False,
+        label_names=["labels"],
     )
 
 
