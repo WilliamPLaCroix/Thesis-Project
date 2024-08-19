@@ -330,7 +330,7 @@ def main():
     #training_args.max_sequence_length = find_max_len(tokenized_dataset)
 
 
-    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=tokenizer.pad_token_id)
+    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=tokenizer.pad_token_id, return_loss=True)
 
     # train_data_loader = torch.utils.data.DataLoader(tokenized_dataset['train'], batch_size=training_args.batch_size, shuffle=True, collate_fn=data_collator)
     # eval_data_loader = torch.utils.data.DataLoader(tokenized_dataset['test'], batch_size=training_args.batch_size, shuffle=False, collate_fn=data_collator)
@@ -359,7 +359,7 @@ def main():
         seed=42,
         num_train_epochs=20,
         load_best_model_at_end=True,
-        prediction_loss_only=True,
+        #prediction_loss_only=True,
         metric_for_best_model="train_loss",
         greater_is_better=False,
     )
