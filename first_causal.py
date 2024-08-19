@@ -363,7 +363,7 @@ def main():
         #prediction_loss_only=True,
         #metric_for_best_model="train_loss",
         greater_is_better=False,
-        label_names=["labels"],
+        #label_names=["labels"],
 
     )
 
