@@ -408,10 +408,10 @@ def main():
     )
 
 
-    gpt_new = FineTuneGPT2(model, tokenizer, training_args)
+    #gpt_new = FineTuneGPT2(model, tokenizer, training_args)
     
     trainer = Seq2SeqTrainer(
-        model=gpt_new,
+        model=model,
         args=training_args,
         train_dataset=tokenized_dataset['train'],
         eval_dataset=tokenized_dataset['test'],
