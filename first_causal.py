@@ -362,7 +362,7 @@ def main():
         num_train_epochs=10,
         load_best_model_at_end=True,
         #prediction_loss_only=True,
-        #metric_for_best_model="train_loss",
+        # metric_for_best_model="train_loss",
         #greater_is_better=False,
         #label_names=["labels"],
         include_inputs_for_metrics=True,
@@ -371,7 +371,7 @@ def main():
 
 
     gpt_new = FineTuneGPT2(model, tokenizer, training_args)
-
+    metric = load_metric("exact_match")
     trainer = Trainer(
         model=gpt_new,
         args=training_args,
@@ -379,7 +379,7 @@ def main():
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
         #callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
-        compute_metrics=load_metric("exact_match"),
+        compute_metrics=metric,
     )
 
     trainer.train()
