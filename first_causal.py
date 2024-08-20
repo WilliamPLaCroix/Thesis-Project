@@ -34,7 +34,7 @@ data_location = './data/wikilarge/'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model_name = "openai-community/gpt2"
 
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
 tokenizer.pad_token = tokenizer.eos_token
 
 config = AutoConfig.from_pretrained(model_name, max_length=1024, pad_token_id=tokenizer.pad_token_id)
