@@ -9,7 +9,7 @@ from transformers import AutoConfig
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer, Seq2SeqTrainer
-from transformers import GPT2LMHeadModel
+from transformers import GenerationConfig
 from transformers import EarlyStoppingCallback
 import torch
 import numpy as np
@@ -39,6 +39,9 @@ tokenizer.pad_token = tokenizer.eos_token
 
 config = AutoConfig.from_pretrained(model_name, max_length=256, pad_token_id=tokenizer.pad_token_id)
 model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
+
+generation_config = GenerationConfig(max_length=256)
+generation_config.save_pretrained("./generation_config")
 
 #model = GPT2LMHeadModel.from_pretrained(model_name)
 
@@ -409,7 +412,7 @@ def main():
         label_names=["labels"],
         include_inputs_for_metrics=True,
         predict_with_generate=True,
-
+        generation_config=generation_config,
     )
 
 
