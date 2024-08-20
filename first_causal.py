@@ -37,7 +37,7 @@ model_name = "openai-community/gpt2"
 tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
 tokenizer.pad_token = tokenizer.eos_token
 
-config = AutoConfig.from_pretrained(model_name, max_new_tokens=128, pad_token_id=tokenizer.pad_token_id)
+config = AutoConfig.from_pretrained(model_name, max_length=128, pad_token_id=tokenizer.pad_token_id)
 model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
 
 #model = GPT2LMHeadModel.from_pretrained(model_name)
