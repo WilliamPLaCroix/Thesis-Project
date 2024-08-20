@@ -68,7 +68,7 @@ def main():
     
 
     ### change dataset[N] where N is the grade group you want to train on
-    for N in set(4,8):
+    for N in {4, 8}:
         tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
         tokenizer.pad_token = tokenizer.eos_token
 
