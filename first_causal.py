@@ -97,7 +97,8 @@ def main():
     datasets = {}
     for i, (grade, group) in enumerate(grade_groups):
         ### [:320] is to limit the number of examples per grade group to 320 for batch subsetting
-        datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']][:320]).train_test_split(test_size=0.1)
+        # datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']][:320]).train_test_split(test_size=0.1)
+        datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1)
     print("datasets created")
     
 
@@ -134,10 +135,10 @@ def main():
         learning_rate=2e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=3,
+        num_train_epochs=10,
         load_best_model_at_end=True,
         #prediction_loss_only=True,
-        metric_for_best_model="sari",
+        metric_for_best_model="loss",
         #greater_is_better=False,
         label_names=["labels"],
         include_inputs_for_metrics=True,
