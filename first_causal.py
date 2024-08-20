@@ -37,7 +37,7 @@ model_name = "openai-community/gpt2"
 tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
 tokenizer.pad_token = tokenizer.eos_token
 
-config = AutoConfig.from_pretrained(model_name, max_length=1024, pad_token_id=tokenizer.pad_token_id)
+config = AutoConfig.from_pretrained(model_name, max_new_tokens=128, pad_token_id=tokenizer.pad_token_id)
 model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
 
 #model = GPT2LMHeadModel.from_pretrained(model_name)
@@ -401,7 +401,7 @@ def main():
         learning_rate=2e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=10,
+        num_train_epochs=3,
         load_best_model_at_end=True,
         #prediction_loss_only=True,
         metric_for_best_model="sari",
