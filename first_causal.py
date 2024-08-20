@@ -37,7 +37,7 @@ model_name = "openai-community/gpt2"
 tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
 tokenizer.pad_token = tokenizer.eos_token
 
-config = AutoConfig.from_pretrained(model_name, max_length=256, pad_token_id=tokenizer.pad_token_id)
+config = AutoConfig.from_pretrained(model_name, pad_token_id=tokenizer.pad_token_id)
 model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
 
 generation_config = GenerationConfig(max_length=256)
@@ -332,7 +332,6 @@ def compute_metrics(prediction):
     predictions_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
 
     score = metric.compute(sources=source_str, predictions=predictions_str, references=references)
-    print(score)
     return score
 
 
@@ -424,7 +423,7 @@ def main():
         train_dataset=tokenized_dataset['train'],
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
-        #callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
         compute_metrics=compute_metrics,
     )
 
