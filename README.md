@@ -6,9 +6,6 @@
 Currently in the early stages of developing a fine-grained, user-adaptive text simplification model for second language acquisition. 
 
 # License
-[(Back to top)](#table-of-contents)
-
-You can also mention what license the project uses. I usually add it like this:
 
 [MIT license](./LICENSE)
 
