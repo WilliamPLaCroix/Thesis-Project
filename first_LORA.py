@@ -114,7 +114,7 @@ def main():
                                 target_modules=['lm_head'],
                                 lora_dropout=0.01,
                                 )
-        lora_model = LoraModel(model, lora_config)
+        lora_model = LoraModel(model, lora_config, "default")
 
         generation_config = GenerationConfig(max_length=256)
         generation_config.save_pretrained("./generation_config")
