@@ -124,6 +124,8 @@ def main():
                                              max_new_tokens=256,
                                              pad_token_id=tokenizer.eos_token_id,)
         generation_config.save_pretrained("./generation_config")
+        model.generation_config.pad_token_id = tokenizer.pad_token_id
+        lora_model.generation_config.pad_token_id = tokenizer.pad_token_id
 
         tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
                                         remove_columns=['target_grade','source', 'target', '__index_level_0__'])
@@ -182,7 +184,7 @@ def main():
         )
 
         trainer.train()
-        trainer.save_model(f"./models/gpt_new-grade_{N}")
+        # trainer.save_model(f"./models/gpt_new-grade_{N}")
     return
 
 if __name__ == "__main__":
