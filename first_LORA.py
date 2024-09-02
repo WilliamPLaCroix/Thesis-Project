@@ -72,7 +72,7 @@ def main():
     for N in {4, 8}:
         tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
         tokenizer.pad_token = tokenizer.eos_token
-        tokenizer.pad_token_id = 50256
+        tokenizer.pad_token_id = tokenizer.eos_token_id
         
 
 
@@ -109,7 +109,7 @@ def main():
         config = AutoConfig.from_pretrained(model_name)
         model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
         print(model)
-        model.config.pad_token_id = 50256
+        model.config.pad_token_id = tokenizer.eos_token_id
 
         lora_config = LoraConfig(task_type = "SEQ_2_SEQ_LM",
                                 r=8,
@@ -118,11 +118,11 @@ def main():
                                 lora_dropout=0.01,
                                 )
         lora_model = LoraModel(model, lora_config, "default")
-        lora_model.config.pad_token_id = 50256
+        lora_model.config.pad_token_id = tokenizer.eos_token_id
 
         generation_config = GenerationConfig(max_length=256, 
                                              max_new_tokens=256,
-                                             pad_token_id=50256,)
+                                             pad_token_id=tokenizer.eos_token_id,)
         generation_config.save_pretrained("./generation_config")
 
         tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
@@ -130,7 +130,7 @@ def main():
         print(tokenized_dataset)
 
 
-        data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=tokenizer.pad_token_id)
+        data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=tokenizer.eos_token_id)
 
         #train_data_loader = torch.utils.data.DataLoader(tokenized_dataset['train'], batch_size=32, shuffle=True, collate_fn=data_collator)
         # eval_data_loader = torch.utils.data.DataLoader(tokenized_dataset['test'], batch_size=training_args.batch_size, shuffle=False, collate_fn=data_collator)
