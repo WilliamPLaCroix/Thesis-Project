@@ -70,8 +70,8 @@ def main():
 
     ### change dataset[N] where N is the grade group you want to train on
     for N in {4, 8}:
-        tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left", pad_token_id=tokenizer.pad_token_id)
-        tokenizer.pad_token = tokenizer.eos_token
+        tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left", pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
+        #tokenizer.pad_token = tokenizer.eos_token
         
 
 
@@ -126,7 +126,7 @@ def main():
         print(tokenized_dataset)
 
 
-        data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=tokenizer.pad_token_id)
+        data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=50256)
 
         #train_data_loader = torch.utils.data.DataLoader(tokenized_dataset['train'], batch_size=32, shuffle=True, collate_fn=data_collator)
         # eval_data_loader = torch.utils.data.DataLoader(tokenized_dataset['test'], batch_size=training_args.batch_size, shuffle=False, collate_fn=data_collator)
