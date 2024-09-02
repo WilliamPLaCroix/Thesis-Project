@@ -70,7 +70,7 @@ def main():
 
     ### change dataset[N] where N is the grade group you want to train on
     for N in {4, 8}:
-        tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
+        tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left", pad_token_id=tokenizer.pad_token_id)
         tokenizer.pad_token = tokenizer.eos_token
         
 
@@ -106,7 +106,7 @@ def main():
             return score
 
         config = AutoConfig.from_pretrained(model_name)
-        model = AutoModelForCausalLM.from_pretrained(model_name, config=config, pad_token_id=tokenizer.eos_token_id)
+        model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
         print(model)
         
 
@@ -118,7 +118,7 @@ def main():
                                 )
         lora_model = LoraModel(model, lora_config, "default")
 
-        generation_config = GenerationConfig(max_length=256, max_new_tokens=256, pad_token_id=tokenizer.pad_token_id)
+        generation_config = GenerationConfig(max_length=256, max_new_tokens=256)
         generation_config.save_pretrained("./generation_config")
 
         tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
