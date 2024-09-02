@@ -111,7 +111,7 @@ def main():
         lora_config = LoraConfig(task_type="SEQ_2_SEQ_LM",
                                 r=8,
                                 lora_alpha=32,
-                                target_modules=['all-linear'],
+                                target_modules=['lm_head'],
                                 lora_dropout=0.01,
                                 )
         lora_model = LoraModel(model, lora_config, "default")
