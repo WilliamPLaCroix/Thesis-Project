@@ -105,8 +105,8 @@ def main():
             score = metric.compute(sources=source_str, predictions=predictions_str, references=references)
             return score
 
-        config = AutoConfig.from_pretrained(model_name, pad_token_id=tokenizer.eos_token_id)
-        model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
+        config = AutoConfig.from_pretrained(model_name)
+        model = AutoModelForCausalLM.from_pretrained(model_name, config=config, pad_token_id=tokenizer.eos_token_id)
         print(model)
         
 
