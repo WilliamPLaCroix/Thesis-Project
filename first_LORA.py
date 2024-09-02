@@ -108,13 +108,12 @@ def main():
         print(model)
         
 
-        lora_config = LoraConfig(task_type="SEQ_2_SEQ_LM",
-                                r=8,
+        lora_config = LoraConfig(r=8,
                                 lora_alpha=32,
                                 target_modules=['lm_head'],
                                 lora_dropout=0.01,
                                 )
-        lora_model = LoraModel(model, lora_config, "default")
+        lora_model = LoraModel(model, lora_config)
 
         generation_config = GenerationConfig(max_length=256)
         generation_config.save_pretrained("./generation_config")
@@ -163,7 +162,7 @@ def main():
         )
         
         trainer = Seq2SeqTrainer(
-            model=model,
+            model=lora_model,
             args=training_args,
             train_dataset=tokenized_dataset['train'],
             eval_dataset=tokenized_dataset['test'],
