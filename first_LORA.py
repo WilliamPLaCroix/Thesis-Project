@@ -72,6 +72,8 @@ def main():
     for N in {4, 8}:
         tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
         tokenizer.pad_token = tokenizer.eos_token
+        tokenizer.pad_token_id = tokenizer.eos_token_id
+
 
         """
         Below function tokenizes parallel corpus into source:target pairs for Seq2Seq training
@@ -116,7 +118,7 @@ def main():
                                 )
         lora_model = LoraModel(model, lora_config, "default")
 
-        generation_config = GenerationConfig(max_length=256)
+        generation_config = GenerationConfig(max_length=256, max_new_tokens=256)
         generation_config.save_pretrained("./generation_config")
 
         tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
@@ -160,6 +162,7 @@ def main():
             include_inputs_for_metrics=True,
             predict_with_generate=True,
             generation_config=generation_config,
+            generation_max_length=256,
             remove_unused_columns=False,
         )
         
