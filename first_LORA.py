@@ -72,7 +72,7 @@ def main():
     for N in {4, 8}:
         tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
         tokenizer.pad_token = tokenizer.eos_token
-        tokenizer.pad_token_id = tokenizer.eos_token_id
+        
 
 
         """
@@ -105,7 +105,7 @@ def main():
             score = metric.compute(sources=source_str, predictions=predictions_str, references=references)
             return score
 
-        config = AutoConfig.from_pretrained(model_name, pad_token_id=tokenizer.pad_token_id)
+        config = AutoConfig.from_pretrained(model_name, pad_token_id=tokenizer.eos_token_id)
         model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
         print(model)
         
@@ -118,7 +118,7 @@ def main():
                                 )
         lora_model = LoraModel(model, lora_config, "default")
 
-        generation_config = GenerationConfig(max_length=256, max_new_tokens=256)
+        generation_config = GenerationConfig(max_length=256, max_new_tokens=256, pad_token_id=tokenizer.pad_token_id)
         generation_config.save_pretrained("./generation_config")
 
         tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
@@ -161,7 +161,7 @@ def main():
             label_names=["labels"],
             include_inputs_for_metrics=True,
             predict_with_generate=True,
-            generation_config=generation_config,
+            generation_config="./generation_config/generatino_config",
             generation_max_length=256,
             remove_unused_columns=False,
         )
