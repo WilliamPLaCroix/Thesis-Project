@@ -105,6 +105,8 @@ def main():
 
         config = AutoConfig.from_pretrained(model_name, pad_token_id=tokenizer.pad_token_id)
         model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
+        print(model)
+        
 
         lora_config = LoraConfig(task_type="SEQ_2_SEQ_LM",
                                 r=8,
