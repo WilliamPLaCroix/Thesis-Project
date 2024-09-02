@@ -108,7 +108,8 @@ def main():
         print(model)
         
 
-        lora_config = LoraConfig(r=8,
+        lora_config = LoraConfig(task_type = "SEQ_2_SEQ_LM",
+                                r=8,
                                 lora_alpha=32,
                                 target_modules=['lm_head'],
                                 lora_dropout=0.01,
