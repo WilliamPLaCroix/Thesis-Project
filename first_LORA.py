@@ -120,7 +120,7 @@ def main():
         generation_config.save_pretrained("./generation_config")
 
         tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
-                                        remove_columns=['source', 'target', '__index_level_0__'])
+                                        remove_columns=['target_grade','source', 'target', '__index_level_0__'])
         print(tokenized_dataset)
 
 
