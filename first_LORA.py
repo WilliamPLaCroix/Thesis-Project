@@ -108,7 +108,7 @@ def main():
         print(model)
         
 
-        lora_config = LoraConfig(task_type = "CAUSAL_LM",
+        lora_config = LoraConfig(task_type = "SEQ_2_SEQ_LM",
                                 r=8,
                                 lora_alpha=32,
                                 target_modules=['lm_head'],
@@ -170,6 +170,7 @@ def main():
             data_collator=data_collator,
             callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
             compute_metrics=compute_metrics,
+            tokenizer=tokenizer,
         )
 
         trainer.train()
