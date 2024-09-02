@@ -161,7 +161,7 @@ def main():
             label_names=["labels"],
             include_inputs_for_metrics=True,
             predict_with_generate=True,
-            generation_config="./generation_config/generation_config",
+            generation_config="generation_config/generation_config",
             generation_max_length=256,
             remove_unused_columns=False,
         )
