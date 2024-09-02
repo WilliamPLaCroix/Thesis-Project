@@ -163,7 +163,7 @@ def main():
         )
         
         trainer = Seq2SeqTrainer(
-            model=lora_model,
+            model=model,
             args=training_args,
             train_dataset=tokenized_dataset['train'],
             eval_dataset=tokenized_dataset['test'],
