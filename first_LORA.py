@@ -160,6 +160,7 @@ def main():
             include_inputs_for_metrics=True,
             predict_with_generate=True,
             generation_config=generation_config,
+            remove_unused_columns=False,
         )
         
         trainer = Seq2SeqTrainer(
