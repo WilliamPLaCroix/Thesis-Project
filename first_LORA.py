@@ -109,7 +109,7 @@ def main():
         config = AutoConfig.from_pretrained(model_name)
         model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
         print(model)
-        
+        model.config.pad_token_id = model.config.eos_token_id
 
         lora_config = LoraConfig(task_type = "SEQ_2_SEQ_LM",
                                 r=8,
@@ -118,6 +118,7 @@ def main():
                                 lora_dropout=0.01,
                                 )
         lora_model = LoraModel(model, lora_config, "default")
+        lora_model.config.pad_token_id = lora_model.config.eos_token_id
 
         generation_config = GenerationConfig(max_length=256, max_new_tokens=256)
         generation_config.save_pretrained("./generation_config")
