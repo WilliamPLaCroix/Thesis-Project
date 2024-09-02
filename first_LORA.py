@@ -120,7 +120,9 @@ def main():
         lora_model = LoraModel(model, lora_config, "default")
         lora_model.config.pad_token_id = lora_model.config.eos_token_id
 
-        generation_config = GenerationConfig(max_length=256, max_new_tokens=256)
+        generation_config = GenerationConfig(max_length=256, 
+                                             max_new_tokens=256,
+                                             pad_token_id=tokenizer.eos_token_id,)
         generation_config.save_pretrained("./generation_config")
 
         tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
