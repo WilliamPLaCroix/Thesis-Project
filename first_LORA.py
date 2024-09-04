@@ -30,7 +30,7 @@ os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
 from huggingface_hub import login
-login(token=os.getenv("huggingface"))
+login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 from evaluate import load
 sari = load("sari")
