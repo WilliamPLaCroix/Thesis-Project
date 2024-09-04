@@ -76,7 +76,7 @@ def main():
     
 
     ### change dataset[N] where N is the grade group you want to train on
-    for N in {2, 4, 6, 8, 10, 12}:
+    for N in {4, 6, 8, 10, 12}:
         tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
         tokenizer.pad_token = tokenizer.eos_token
         tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -169,7 +169,7 @@ def main():
             learning_rate=2e-5,
             weight_decay=0.01,
             seed=42,
-            num_train_epochs=100,
+            num_train_epochs=20,
             load_best_model_at_end=True,
             #prediction_loss_only=True,
             metric_for_best_model="loss",
@@ -191,10 +191,11 @@ def main():
             callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
             compute_metrics=compute_metrics,
             tokenizer=tokenizer,
+            
         )
 
         trainer.train()
-        # trainer.save_model(f"./models/gpt_new-grade_{N}")
+        trainer.save_model(f"./models/gpt_new-grade_{N}")
     return
 
 if __name__ == "__main__":
