@@ -21,9 +21,16 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
+from dotenv import load_dotenv
+load_dotenv()
+import wandb
+
+wandb.login(key=os.getenv("WANDB"))
+os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project
+os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
 from huggingface_hub import login
-login(token="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")
+login(token=os.getenv("huggingface"))
 
 from evaluate import load
 sari = load("sari")
@@ -151,6 +158,9 @@ def main():
         training_args = Seq2SeqTrainingArguments(
             save_strategy="epoch",
             output_dir="./models",
+            report_to="wandb",  # enable logging to W&B
+            run_name=f"gpt2-grade-{N}",  # name of the W&B run (optional)
+            logging_steps=1,  # how often to log to W&B
             overwrite_output_dir=True,
             save_safetensors=False, # this is a temporary fix for a bug in the transformers library
             #save_only_model=True,
