@@ -25,7 +25,7 @@ from dotenv import load_dotenv
 load_dotenv()
 import wandb
 
-wandb.login(key=os.getenv("WANDB"))
+wandb.login(key=os.getenv("wandb"))
 os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
