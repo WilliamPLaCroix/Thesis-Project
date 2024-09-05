@@ -171,7 +171,7 @@ def main():
             seed=42,
             num_train_epochs=20,
             load_best_model_at_end=True,
-            #prediction_loss_only=True,
+            prediction_loss_only=True,
             metric_for_best_model="loss",
             #greater_is_better=False,
             label_names=["labels"],
@@ -189,7 +189,7 @@ def main():
             eval_dataset=tokenized_dataset['test'],
             data_collator=data_collator,
             callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
-            compute_metrics=compute_metrics,
+            #compute_metrics=compute_metrics,
             tokenizer=tokenizer,
             
         )
