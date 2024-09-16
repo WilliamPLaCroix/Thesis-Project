@@ -170,7 +170,7 @@ def main():
             learning_rate=2e-5,
             weight_decay=0.01,
             seed=42,
-            num_train_epochs=20,
+            num_train_epochs=2,
             load_best_model_at_end=True,
             prediction_loss_only=True,
             metric_for_best_model="loss",
