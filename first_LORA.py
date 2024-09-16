@@ -157,7 +157,7 @@ def main():
 
         training_args = Seq2SeqTrainingArguments(
             #save_strategy="epoch",
-            output_dir="/models",
+            output_dir="./models",
             report_to="wandb",  # enable logging to W&B
             run_name=f"gpt2-grade-{N}",  # name of the W&B run (optional)
             logging_steps=1,  # how often to log to W&B
