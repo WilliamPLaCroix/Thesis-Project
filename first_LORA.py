@@ -163,7 +163,7 @@ def main():
             logging_steps=1,  # how often to log to W&B
             hub_model_id="williamplacroix/text-simplification",  # save the model to the Hub after training
             #overwrite_output_dir=True,
-            #save_safetensors=False, # this is a temporary fix for a bug in the transformers library
+            save_safetensors=False, # this is a temporary fix for a bug in the transformers library
             #save_only_model=True,
             #save_total_limit=1,
             #eval_strategy="epoch",
