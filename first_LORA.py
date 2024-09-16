@@ -161,6 +161,7 @@ def main():
             report_to="wandb",  # enable logging to W&B
             run_name=f"gpt2-grade-{N}",  # name of the W&B run (optional)
             logging_steps=1,  # how often to log to W&B
+            hub_model_id="williamplacroix/text-simplification",  # save the model to the Hub after training
             overwrite_output_dir=True,
             save_safetensors=False, # this is a temporary fix for a bug in the transformers library
             #save_only_model=True,
@@ -195,7 +196,7 @@ def main():
         )
 
         trainer.train()
-        trainer.push_to_hub(f"./models/gpt_new-grade_{N}")
+        trainer.push_to_hub(f"gpt2-grade-{N}")
     return
 
 if __name__ == "__main__":
