@@ -58,7 +58,7 @@ model_name = "openai-community/gpt2"
 
 def main():
 
-    N = sys.argv[1]
+    N = str(sys.argv[1])
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
