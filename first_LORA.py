@@ -195,7 +195,7 @@ def main():
     )
 
     trainer.train()
-    trainer.push_to_hub(repo_name=current_model_name)
+    trainer.push_to_hub(current_model_name)
     return
 
 if __name__ == "__main__":
