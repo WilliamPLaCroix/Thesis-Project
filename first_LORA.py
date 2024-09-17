@@ -12,10 +12,8 @@ from transformers import Trainer, Seq2SeqTrainer
 from transformers import GenerationConfig
 from transformers import EarlyStoppingCallback
 from peft import LoraModel, LoraConfig
+import sys
 import torch
-import numpy as np
-import torch.nn as nn
-import random
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from tqdm import tqdm
@@ -60,7 +58,7 @@ model_name = "openai-community/gpt2"
 
 def main():
 
-
+    N = sys.argv[1]
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
@@ -76,7 +74,7 @@ def main():
     
 
     ### change dataset[N] where N is the grade group you want to train on
-    N = 4
+    
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -154,23 +152,24 @@ def main():
     #     break
     print("data collated")
 
+    current_model_name = f"gpt2-grade-{N}"
 
     training_args = Seq2SeqTrainingArguments(
         save_strategy="epoch",
-        output_dir="./models",
+        output_dir=f"./models/{current_model_name}",
         report_to="wandb",  # enable logging to W&B
-        run_name=f"gpt2-grade-{N}",  # name of the W&B run (optional)
+        run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
-        hub_model_id="williamplacroix/text-simplification",  # save the model to the Hub after training
+        #hub_model_id="williamplacroix/text-simplification",  # save the model to the Hub after training
         overwrite_output_dir=True,
         save_safetensors=False, # this is a temporary fix for a bug in the transformers library
-        save_only_model=True,
+        #save_only_model=True,
         save_total_limit=1,
         eval_strategy="epoch",
-        learning_rate=2e-5,
+        learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=2,
+        num_train_epochs=5,
         load_best_model_at_end=True,
         prediction_loss_only=True,
         metric_for_best_model="loss",
@@ -196,7 +195,7 @@ def main():
     )
 
     trainer.train()
-    trainer.push_to_hub(f"gpt2-grade-{N}")
+    trainer.push_to_hub(repo_name=current_model_name)
     return
 
 if __name__ == "__main__":
