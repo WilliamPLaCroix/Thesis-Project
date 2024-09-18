@@ -6,7 +6,7 @@ from evaluate import load
 from transformers import TrainingArguments, Seq2SeqTrainingArguments
 from transformers import AutoTokenizer
 from transformers import AutoConfig
-from transformers import AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoModelForSeq2SeqLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer, Seq2SeqTrainer
 from transformers import GenerationConfig
@@ -112,7 +112,7 @@ def main():
         return score
 
     config = AutoConfig.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name, config=config)
     print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
@@ -121,7 +121,6 @@ def main():
                             lora_alpha=32,
                             target_modules=['lm_head'],
                             lora_dropout=0.01,
-                            task_type=TaskType.SEQ_2_SEQ_LM,
                             )
     # lora_model = LoraModel(model, lora_config, f"gpt2-grade-{N}")
     lora_model = get_peft_model(model, lora_config, f"gpt2-grade-{N}")
