@@ -24,8 +24,6 @@ load_dotenv()
 import wandb
 
 wandb.login(key=os.getenv("wandb"))
-os.environ["WANDB_PROJECT"] = "Graded text simplification evaluation"  # name your W&B project
-os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
 from huggingface_hub import login
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
@@ -39,6 +37,9 @@ def main():
     data_location = './data/wikilarge/'   
     model_grade = int(sys.argv[1])
     test_set_grade = int(sys.argv[2])
+
+    os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
+    os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
     model_name = "openai-community/gpt2"
 
