@@ -79,8 +79,8 @@ def main():
     base_model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
 
     adapters = [f"williamplacroix/gpt2-grade-{test_set_grade+1}", f"williamplacroix/gpt2-grade-{test_set_grade-1}"]
-    model = PeftModel.from_pretrained(base_model, adapters)
-    merged_model = model.merge_and_unload()
+    model = PeftModel.from_pretrained(base_model)
+    merged_model = model.merge_and_unload(adapter_names=adapters)
 
     print(merged_model)
     merged_model.config.pad_token_id = tokenizer.eos_token_id
