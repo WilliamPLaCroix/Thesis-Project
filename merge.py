@@ -11,7 +11,7 @@ from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer, Seq2SeqTrainer
 from transformers import GenerationConfig
 from transformers import EarlyStoppingCallback
-from peft import LoraModel, LoraConfig
+from peft import LoraModel, LoraConfig, PeftModel
 import sys
 import torch
 import os
@@ -76,24 +76,20 @@ def main():
 
     config = AutoConfig.from_pretrained(model_name)
     
-    model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
-    _ = model.load_adapter(f"williamplacroix/gpt2-grade-{test_set_grade+1}", adapter_name="+1")
-    _ = model.load_adapter(f"williamplacroix/gpt2-grade-{test_set_grade-1}", adapter_name="-1")
+    base_model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
 
-    adapters = ["+1", "-1"]
-    weights = [0.5, 0.5]
-    adapter_name = "merge"
-    model.add_weighted_adapter(adapters, weights, adapter_name)
-    model.set_adapter("merge")
+    adapters = [f"williamplacroix/gpt2-grade-{test_set_grade+1}", f"williamplacroix/gpt2-grade-{test_set_grade-1}"]
+    model = PeftModel.from_pretrained(base_model, adapters)
+    merged_model = model.merge_and_unload()
 
-    print(model)
-    model.config.pad_token_id = tokenizer.eos_token_id
+    print(merged_model)
+    merged_model.config.pad_token_id = tokenizer.eos_token_id
 
     generation_config = GenerationConfig(max_length=256, 
                                             max_new_tokens=256,
                                             pad_token_id=tokenizer.eos_token_id,)
     generation_config.save_pretrained("./generation_config")
-    model.generation_config.pad_token_id = tokenizer.pad_token_id
+    merged_model.generation_config.pad_token_id = tokenizer.pad_token_id
 
     tokenized_dataset = datasets[test_set_grade].map(tokenize_function, batched=True, batch_size=32,
                                     remove_columns=['target_grade','source', 'target', '__index_level_0__'])
@@ -145,7 +141,7 @@ def main():
     )
     
     trainer = Seq2SeqTrainer(
-        model=model,
+        model=merged_model,
         args=training_args,
         train_dataset=tokenized_dataset['train'],
         eval_dataset=tokenized_dataset['test'],
