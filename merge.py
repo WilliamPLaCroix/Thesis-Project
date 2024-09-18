@@ -79,7 +79,7 @@ def main():
     base_model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
 
     adapters = [f"williamplacroix/gpt2-grade-{test_set_grade+1}", f"williamplacroix/gpt2-grade-{test_set_grade-1}"]
-    model = PeftModel.from_pretrained(base_model)
+    model = PeftModel.from_pretrained(base_model, f"williamplacroix/gpt2-grade-{test_set_grade}")
     merged_model = model.merge_and_unload(adapter_names=adapters)
 
     print(merged_model)
