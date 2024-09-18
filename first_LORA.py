@@ -113,7 +113,7 @@ def main():
 
     config = AutoConfig.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
-    model.print_trainable_parameters()
+    print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
     lora_config = LoraConfig(task_type = "SEQ_2_SEQ_LM",
