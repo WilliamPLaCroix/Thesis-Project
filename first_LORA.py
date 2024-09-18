@@ -11,7 +11,7 @@ from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer, Seq2SeqTrainer
 from transformers import GenerationConfig
 from transformers import EarlyStoppingCallback
-from peft import LoraModel, LoraConfig, get_peft_model
+from peft import LoraModel, LoraConfig, get_peft_model, TaskType
 import sys
 import torch
 import os
@@ -121,6 +121,7 @@ def main():
                             lora_alpha=32,
                             target_modules=['lm_head'],
                             lora_dropout=0.01,
+                            task_type=TaskType.SEQ_2_SEQ_LM,
                             )
     # lora_model = LoraModel(model, lora_config, f"gpt2-grade-{N}")
     lora_model = get_peft_model(model, lora_config, f"gpt2-grade-{N}")
