@@ -35,8 +35,7 @@ sari = load("sari")
 def main():
 
     data_location = './data/wikilarge/'   
-    model_grade = int(sys.argv[1])
-    test_set_grade = int(sys.argv[2])
+    test_set_grade = int(sys.argv[1])
 
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
@@ -76,11 +75,17 @@ def main():
         return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
 
     config = AutoConfig.from_pretrained(model_name)
-
-    if model_grade != 0:
-        model_name = f"williamplacroix/gpt2-grade-{model_grade}"
     
     model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
+    _ = model.load_adapter(f"williamplacroix/gpt2-grade-{test_set_grade+1}", adapter_name="+1")
+    _ = model.load_adapter(f"williamplacroix/gpt2-grade-{test_set_grade-1}", adapter_name="-1")
+
+    adapters = ["+1", "-1"]
+    weights = [0.5, 0.5]
+    adapter_name = "merge"
+    model.add_weighted_adapter(adapters, weights, adapter_name)
+    model.set_adapter("merge")
+
     print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
@@ -109,7 +114,7 @@ def main():
     #     break
     print("data collated")
 
-    current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
+    current_model_name = f"merge-{test_set_grade-1}-with-{test_set_grade+1}_eval-on-grade-{test_set_grade}"
 
     training_args = Seq2SeqTrainingArguments(
         save_strategy="epoch",
