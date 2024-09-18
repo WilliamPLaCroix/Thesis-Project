@@ -11,7 +11,7 @@ from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer, Seq2SeqTrainer
 from transformers import GenerationConfig
 from transformers import EarlyStoppingCallback
-from peft import LoraModel, LoraConfig
+from peft import LoraModel, LoraConfig, get_peft_model
 import sys
 import torch
 import os
@@ -113,7 +113,7 @@ def main():
 
     config = AutoConfig.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
-    print(model)
+    model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
 
     lora_config = LoraConfig(task_type = "SEQ_2_SEQ_LM",
@@ -122,7 +122,9 @@ def main():
                             target_modules=['lm_head'],
                             lora_dropout=0.01,
                             )
-    lora_model = LoraModel(model, lora_config, "default")
+    # lora_model = LoraModel(model, lora_config, f"gpt2-grade-{N}")
+    lora_model = get_peft_model(model, lora_config, f"gpt2-grade-{N}")
+    lora_model.print_trainable_parameters()
     lora_model.config.pad_token_id = tokenizer.eos_token_id
 
     generation_config = GenerationConfig(max_length=256, 
