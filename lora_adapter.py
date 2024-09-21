@@ -91,11 +91,12 @@ def main():
     model.generation_config.pad_token_id = tokenizer.pad_token_id
 
     tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
-                                    remove_columns=['target_grade','source', 'target', '__index_level_0__'])
+                                    remove_columns=['target_grade','source', '__index_level_0__'])
+    tokenized_dataset.rename_column("target", "label")
     print(tokenized_dataset)
 
 
-    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=tokenizer.eos_token_id)
+    data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
 
     print("data collated")
 
