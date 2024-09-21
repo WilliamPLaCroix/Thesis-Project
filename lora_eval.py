@@ -67,7 +67,7 @@ def main():
                                                 config=config,
                                                 load_in_8bit=True,
                                                 torch_dtype=torch.float16)
-    adapters = f"williamplacroix/gpt2-grade-{model_grade}/gpt2-grade-{model_grade}"
+    adapters = f"williamplacroix/gpt2-grade-{model_grade}"
     model = PeftModel.from_pretrained(model, adapters)
     model = model.merge_and_unload()
     print(model)
