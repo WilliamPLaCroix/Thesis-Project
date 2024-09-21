@@ -59,7 +59,7 @@ def main():
     Below function tokenizes parallel corpus into target only inputs for unsupervised fine-tuning
     """
     def tokenize_function(examples):
-        return tokenizer(text=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
+        return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
 
 
     config = AutoConfig.from_pretrained(model_name)
