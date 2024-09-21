@@ -69,9 +69,7 @@ def main():
 
     config = AutoConfig.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
-                                                config=config,
-                                                load_in_8bit=True,
-                                                torch_dtype=torch.float16)
+                                                config=config)
     
     if model_grade != 0:
         adapters = f"williamplacroix/gpt2-grade-{model_grade}"
