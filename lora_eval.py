@@ -44,6 +44,7 @@ def main():
     data_location = './data/wikilarge/'
 
     model_name = "openai-community/gpt2"
+    current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
@@ -71,8 +72,11 @@ def main():
                                                 config=config,
                                                 load_in_8bit=True,
                                                 torch_dtype=torch.float16)
-    adapters = f"williamplacroix/gpt2-grade-{model_grade}"
-    model = PeftModel.from_pretrained(model, adapters)
+    
+    if model_grade != 0:
+        adapters = f"williamplacroix/gpt2-grade-{model_grade}"
+        model = PeftModel.from_pretrained(model, adapters)
+        current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
     #model = model.merge_and_unload()
     print(model)
 
@@ -93,7 +97,7 @@ def main():
 
     print("data collated")
 
-    current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
+    
  
     training_args = TrainingArguments(
         logging_strategy="epoch",
