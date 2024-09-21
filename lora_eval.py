@@ -82,12 +82,6 @@ def main():
 
     model.config.pad_token_id = tokenizer.eos_token_id
 
-    # generation_config = GenerationConfig(max_length=256, 
-    #                                         max_new_tokens=256,
-    #                                         pad_token_id=tokenizer.eos_token_id,)
-    # generation_config.save_pretrained("./generation_config")
-    # model.generation_config.pad_token_id = tokenizer.pad_token_id
-
     tokenized_dataset = datasets[test_set_grade].map(tokenize_function, batched=True, batch_size=32,
                                     remove_columns=['target_grade','target', 'source', '__index_level_0__'])
 
@@ -96,8 +90,6 @@ def main():
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
 
     print("data collated")
-
-    
  
     training_args = TrainingArguments(
         logging_strategy="epoch",
