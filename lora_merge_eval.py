@@ -77,9 +77,9 @@ def main():
 
     adapters = ["+1", "-1"]
     weights = [0.5, 0.5]
-    adapter_name = "merge"
-    density = 0.2
-    model.add_weighted_adapter(adapters, weights, adapter_name, combination_type="dare_ties", density=density)
+    adapter_name = f"{test_set_grade-1}+{test_set_grade+1}={test_set_grade}"
+    #density = 0.2
+    model.add_weighted_adapter(adapters, weights, adapter_name)
     model.set_adapter("merge")
 
 
