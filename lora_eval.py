@@ -69,7 +69,7 @@ def main():
                                                 torch_dtype=torch.float16)
     adapters = f"williamplacroix/gpt2-grade-{model_grade}"
     model = PeftModel.from_pretrained(model, adapters)
-    model = model.merge_and_unload()
+    #model = model.merge_and_unload()
     print(model)
 
     model.config.pad_token_id = tokenizer.eos_token_id
@@ -120,7 +120,6 @@ def main():
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
         tokenizer=tokenizer,
-        
     )
 
     trainer.evaluate()
