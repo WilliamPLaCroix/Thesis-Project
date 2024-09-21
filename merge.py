@@ -78,9 +78,34 @@ def main():
     
     base_model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
 
-    adapters = [f"williamplacroix/gpt2-grade-{test_set_grade+1}", f"williamplacroix/gpt2-grade-{test_set_grade-1}"]
-    model = PeftModel.from_pretrained(base_model, f"williamplacroix/gpt2-grade-{test_set_grade}")
-    merged_model = model.merge_and_unload(adapter_names=adapters)
+    # adapters = [f"williamplacroix/gpt2-grade-{test_set_grade+1}", f"williamplacroix/gpt2-grade-{test_set_grade-1}"]
+    # model = PeftModel.from_pretrained(base_model, f"williamplacroix/gpt2-grade-{test_set_grade}")
+    # merged_model = model.merge_and_unload(adapter_names=adapters)
+
+    MODEL_NAME = "NeuralPipe-7B-slerp"
+    yaml_config =   f"""
+                    slices:
+                    - sources:
+                        - model: OpenPipe/mistral-ft-optimized-1218
+                            layer_range: [0, 32]
+                        - model: mlabonne/NeuralHermes-2.5-Mistral-7B
+                            layer_range: [0, 32]
+                    merge_method: slerp
+                    base_model: OpenPipe/mistral-ft-optimized-1218
+                    parameters:
+                    t:
+                        - filter: self_attn
+                        value: [0, 0.5, 0.3, 0.7, 1]
+                        - filter: mlp
+                        value: [1, 0.5, 0.7, 0.3, 0]
+                        - value: 0.5
+                    dtype: bfloat16
+                    """
+
+
+
+
+
 
     print(merged_model)
     merged_model.config.pad_token_id = tokenizer.eos_token_id
