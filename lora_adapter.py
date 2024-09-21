@@ -1,48 +1,42 @@
 import pandas as pd
 from datasets import Dataset
-from datasets import load_metric
-from evaluate import load
 
-from transformers import TrainingArguments, Seq2SeqTrainingArguments
+from transformers import TrainingArguments
 from transformers import AutoTokenizer
 from transformers import AutoConfig
-from transformers import AutoModelForCausalLM, AutoModelForSeq2SeqLM
+from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
-from transformers import Trainer, Seq2SeqTrainer
+from transformers import Trainer
 from transformers import GenerationConfig
-from transformers import EarlyStoppingCallback
-from peft import LoraModel, LoraConfig, get_peft_model, TaskType, prepare_model_for_int8_training
+from peft import LoraConfig
+from peft import get_peft_model
+# from peft import prepare_model_for_int8_training
+
 import sys
 import torch
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-from tqdm import tqdm
-import warnings
-warnings.filterwarnings("ignore")
-from dotenv import load_dotenv
-load_dotenv()
-import wandb
-
-wandb.login(key=os.getenv("wandb"))
 os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+
+import warnings
+warnings.filterwarnings("ignore")
+
+from dotenv import load_dotenv
+load_dotenv()
+
+import wandb
+wandb.login(key=os.getenv("wandb"))
 
 from huggingface_hub import login
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
-from evaluate import load
-sari = load("sari")
-
-
-data_location = './data/wikilarge/'
-
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-model_name = "openai-community/gpt2"
-
-
 
 def main():
+
+    data_location = './data/wikilarge/'
+
+    model_name = "openai-community/gpt2"
 
     N = int(sys.argv[1])
 
@@ -76,7 +70,7 @@ def main():
     print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
-    model = prepare_model_for_int8_training(model)
+    #model = prepare_model_for_int8_training(model)
 
     lora_config = LoraConfig(
                             r=8,
