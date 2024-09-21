@@ -35,7 +35,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main():
 
-    test_set_grade = int(sys.argv[2])
+    test_set_grade = int(sys.argv[1])
 
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
@@ -72,7 +72,7 @@ def main():
     
     model = PeftModel.from_pretrained(model, f"williamplacroix/gpt2-grade-{test_set_grade-1}", adapter_name="-1")
     _ = model.load_adapter(f"williamplacroix/gpt2-grade-{test_set_grade+1}", adapter_name="+1")
-    
+
     current_model_name = f"gpt2-grade-{test_set_grade-1}-merge-{test_set_grade+1}_eval-on-grade-{test_set_grade}"
 
     adapters = ["+1", "-1"]
