@@ -56,7 +56,7 @@ def main():
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
     """
-    Below function tokenizes parallel corpus into target only inputs for unsupervised fine-tuning
+    Below function tokenizes parallel corpus into target only inputs for fine-tuning
     """
     def tokenize_function(examples):
         return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
@@ -69,8 +69,6 @@ def main():
                                                 torch_dtype=torch.float16)
     print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
-
-    #model = prepare_model_for_int8_training(model)
 
     lora_config = LoraConfig(
                             r=8,
@@ -100,7 +98,7 @@ def main():
     print("data collated")
 
     current_model_name = f"gpt2-grade-{N}"
-
+ 
     training_args = TrainingArguments(
         logging_strategy="epoch",
         save_strategy="epoch",
@@ -120,13 +118,6 @@ def main():
         seed=42,
         num_train_epochs=5,
         load_best_model_at_end=True,
-        #prediction_loss_only=True,
-        #metric_for_best_model="loss",
-        #label_names=["labels"],
-        #include_inputs_for_metrics=True,
-        #predict_with_generate=True,
-        #generation_config="./generation_config/generation_config.json",
-        #generation_max_length=256,
         remove_unused_columns=False,
     )
     
