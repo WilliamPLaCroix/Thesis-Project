@@ -78,33 +78,10 @@ def main():
     
     base_model = AutoModelForCausalLM.from_pretrained(model_name, config=config)
 
-    # adapters = [f"williamplacroix/gpt2-grade-{test_set_grade+1}", f"williamplacroix/gpt2-grade-{test_set_grade-1}"]
-    # model = PeftModel.from_pretrained(base_model, f"williamplacroix/gpt2-grade-{test_set_grade}")
-    # merged_model = model.merge_and_unload(adapter_names=adapters)
-
-    MODEL_NAME = "NeuralPipe-7B-slerp"
-    yaml_config =   f"""
-                    slices:
-                    - sources:
-                        - model: OpenPipe/mistral-ft-optimized-1218
-                            layer_range: [0, 32]
-                        - model: mlabonne/NeuralHermes-2.5-Mistral-7B
-                            layer_range: [0, 32]
-                    merge_method: slerp
-                    base_model: OpenPipe/mistral-ft-optimized-1218
-                    parameters:
-                    t:
-                        - filter: self_attn
-                        value: [0, 0.5, 0.3, 0.7, 1]
-                        - filter: mlp
-                        value: [1, 0.5, 0.7, 0.3, 0]
-                        - value: 0.5
-                    dtype: bfloat16
-                    """
-
-
-
-
+    adapters = [f"williamplacroix/gpt2-grade-{test_set_grade+1}/gpt2-grade-{test_set_grade+1}", 
+                f"williamplacroix/gpt2-grade-{test_set_grade-1}/gpt2-grade-{test_set_grade-1}"]
+    model = PeftModel.from_pretrained(base_model, adapters)
+    merged_model = model.merge_and_unload()
 
 
     print(merged_model)
@@ -122,17 +99,6 @@ def main():
 
     data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding="max_length", max_length=128, label_pad_token_id=tokenizer.eos_token_id)
 
-    #train_data_loader = torch.utils.data.DataLoader(tokenized_dataset['train'], batch_size=32, shuffle=True, collate_fn=data_collator)
-    # eval_data_loader = torch.utils.data.DataLoader(tokenized_dataset['test'], batch_size=training_args.batch_size, shuffle=False, collate_fn=data_collator)
-    # dataloaders = {'train': train_data_loader, 'eval': eval_data_loader}
-
-    # for batch in train_data_loader:
-    #     print(batch.keys())
-    #     print(batch['input_ids'].shape)
-    #     print(batch['attention_mask'].shape)
-    #     print(batch['labels'].shape)
-    #     print(batch['target_grade'].shape)
-    #     break
     print("data collated")
 
     current_model_name = f"merge-{test_set_grade-1}-with-{test_set_grade+1}_eval-on-grade-{test_set_grade}"
