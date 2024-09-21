@@ -92,8 +92,7 @@ def main():
 
     tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
                                     remove_columns=['target_grade','target', 'source', '__index_level_0__'])
-    tokenized_dataset['train'].rename_column("target", "label")
-    tokenized_dataset['test'].rename_column("target", "label")
+
     print(tokenized_dataset)
     
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
