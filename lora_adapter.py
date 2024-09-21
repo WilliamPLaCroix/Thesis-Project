@@ -96,6 +96,8 @@ def main():
     tokenized_dataset['test'].rename_column("target", "label")
     print(tokenized_dataset)
     
+    data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
+
     train_data_loader = torch.utils.data.DataLoader(tokenized_dataset['train'], batch_size=32, shuffle=True, collate_fn=data_collator)
     
     for batch in train_data_loader:
@@ -106,8 +108,7 @@ def main():
         print(batch['target_grade'].shape)
         break
 
-    data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
-
+    
     print("data collated")
 
     current_model_name = f"gpt2-grade-{N}"
