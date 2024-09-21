@@ -123,8 +123,7 @@ def main():
         
     )
 
-    trainer.train()
-    trainer.push_to_hub(current_model_name)
+    trainer.evaluate()
     return
 
 if __name__ == "__main__":
