@@ -91,7 +91,7 @@ def main():
     model.generation_config.pad_token_id = tokenizer.pad_token_id
 
     tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
-                                    remove_columns=['target_grade','source', '__index_level_0__'])
+                                    remove_columns=['target_grade','target', 'source', '__index_level_0__'])
     tokenized_dataset['train'].rename_column("target", "label")
     tokenized_dataset['test'].rename_column("target", "label")
     print(tokenized_dataset)
