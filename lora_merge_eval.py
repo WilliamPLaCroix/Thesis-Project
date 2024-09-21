@@ -80,7 +80,7 @@ def main():
     adapter_name = f"{test_set_grade-1}+{test_set_grade+1}={test_set_grade}"
     #density = 0.2
     model.add_weighted_adapter(adapters, weights, adapter_name)
-    model.set_adapter("merge")
+    model.set_adapter(adapter_name)
 
 
     #model = model.merge_and_unload()
