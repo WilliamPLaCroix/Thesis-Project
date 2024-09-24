@@ -36,6 +36,8 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 def main():
 
     test_set_grade = int(sys.argv[1])
+    model_a_proportion = float(sys.argv[2]/10)
+    model_b_proportion = 1 - model_a_proportion
 
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
@@ -73,11 +75,11 @@ def main():
     model = PeftModel.from_pretrained(model, f"williamplacroix/gpt2-grade-{test_set_grade-1}", adapter_name="-1")
     _ = model.load_adapter(f"williamplacroix/gpt2-grade-{test_set_grade+1}", adapter_name="+1")
 
-    current_model_name = f"gpt2-grade-{test_set_grade-1}-merge-{test_set_grade+1}_eval-on-grade-{test_set_grade}"
+    current_model_name = f"g{test_set_grade-1}@({model_a_proportion})-merge-g{test_set_grade+1}@({model_b_proportion})_eval-on-g{test_set_grade}"
 
     adapters = ["+1", "-1"]
-    weights = [0.5, 0.5]
-    adapter_name = f"{test_set_grade-1}+{test_set_grade+1}={test_set_grade}"
+    weights = [model_a_proportion, model_b_proportion]
+    adapter_name = f"{test_set_grade-1}({model_a_proportion})+{test_set_grade+1}({model_b_proportion})={test_set_grade}"
     #density = 0.2
     model.add_weighted_adapter(adapters, weights, adapter_name)
     model.set_adapter(adapter_name)
