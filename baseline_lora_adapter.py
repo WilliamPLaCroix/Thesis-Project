@@ -54,8 +54,10 @@ def main():
         datasets.append(Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42))
     print("datasets created")
 
-    train_dataset = concatenate_datasets(datasets, split='train')
-    test_dataset = concatenate_datasets(datasets, split='test')
+    train_sets = [dataset["train"] for dataset in datasets]
+    test_sets = [dataset["test"] for dataset in datasets]
+    train_dataset = concatenate_datasets(train_sets)
+    test_dataset = concatenate_datasets(test_sets)
     merged_dataset = DatasetDict({'train': train_dataset, 'test': test_dataset})
     print("datasets merged: ", merged_dataset)
     
