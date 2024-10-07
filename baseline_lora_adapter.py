@@ -41,7 +41,8 @@ def main():
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
-    train_texts = train_texts[train_texts['target_grade'] != 0 and train_texts['target_grade'] != 1]
+    train_texts = train_texts[train_texts['target_grade'] != 0]
+    train_texts = train_texts[train_texts['target_grade'] != 1]
     print("dropped rows for grades 0 and 1")
 
     grade_groups = train_texts.groupby(['target_grade'])
