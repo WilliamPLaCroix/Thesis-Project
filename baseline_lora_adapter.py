@@ -1,5 +1,5 @@
 import pandas as pd
-from datasets import Dataset
+from datasets import Dataset, DatasetDict
 from datasets import concatenate_datasets
 
 from transformers import TrainingArguments
@@ -54,8 +54,10 @@ def main():
         datasets.append(Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42))
     print("datasets created")
 
-    merged_dataset = concatenate_datasets(datasets)
-    
+    train_dataset = concatenate_datasets(datasets, split='train')
+    test_dataset = concatenate_datasets(datasets, split='test')
+    merged_dataset = DatasetDict({'train': train_dataset, 'test': test_dataset})
+    print("datasets merged: ", merged_dataset)
     
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
     tokenizer.pad_token = tokenizer.eos_token
