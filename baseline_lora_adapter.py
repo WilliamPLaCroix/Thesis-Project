@@ -42,7 +42,7 @@ def main():
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
     train_texts = train_texts[train_texts['target_grade'] != 0]
-    train_texts = train_texts[train_texts['target_grade'] != 1]
+    train_texts = train_texts[train_texts['target_grade'] % 2 == 0]
     print("dropped rows for grades 0 and 1")
 
     grade_groups = train_texts.groupby(['target_grade'])
@@ -107,7 +107,7 @@ def main():
 
     print("data collated")
 
-    current_model_name = "gpt2-2-12-baseline"
+    current_model_name = "gpt2-2-12-evens"
  
     training_args = TrainingArguments(
         logging_strategy="epoch",
