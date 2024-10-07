@@ -48,12 +48,16 @@ def main():
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
+    train_texts = train_texts[train_texts['target_grade'] not in {0, 1}]
+    print("dropped rows for grades 0 and 1")
 
     grade_groups = train_texts.groupby(['target_grade'])
 
-    datasets = {}
+    datasets = []
     for i, (grade, group) in enumerate(grade_groups):
-        datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1)
+        if i < 2:
+            continue
+        datasets.append(Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42))
     print("datasets created")
     
     
