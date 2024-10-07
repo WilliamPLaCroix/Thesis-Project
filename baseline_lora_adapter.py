@@ -1,5 +1,6 @@
 import pandas as pd
 from datasets import Dataset
+from datasets import concatenate_datasets
 
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
@@ -51,6 +52,8 @@ def main():
             continue
         datasets.append(Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42))
     print("datasets created")
+
+    merged_dataset = concatenate_datasets(datasets)
     
     
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
@@ -90,7 +93,7 @@ def main():
     generation_config.save_pretrained("./generation_config")
     model.generation_config.pad_token_id = tokenizer.pad_token_id
 
-    tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
+    tokenized_dataset = merged_dataset.map(tokenize_function, batched=True, batch_size=32,
                                     remove_columns=['target_grade','target', 'source', '__index_level_0__'])
 
     print(tokenized_dataset)
