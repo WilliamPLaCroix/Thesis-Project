@@ -74,10 +74,8 @@ def main():
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config)
     
-    if model_grade != 0 and model_grade != 1:
-        adapters = f"williamplacroix/gpt2-grade-{model_grade}"
-        model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
+    if model_grade == -1:
+        pass
     elif model_grade == 1:
         adapters = "williamplacroix/gpt2-2-12-evens"
         model = PeftModel.from_pretrained(model, adapters)
@@ -86,6 +84,10 @@ def main():
         adapters = "williamplacroix/gpt2-2-12-baseline"
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-2-12-baseline_eval-on-grade-{test_set_grade}"
+    else:
+        adapters = f"williamplacroix/gpt2-grade-{model_grade}"
+        model = PeftModel.from_pretrained(model, adapters)
+        current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
     #model = model.merge_and_unload()
     print(model)
 
