@@ -44,9 +44,9 @@ def main(test_set_grade, model_a_proportion):
 
     current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_merge_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
 
-    os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
+    os.environ["WANDB_PROJECT"] = "Graded text simplification evaluation"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-    wandb.init(project=f"Graded text simplification evaluation - grade {test_set_grade}", name=current_model_name)
+    wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
     data_location = './data/wikilarge/'
 

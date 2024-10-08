@@ -37,7 +37,7 @@ def main(model_grade, test_set_grade):
     print(f"Running evaluation on model_grade: {model_grade}, test_set_grade: {test_set_grade}")
     print("#"*50)
 
-    os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
+    os.environ["WANDB_PROJECT"] = "Graded text simplification evaluation"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
     data_location = './data/wikilarge/'
@@ -62,7 +62,7 @@ def main(model_grade, test_set_grade):
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
 
-    wandb.init(project=f"Graded text simplification evaluation - grade {test_set_grade}", name=current_model_name)
+    wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
