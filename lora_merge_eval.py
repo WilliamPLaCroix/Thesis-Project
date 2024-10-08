@@ -34,6 +34,8 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 
 def main(test_set_grade, model_a_proportion):
+    print(f"Running merge evaluation on test_set_grade: {test_set_grade}")
+    print("#"*50)
 
     model_b_proportion = round(1 - model_a_proportion, 1)
 

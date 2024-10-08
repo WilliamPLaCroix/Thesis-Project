@@ -35,6 +35,9 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(model_grade, test_set_grade):
 
+    print(f"Running evaluation on model_grade: {model_grade}, test_set_grade: {test_set_grade}")
+    print("#"*50)
+
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
