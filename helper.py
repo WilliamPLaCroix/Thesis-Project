@@ -5,7 +5,7 @@ import lora_merge_eval
 
 def main():
     model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
-    test_set_grades = {1, 3, 5, 7, 9, 11}
+    test_set_grades = {3, 5, 7, 9, 11}
     model_test_combos = product(model_grades, test_set_grades)
     runs = len(model_grades) * len(test_set_grades)
 
