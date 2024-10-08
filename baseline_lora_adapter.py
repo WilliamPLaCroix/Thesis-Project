@@ -87,8 +87,11 @@ def main():
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
+    
+    current_model_name = "gpt2-2-12-evens"
 
-    model = get_peft_model(model=model, peft_config=lora_config, adapter_name="gpt2-2-12-baseline")
+    model = get_peft_model(model=model, peft_config=lora_config)#, adapter_name=current_model_name)
+    print(model)
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
 
@@ -107,7 +110,7 @@ def main():
 
     print("data collated")
 
-    current_model_name = "gpt2-2-12-evens"
+    
  
     training_args = TrainingArguments(
         logging_strategy="epoch",

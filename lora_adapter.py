@@ -83,7 +83,9 @@ def main():
                             lora_dropout=0.01,
                             )
 
-    model = get_peft_model(model=model, peft_config=lora_config, adapter_name=f"gpt2-grade-{N}")
+    current_model_name = f"gpt2-grade-{N}"
+
+    model = get_peft_model(model=model, peft_config=lora_config)#, adapter_name=current_model_name)
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
 
