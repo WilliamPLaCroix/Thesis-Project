@@ -78,7 +78,7 @@ def main():
     model = PeftModel.from_pretrained(model, f"williamplacroix/gpt2-grade-{test_set_grade-1}", adapter_name="-1")
     _ = model.load_adapter(f"williamplacroix/gpt2-grade-{test_set_grade+1}", adapter_name="+1")
 
-    current_model_name = f"g{test_set_grade-1}@({model_a_proportion})-merge-g{test_set_grade+1}@({model_b_proportion})_eval-on-g{test_set_grade}"
+    current_model_name = f"g{test_set_grade-1}@({int(model_a_proportion*100)})-merge-g{test_set_grade+1}@({int(model_b_proportion*100)})_eval-on-g{test_set_grade}"
 
     adapters = ["+1", "-1"]
     weights = [model_a_proportion, model_b_proportion]
