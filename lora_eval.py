@@ -81,13 +81,13 @@ def main():
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
     elif model_grade == 1:
-        adapters = "williamplacroix/gpt2-2-12-baseline"
-        model = PeftModel.from_pretrained(model, adapters + "/gpt2-2-12-baseline")
-        current_model_name = f"gpt2-2-12-baseline_eval-on-grade-{test_set_grade}"
-    elif model_grade == 0:
         adapters = "williamplacroix/gpt2-2-12-evens"
         model = PeftModel.from_pretrained(model, adapters + "/gpt2-2-12-evens")
         current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
+    elif model_grade == 0:
+        adapters = "williamplacroix/gpt2-2-12-baseline"
+        model = PeftModel.from_pretrained(model, adapters + "/gpt2-2-12-baseline")
+        current_model_name = f"gpt2-2-12-baseline_eval-on-grade-{test_set_grade}"
     #model = model.merge_and_unload()
     print(model)
 
