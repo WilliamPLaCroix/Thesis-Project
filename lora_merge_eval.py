@@ -35,7 +35,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(test_set_grade, model_a_proportion):
 
-    model_b_proportion = 1 - model_a_proportion
+    model_b_proportion = round(1 - model_a_proportion, 1)
 
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
@@ -136,5 +136,5 @@ def main(test_set_grade, model_a_proportion):
 
 if __name__ == "__main__":
     test_set_grade = int(sys.argv[1])
-    model_a_proportion = int(sys.argv[2])/10
+    model_a_proportion = round(int(sys.argv[2])/10, 1)
     main(test_set_grade, model_a_proportion)
