@@ -82,7 +82,7 @@ def main():
 
     adapters = ["+1", "-1"]
     weights = [model_a_proportion, model_b_proportion]
-    adapter_name = f"{test_set_grade-1}({model_a_proportion})+{test_set_grade+1}({model_b_proportion})={test_set_grade}"
+    adapter_name = f"{test_set_grade-1}({int(model_a_proportion*100)})+{test_set_grade+1}({int(model_b_proportion*100)})={test_set_grade}"
     #density = 0.2
     model.add_weighted_adapter(adapters, weights, adapter_name)
     model.set_adapter(adapter_name)
