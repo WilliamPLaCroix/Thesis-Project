@@ -73,14 +73,14 @@ def main(model_grade, test_set_grade):
     
     if model_grade == -1:
         pass
-    elif model_grade == 1:
-        adapters = "williamplacroix/gpt2-2-12-evens"
-        model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
     elif model_grade == 0:
         adapters = "williamplacroix/gpt2-2-12-baseline"
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-2-12-baseline_eval-on-grade-{test_set_grade}"
+    elif model_grade == 1:
+        adapters = "williamplacroix/gpt2-2-12-evens"
+        model = PeftModel.from_pretrained(model, adapters)
+        current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
     else:
         adapters = f"williamplacroix/gpt2-grade-{model_grade}"
         model = PeftModel.from_pretrained(model, adapters)
