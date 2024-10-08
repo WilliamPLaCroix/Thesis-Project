@@ -40,14 +40,17 @@ def main(test_set_grade, model_a_proportion):
 
     model_b_proportion = round(1 - model_a_proportion, 1)
 
+    model_name = "openai-community/gpt2"
+
+    current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_merge_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
+
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-    wandb.init()
+    wandb.init(project=f"Graded text simplification evaluation - grade {test_set_grade}", name=current_model_name)
 
     data_location = './data/wikilarge/'
 
-    model_name = "openai-community/gpt2"
-    current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
+    
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
@@ -80,7 +83,7 @@ def main(test_set_grade, model_a_proportion):
     model = PeftModel.from_pretrained(model, f"williamplacroix/gpt2-grade-{test_set_grade-1}", adapter_name="-1")
     _ = model.load_adapter(f"williamplacroix/gpt2-grade-{test_set_grade+1}", adapter_name="+1")
 
-    current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_merge_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
+    
 
     adapters = ["+1", "-1"]
     weights = [model_a_proportion, model_b_proportion]

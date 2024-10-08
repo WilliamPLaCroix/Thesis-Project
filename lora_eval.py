@@ -40,12 +40,29 @@ def main(model_grade, test_set_grade):
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
-    wandb.init()
-
     data_location = './data/wikilarge/'
 
     model_name = "openai-community/gpt2"
-    current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
+    config = AutoConfig.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name, 
+                                                config=config)
+    
+    if model_grade == -1:
+        current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
+    elif model_grade == 0:
+        adapters = "williamplacroix/gpt2-2-12-baseline"
+        model = PeftModel.from_pretrained(model, adapters)
+        current_model_name = f"gpt2-2-12-baseline_eval-on-grade-{test_set_grade}"
+    elif model_grade == 1:
+        adapters = "williamplacroix/gpt2-2-12-evens"
+        model = PeftModel.from_pretrained(model, adapters)
+        current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
+    else:
+        adapters = f"williamplacroix/gpt2-grade-{model_grade}"
+        model = PeftModel.from_pretrained(model, adapters)
+        current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
+
+    wandb.init(project=f"Graded text simplification evaluation - grade {test_set_grade}", name=current_model_name)
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
@@ -71,24 +88,7 @@ def main(model_grade, test_set_grade):
     def tokenize_function(examples):
         return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
 
-    config = AutoConfig.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(model_name, 
-                                                config=config)
     
-    if model_grade == -1:
-        pass
-    elif model_grade == 0:
-        adapters = "williamplacroix/gpt2-2-12-baseline"
-        model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-2-12-baseline_eval-on-grade-{test_set_grade}"
-    elif model_grade == 1:
-        adapters = "williamplacroix/gpt2-2-12-evens"
-        model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
-    else:
-        adapters = f"williamplacroix/gpt2-grade-{model_grade}"
-        model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
     #model = model.merge_and_unload()
     print(model)
 
