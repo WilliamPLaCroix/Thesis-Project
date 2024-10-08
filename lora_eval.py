@@ -19,7 +19,6 @@ import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -40,6 +39,8 @@ def main(model_grade, test_set_grade):
 
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+
+    wandb.init()
 
     data_location = './data/wikilarge/'
 
@@ -134,6 +135,7 @@ def main(model_grade, test_set_grade):
     )
 
     trainer.evaluate()
+    wandb.finish()
     return
 
 if __name__ == "__main__":

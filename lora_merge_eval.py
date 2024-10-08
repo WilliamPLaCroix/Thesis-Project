@@ -34,6 +34,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 
 def main(test_set_grade, model_a_proportion):
+    
     print(f"Running merge evaluation on test_set_grade: {test_set_grade}")
     print("#"*50)
 
@@ -41,6 +42,7 @@ def main(test_set_grade, model_a_proportion):
 
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+    wandb.init()
 
     data_location = './data/wikilarge/'
 
@@ -134,6 +136,7 @@ def main(test_set_grade, model_a_proportion):
     )
 
     trainer.evaluate()
+    wandb.finish()
     return
 
 if __name__ == "__main__":
