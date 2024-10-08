@@ -13,7 +13,6 @@ def main():
     for i, (model_grade, test_set_grade) in enumerate(model_test_combos):
         print("#"*50)
         print(f"LoRA run {i+1}/{runs}")
-        reload(lora_eval)
         lora_eval.main(model_grade, test_set_grade)
         print("#"*50)
         print(f"Evaluation complete")
@@ -27,7 +26,6 @@ def main():
     for i, (test_set_grades, mixing_proportions) in enumerate(model_test_combos):
         print("#"*50)
         print(f"Merge LoRA run {i+1}/{runs}")
-        reload(lora_merge_eval)
         lora_merge_eval.main(test_set_grades, mixing_proportions)
         print("#"*50)
         print(f"Evaluation complete")
