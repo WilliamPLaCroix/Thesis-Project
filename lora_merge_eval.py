@@ -37,7 +37,7 @@ def main(test_set_grade, model_a_proportion):
     
     print(f"Running merge evaluation on test_set_grade: {test_set_grade}")
     print("#"*50)
-
+    model_a_proportion = round(model_a_proportion/10, 1)
     model_b_proportion = round(1 - model_a_proportion, 1)
 
     model_name = "openai-community/gpt2"
