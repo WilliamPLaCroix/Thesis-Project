@@ -32,13 +32,11 @@ from huggingface_hub import login
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 
-def main():
+def main(N):
 
     data_location = './data/wikilarge/'
 
     model_name = "openai-community/gpt2"
-
-    N = int(sys.argv[1])
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
@@ -141,4 +139,5 @@ def main():
     return
 
 if __name__ == "__main__":
-    main()
+    N = int(sys.argv[1])
+    main(N)

@@ -32,11 +32,9 @@ from evaluate import load
 sari = load("sari")
 
 
-def main():
+def main(model_grade, test_set_grade):
 
     data_location = './data/wikilarge/'   
-    model_grade = int(sys.argv[1])
-    test_set_grade = int(sys.argv[2])
 
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
@@ -154,4 +152,6 @@ def main():
     return
 
 if __name__ == "__main__":
-    main()
+    model_grade = int(sys.argv[1])
+    test_set_grade = int(sys.argv[2])
+    main(model_grade, test_set_grade)

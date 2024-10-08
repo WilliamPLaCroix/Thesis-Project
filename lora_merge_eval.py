@@ -33,10 +33,8 @@ from huggingface_hub import login
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 
-def main():
+def main(test_set_grade, model_a_proportion):
 
-    test_set_grade = int(sys.argv[1])
-    model_a_proportion = int(sys.argv[2])/10
     model_b_proportion = 1 - model_a_proportion
 
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project
@@ -137,4 +135,6 @@ def main():
     return
 
 if __name__ == "__main__":
-    main()
+    test_set_grade = int(sys.argv[1])
+    model_a_proportion = int(sys.argv[2])/10
+    main(test_set_grade, model_a_proportion)
