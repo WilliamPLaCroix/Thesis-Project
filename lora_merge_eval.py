@@ -36,7 +36,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 def main():
 
     test_set_grade = int(sys.argv[1])
-    model_a_proportion = float(sys.argv[2]/10)
+    model_a_proportion = int(sys.argv[2])/10
     model_b_proportion = 1 - model_a_proportion
 
     os.environ["WANDB_PROJECT"] = f"Graded text simplification evaluation - grade {test_set_grade}"  # name your W&B project

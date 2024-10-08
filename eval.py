@@ -49,10 +49,8 @@ def main():
     grade_groups = train_texts.groupby(['target_grade'])
 
     datasets = {}
-    for i, (grade, group) in enumerate(grade_groups):
-        ### [:320] is to limit the number of examples per grade group to 320 for batch subsetting
-        # datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']][:320]).train_test_split(test_size=0.1)
-        datasets[i] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1)
+    for grade, group in grade_groups:
+        datasets[grade[0]] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42)
     print("datasets created")
     
 
