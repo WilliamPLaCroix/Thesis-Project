@@ -55,11 +55,9 @@ def main():
 
     grade_groups = train_texts.groupby(['target_grade'])
 
-    datasets = []
-    for i, (grade, group) in enumerate(grade_groups):
-        if i < 2:
-            continue
-        datasets.append(Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42))
+    datasets = {}
+    for grade, group in grade_groups:
+        datasets[grade[0]] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42)
     print("datasets created")
     
     
