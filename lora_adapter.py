@@ -34,33 +34,33 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(N):
 
-    data_location = './data/wikilarge/'
+    #data_location = './data/wikilarge/'
 
     model_name = "openai-community/gpt2"
 
-    train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
-    print("train texts read in")
-    train_texts = train_texts[train_texts['target_grade'] != 0]
-    train_texts = train_texts[train_texts['target_grade'] != 1]
-    print("dropped rows for grades 0 and 1")
+    # train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
+    # print("train texts read in")
+    # train_texts = train_texts[train_texts['target_grade'] != 0]
+    # train_texts = train_texts[train_texts['target_grade'] != 1]
+    # print("dropped rows for grades 0 and 1")
 
-    grade_groups = train_texts.groupby(['target_grade'])
+    # grade_groups = train_texts.groupby(['target_grade'])
 
-    datasets = {}
-    for grade, group in grade_groups:
-        datasets[grade[0]] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42)
-    print("datasets created")
+    # datasets = {}
+    # for grade, group in grade_groups:
+    #     datasets[grade[0]] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42)
+    # print("datasets created")
     
     
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
-    """
-    Below function tokenizes parallel corpus into target only inputs for fine-tuning
-    """
-    def tokenize_function(examples):
-        return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
+    # """
+    # Below function tokenizes parallel corpus into target only inputs for fine-tuning
+    # """
+    # def tokenize_function(examples):
+    #     return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
 
 
     config = AutoConfig.from_pretrained(model_name)
@@ -74,7 +74,7 @@ def main(N):
     lora_config = LoraConfig(
                             r=8,
                             lora_alpha=32,
-                            target_modules=['lm_head'],
+                            target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'],
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
@@ -92,28 +92,29 @@ def main(N):
     model.generation_config.pad_token_id = tokenizer.pad_token_id
 
 
-    """
-    Detour to push datasets to hub for faster access without repeating preprocessing
-    """
-    for grade, dataset in datasets.items():
-        preprocessed_dataset = dataset.map(tokenize_function, batched=True, batch_size=32,
-                                    remove_columns=['target_grade','target', 'source', '__index_level_0__'])
-        print(preprocessed_dataset)
-        preprocessed_dataset.push_to_hub(f"williamplacroix/wikilarge-graded", f"grade-{grade}")
+    # """
+    # Detour to push datasets to hub for faster access without repeating preprocessing
+    # """
+    # for grade, dataset in datasets.items():
+    #     preprocessed_dataset = dataset.map(tokenize_function, batched=True, batch_size=32,
+    #                                 remove_columns=['target_grade','target', 'source', '__index_level_0__'])
+    #     print(preprocessed_dataset)
+    #     preprocessed_dataset.push_to_hub(f"williamplacroix/wikilarge-graded", f"grade-{grade}")
 
-    print("all datasets pushed to hub")
+    # print("all datasets pushed to hub")
     tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{N}")
     #tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
                                     #remove_columns=['target_grade','target', 'source', '__index_level_0__'])
 
     print(tokenized_dataset)
-    return
+
     
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
 
     print("data collated")
 
-    current_model_name = f"gpt2-grade-{N}"
+    #current_model_name = f"gpt2-grade-{N}"
+    current_model_name = "model-for-directory-testing"
  
     training_args = TrainingArguments(
         logging_strategy="epoch",
@@ -132,7 +133,7 @@ def main(N):
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=5,
+        num_train_epochs=1, ### CHANGE THIS BACK TO 5
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
@@ -148,7 +149,7 @@ def main(N):
     )
 
     trainer.train()
-    trainer.push_to_hub(current_model_name)
+    trainer.push_to_hub()
     return
 
 if __name__ == "__main__":
