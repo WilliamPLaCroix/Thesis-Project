@@ -153,5 +153,6 @@ def main(N):
     return
 
 if __name__ == "__main__":
+    assert sys.argv[1] in {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, "Must include an integer grade as an argument"
     N = int(sys.argv[1])
     main(N)
