@@ -1,5 +1,5 @@
 import pandas as pd
-from datasets import Dataset
+from datasets import Dataset, load_dataset
 
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
@@ -16,7 +16,7 @@ import sys
 import torch
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project
+os.environ["WANDB_PROJECT"] = "Graded text simplification HF model tampering"  # name your W&B project
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
 import warnings
@@ -91,10 +91,23 @@ def main(N):
     generation_config.save_pretrained("./generation_config")
     model.generation_config.pad_token_id = tokenizer.pad_token_id
 
-    tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
+
+    """
+    Detour to push datasets to hub for faster access without repeating preprocessing
+    """
+    for grade, dataset in datasets.items():
+        preprocessed_dataset = dataset.map(tokenize_function, batched=True, batch_size=32,
                                     remove_columns=['target_grade','target', 'source', '__index_level_0__'])
+        print(preprocessed_dataset)
+        preprocessed_dataset.push_to_hub(f"williamplacroix/wikilarge-graded", f"grade-{grade}")
+
+    print("all datasets pushed to hub")
+    tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{N}")
+    #tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
+                                    #remove_columns=['target_grade','target', 'source', '__index_level_0__'])
 
     print(tokenized_dataset)
+    return
     
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
 
