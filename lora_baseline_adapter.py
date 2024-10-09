@@ -90,7 +90,7 @@ def main():
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
-    model.merge_adapter()
+    # model.merge_adapter()
     print(model)
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
