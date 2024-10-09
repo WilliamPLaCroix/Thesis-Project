@@ -32,7 +32,7 @@ from huggingface_hub import login
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 
-def main(N):
+def main(model_grade):
 
     model_name = "openai-community/gpt2"
 
@@ -56,7 +56,7 @@ def main(N):
                             lora_dropout=0.01,
                             )
 
-    current_model_name = f"gpt2-grade-{N}"
+    current_model_name = f"gpt2-grade-{model_grade}"
 
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name="model10-for-directory-testing")#current_model_name)
     model.print_trainable_parameters()
@@ -68,9 +68,9 @@ def main(N):
     generation_config.save_pretrained("./generation_config")
     model.generation_config.pad_token_id = tokenizer.pad_token_id
 
-    tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{N}")
+    tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{model_grade}")
 
-    print(f"Grade {N}:", tokenized_dataset)
+    print(f"Grade {model_grade}:", tokenized_dataset)
 
     
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
@@ -119,5 +119,5 @@ def main(N):
 
 if __name__ == "__main__":
     assert int(sys.argv[1]) in {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, "Must include an integer grade as an argument"
-    N = int(sys.argv[1])
-    main(N)
+    model_grade = int(sys.argv[1])
+    main(model_grade)
