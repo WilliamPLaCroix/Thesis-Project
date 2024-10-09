@@ -11,9 +11,7 @@ from transformers import Trainer
 from transformers import GenerationConfig
 from peft import LoraConfig
 from peft import get_peft_model
-# from peft import prepare_model_for_int8_training
 
-import sys
 import torch
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -32,7 +30,6 @@ wandb.login(key=os.getenv("wandb"))
 from huggingface_hub import login
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
-
 def main():
 
     data_location = './data/wikilarge/'
@@ -49,16 +46,16 @@ def main():
     grade_groups = train_texts.groupby(['target_grade'])
 
     datasets = []
-    for i, (grade, group) in enumerate(grade_groups):
-        if i < 2:
-            continue
+    for grade, group in grade_groups:
         datasets.append(Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42))
     print("datasets created")
 
     train_sets = [dataset["train"] for dataset in datasets]
     test_sets = [dataset["test"] for dataset in datasets]
     train_dataset = concatenate_datasets(train_sets)
+    train_dataset = train_dataset.shuffle(seed=42)
     test_dataset = concatenate_datasets(test_sets)
+    test_dataset = test_dataset.shuffle(seed=42)
     merged_dataset = DatasetDict({'train': train_dataset, 'test': test_dataset})
     print("datasets merged: ", merged_dataset)
     
@@ -71,7 +68,6 @@ def main():
     """
     def tokenize_function(examples):
         return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
-
 
     config = AutoConfig.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
@@ -89,9 +85,11 @@ def main():
                             lora_dropout=0.01,
                             )
     
-    current_model_name = "gpt2-2-12-all-sets"
+    current_model_name = "gpt2-2-12-all"
 
-    model = get_peft_model(model=model, peft_config=lora_config)#, adapter_name=current_model_name)
+    wandb.init(project=f"Graded text simplification training", name=current_model_name)
+
+    model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
     print(model)
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
@@ -111,26 +109,21 @@ def main():
 
     print("data collated")
 
-    
- 
     training_args = TrainingArguments(
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=f"./models/{current_model_name}",
+        output_dir=f"williamplacroix/text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
-        #hub_model_id="williamplacroix/text-simplification",  # save the model to the Hub after training
         overwrite_output_dir=True,
         save_safetensors=False, # this is a kludge fix for a bug in the transformers library
-        #save_only_model=True,
         save_total_limit=1,
-        fp16=True,
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=5,
+        num_train_epochs=3, 
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
@@ -142,12 +135,11 @@ def main():
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
         tokenizer=tokenizer,
-        
     )
 
     trainer.train()
-    trainer.push_to_hub(current_model_name)
-    return
+    trainer.push_to_hub(f"Finished 2-12 pretraining")
+    wandb.finish()
 
 if __name__ == "__main__":
     main()
