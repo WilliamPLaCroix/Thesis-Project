@@ -34,34 +34,11 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(N):
 
-    #data_location = './data/wikilarge/'
-
     model_name = "openai-community/gpt2"
 
-    # train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
-    # print("train texts read in")
-    # train_texts = train_texts[train_texts['target_grade'] != 0]
-    # train_texts = train_texts[train_texts['target_grade'] != 1]
-    # print("dropped rows for grades 0 and 1")
-
-    # grade_groups = train_texts.groupby(['target_grade'])
-
-    # datasets = {}
-    # for grade, group in grade_groups:
-    #     datasets[grade[0]] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42)
-    # print("datasets created")
-    
-    
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
-
-    # """
-    # Below function tokenizes parallel corpus into target only inputs for fine-tuning
-    # """
-    # def tokenize_function(examples):
-    #     return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
-
 
     config = AutoConfig.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
@@ -91,20 +68,7 @@ def main(N):
     generation_config.save_pretrained("./generation_config")
     model.generation_config.pad_token_id = tokenizer.pad_token_id
 
-
-    # """
-    # Detour to push datasets to hub for faster access without repeating preprocessing
-    # """
-    # for grade, dataset in datasets.items():
-    #     preprocessed_dataset = dataset.map(tokenize_function, batched=True, batch_size=32,
-    #                                 remove_columns=['target_grade','target', 'source', '__index_level_0__'])
-    #     print(preprocessed_dataset)
-    #     preprocessed_dataset.push_to_hub(f"williamplacroix/wikilarge-graded", f"grade-{grade}")
-
-    # print("all datasets pushed to hub")
     tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{N}")
-    #tokenized_dataset = datasets[N].map(tokenize_function, batched=True, batch_size=32,
-                                    #remove_columns=['target_grade','target', 'source', '__index_level_0__'])
 
     print(f"Grade {N}:", tokenized_dataset)
 
@@ -120,7 +84,7 @@ def main(N):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=f"./models/{current_model_name}",
+        output_dir=f"./models/text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
@@ -149,7 +113,7 @@ def main(N):
     )
 
     trainer.train()
-    trainer.push_to_hub()
+    trainer.push_to_hub(current_model_name)
     return
 
 if __name__ == "__main__":
