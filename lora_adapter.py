@@ -33,8 +33,6 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(model_grade):
 
-    
-
     os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
@@ -80,8 +78,6 @@ def main(model_grade):
 
     
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
-
-    print("data collated")
  
     training_args = TrainingArguments(
         logging_strategy="epoch",
@@ -101,7 +97,7 @@ def main(model_grade):
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=1, ### CHANGE THIS BACK TO 5
+        num_train_epochs=3, 
         load_best_model_at_end=True,
         remove_unused_columns=False,
         #push_to_hub=True,
