@@ -78,7 +78,7 @@ def main(N):
     print("data collated")
 
     #current_model_name = f"gpt2-grade-{N}"
-    current_model_name = "model-for-directory-testing"
+    current_model_name = "model2-for-directory-testing"
  
     training_args = TrainingArguments(
         logging_strategy="epoch",
