@@ -39,14 +39,14 @@ def main():
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
     train_texts = train_texts[train_texts['target_grade'] != 0]
-    train_texts = train_texts[train_texts['target_grade'] != 1]
-    train_texts = train_texts[train_texts['target_grade'] != 13]
-    print("dropped rows for grades 0, 1, and 13")
+    train_texts = train_texts[train_texts['target_grade'] %2 != 0]
+    print("dropped rows for odd grades and 0")
 
     grade_groups = train_texts.groupby(['target_grade'])
 
     datasets = []
     for grade, group in grade_groups:
+        print(f"Creating dataset for grade {grade}")
         datasets.append(Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42))
     print("datasets created")
 
@@ -85,7 +85,7 @@ def main():
                             lora_dropout=0.01,
                             )
     
-    current_model_name = "gpt2-2-12-all"
+    current_model_name = "gpt2-2-12-evens"
 
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
@@ -138,7 +138,7 @@ def main():
     )
 
     trainer.train()
-    trainer.push_to_hub(f"Finished 2-12 pretraining")
+    trainer.push_to_hub(f"Finished 2-12 evens pretraining")
     wandb.finish()
 
 if __name__ == "__main__":
