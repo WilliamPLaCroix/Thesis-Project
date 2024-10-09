@@ -85,7 +85,7 @@ def main(N):
         save_strategy="epoch",
         eval_strategy="epoch",
         output_dir=f"williamplacroix/text-simplification",
-        push_to_hub_model_id=current_model_name,
+        push_to_hub_model_id="text-simplification/" + current_model_name,
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
