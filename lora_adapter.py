@@ -58,7 +58,7 @@ def main(N):
 
     current_model_name = f"gpt2-grade-{N}"
 
-    model = get_peft_model(model=model, peft_config=lora_config, adapter_name="8")#current_model_name)
+    model = get_peft_model(model=model, peft_config=lora_config, adapter_name="9")#current_model_name)
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
 
@@ -78,14 +78,14 @@ def main(N):
     print("data collated")
 
     #current_model_name = f"gpt2-grade-{N}"
-    current_model_name = "model8-for-directory-testing"
+    current_model_name = "model9-for-directory-testing"
  
     training_args = TrainingArguments(
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
         output_dir=f"williamplacroix/text-simplification",
-        push_to_hub_model_id="text-simplification/",
+        push_to_hub_model_id=current_model_name,
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
@@ -114,7 +114,7 @@ def main(N):
     )
 
     trainer.train()
-    trainer.push_to_hub("commit message 8")
+    trainer.push_to_hub("commit message 9")
     return
 
 if __name__ == "__main__":
