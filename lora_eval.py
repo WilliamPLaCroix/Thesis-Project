@@ -47,24 +47,21 @@ def main(model_grade, test_set_grade):
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config)
     
-    # if model_grade == -1:
-    #     current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
-    # elif model_grade == 0:
-    #     adapters = "williamplacroix/gpt2-2-12-baseline"
-    #     model = PeftModel.from_pretrained(model, adapters)
-    #     current_model_name = f"gpt2-2-12-baseline_eval-on-grade-{test_set_grade}"
-    # elif model_grade == 1:
-    #     adapters = "williamplacroix/gpt2-2-12-evens"
-    #     model = PeftModel.from_pretrained(model, adapters)
-    #     current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
-    # else:
-    #     adapters = f"williamplacroix/gpt2-grade-{model_grade}"
-    #     model = PeftModel.from_pretrained(model, adapters)
-    #     current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
+    if model_grade == -1:
+        current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
+    elif model_grade == 0:
+        adapters = "williamplacroix/gpt2-2-12-all"
+        model = PeftModel.from_pretrained(model, adapters)
+        current_model_name = f"gpt2-2-12-all_eval-on-grade-{test_set_grade}"
+    elif model_grade == 1:
+        adapters = "williamplacroix/gpt2-2-12-evens"
+        model = PeftModel.from_pretrained(model, adapters)
+        current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
+    else:
+        adapters = f"williamplacroix/gpt2-grade-{model_grade}"
+        model = PeftModel.from_pretrained(model, adapters)
+        current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
 
-    adapters = f"williamplacroix/text-simplification/model10-for-directory-testing"
-    model = PeftModel.from_pretrained(model, adapters)
-    current_model_name = f"model11_from_10_-for-directory-testing"
 
     wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
