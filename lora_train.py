@@ -57,12 +57,15 @@ def main(model_grade):
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
-
+    baseline_adapter = "williamplacroix/gpt2-2-12-all"
     current_model_name = f"gpt2-grade-{model_grade}-4module"
 
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
+    print(model) 
+    model.merge_and_unload() ###
+
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
 
@@ -83,7 +86,7 @@ def main(model_grade):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=f"williamplacroix/text-simplification",
+        output_dir=f"./williamplacroix/text-simplification",
         #push_to_hub_model_id=f"williamplacroix/text-simplification"
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
