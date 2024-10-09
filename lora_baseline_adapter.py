@@ -90,6 +90,7 @@ def main():
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
+    model.merge_adapter()
     print(model)
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
@@ -107,7 +108,7 @@ def main():
     
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
 
-    print("data collated")
+    print(f"Beginning training {current_model_name}")
 
     training_args = TrainingArguments(
         logging_strategy="epoch",
@@ -138,6 +139,7 @@ def main():
     )
 
     trainer.train()
+    model.unmerge_adapter()
     trainer.push_to_hub(f"Finished 2-12 evens pretraining")
     wandb.finish()
 
