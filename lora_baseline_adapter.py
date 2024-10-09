@@ -42,8 +42,9 @@ def main():
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
     train_texts = train_texts[train_texts['target_grade'] != 0]
-    train_texts = train_texts[train_texts['target_grade'] % 2 == 0]
-    print("dropped rows for grades 0 and 1")
+    train_texts = train_texts[train_texts['target_grade'] != 1]
+    train_texts = train_texts[train_texts['target_grade'] != 13]
+    print("dropped rows for grades 0, 1, and 13")
 
     grade_groups = train_texts.groupby(['target_grade'])
 
@@ -88,7 +89,7 @@ def main():
                             lora_dropout=0.01,
                             )
     
-    current_model_name = "gpt2-2-12-evens"
+    current_model_name = "gpt2-2-12-all-sets"
 
     model = get_peft_model(model=model, peft_config=lora_config)#, adapter_name=current_model_name)
     print(model)
