@@ -16,8 +16,7 @@ import sys
 import torch
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["WANDB_PROJECT"] = "Graded text simplification HF model tampering"  # name your W&B project
-os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -33,6 +32,9 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 
 def main(model_grade):
+
+    os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project
+    os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
     model_name = "openai-community/gpt2"
 
@@ -58,7 +60,7 @@ def main(model_grade):
 
     current_model_name = f"gpt2-grade-{model_grade}"
 
-    model = get_peft_model(model=model, peft_config=lora_config, adapter_name="model10-for-directory-testing")#current_model_name)
+    model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
 
@@ -76,9 +78,6 @@ def main(model_grade):
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
 
     print("data collated")
-
-    #current_model_name = f"gpt2-grade-{N}"
-    current_model_name = "model10-for-directory-testing"
  
     training_args = TrainingArguments(
         logging_strategy="epoch",
@@ -114,7 +113,7 @@ def main(model_grade):
     )
 
     trainer.train()
-    trainer.push_to_hub("commit message 10")
+    trainer.push_to_hub(f"Finished training grade {model_grade}")
     return
 
 if __name__ == "__main__":
