@@ -33,6 +33,8 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(model_grade):
 
+    
+
     os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
@@ -58,7 +60,9 @@ def main(model_grade):
                             lora_dropout=0.01,
                             )
 
-    current_model_name = f"gpt2-grade-{model_grade}"
+    current_model_name = f"gpt2-grade-{model_grade}-4module"
+
+    wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
     model.print_trainable_parameters()
@@ -114,6 +118,7 @@ def main(model_grade):
 
     trainer.train()
     trainer.push_to_hub(f"Finished training grade {model_grade}")
+    wandb.finish()
     return
 
 if __name__ == "__main__":
