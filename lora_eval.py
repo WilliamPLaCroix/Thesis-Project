@@ -1,5 +1,5 @@
 import pandas as pd
-from datasets import Dataset
+from datasets import Dataset, load_dataset
 
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
@@ -37,56 +37,41 @@ def main(model_grade, test_set_grade):
     print(f"Running evaluation on model_grade: {model_grade}, test_set_grade: {test_set_grade}")
     print("#"*50)
 
-    os.environ["WANDB_PROJECT"] = "Graded text simplification evaluation"  # name your W&B project
+    #os.environ["WANDB_PROJECT"] = "Graded text simplification evaluation"  # name your W&B project ###
+    os.environ["WANDB_PROJECT"] = "Graded text simplification HF model tampering"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
-    data_location = './data/wikilarge/'
 
     model_name = "openai-community/gpt2"
     config = AutoConfig.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config)
     
-    if model_grade == -1:
-        current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
-    elif model_grade == 0:
-        adapters = "williamplacroix/gpt2-2-12-baseline"
-        model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-2-12-baseline_eval-on-grade-{test_set_grade}"
-    elif model_grade == 1:
-        adapters = "williamplacroix/gpt2-2-12-evens"
-        model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
-    else:
-        adapters = f"williamplacroix/gpt2-grade-{model_grade}"
-        model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
+    # if model_grade == -1:
+    #     current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
+    # elif model_grade == 0:
+    #     adapters = "williamplacroix/gpt2-2-12-baseline"
+    #     model = PeftModel.from_pretrained(model, adapters)
+    #     current_model_name = f"gpt2-2-12-baseline_eval-on-grade-{test_set_grade}"
+    # elif model_grade == 1:
+    #     adapters = "williamplacroix/gpt2-2-12-evens"
+    #     model = PeftModel.from_pretrained(model, adapters)
+    #     current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
+    # else:
+    #     adapters = f"williamplacroix/gpt2-grade-{model_grade}"
+    #     model = PeftModel.from_pretrained(model, adapters)
+    #     current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
+
+    adapters = f"williamplacroix/text-simplification/model10-for-directory-testing"
+    model = PeftModel.from_pretrained(model, adapters)
+    current_model_name = f"model11_from_10_-for-directory-testing"
 
     wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
-    train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
-    print("train texts read in")
-    # train_texts = train_texts[train_texts['target_grade'] != 0]
-    # train_texts = train_texts[train_texts['target_grade'] != 1]
-    # print("dropped rows for grades 0 and 1")
-
-    grade_groups = train_texts.groupby(['target_grade'])
-
-    datasets = {}
-    for grade, group in grade_groups:
-        datasets[grade[0]] = Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42)
-    print("datasets created")
-    
     
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
-
-    """
-    Below function tokenizes parallel corpus into target only inputs for fine-tuning
-    """
-    def tokenize_function(examples):
-        return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
 
     
     #model = model.merge_and_unload()
@@ -94,8 +79,8 @@ def main(model_grade, test_set_grade):
 
     model.config.pad_token_id = tokenizer.eos_token_id
 
-    tokenized_dataset = datasets[test_set_grade].map(tokenize_function, batched=True, batch_size=32,
-                                    remove_columns=['target_grade','target', 'source', '__index_level_0__'])
+
+    tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{test_set_grade}")
 
     print(tokenized_dataset)
     
