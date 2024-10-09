@@ -74,7 +74,7 @@ def main(N):
     lora_config = LoraConfig(
                             r=8,
                             lora_alpha=32,
-                            target_modules=['c_attn', 'c_fc', 'c_proj'],
+                            target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'],
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
@@ -129,7 +129,7 @@ def main(N):
         save_safetensors=False, # this is a kludge fix for a bug in the transformers library
         #save_only_model=True,
         save_total_limit=1,
-        fp16=True,
+        #fp16=True,
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
