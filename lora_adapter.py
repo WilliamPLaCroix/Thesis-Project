@@ -78,13 +78,13 @@ def main(N):
     print("data collated")
 
     #current_model_name = f"gpt2-grade-{N}"
-    current_model_name = "model5-for-directory-testing"
+    current_model_name = "model6-for-directory-testing"
  
     training_args = TrainingArguments(
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=f"./models/text-simplification/model2",
+        output_dir=f"./models/text-simplification/model6",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
@@ -109,11 +109,10 @@ def main(N):
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
         tokenizer=tokenizer,
-        
     )
 
     trainer.train()
-    trainer.push_to_hub("text-simplification/" + current_model_name)
+    trainer.push_to_hub(current_model_name)
     return
 
 if __name__ == "__main__":
