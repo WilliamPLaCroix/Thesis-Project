@@ -83,7 +83,7 @@ def main():
     lora_config = LoraConfig(
                             r=8,
                             lora_alpha=32,
-                            target_modules=['lm_head'],
+                            target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'],
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
