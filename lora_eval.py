@@ -37,10 +37,8 @@ def main(model_grade, test_set_grade):
     print(f"Running evaluation on model_grade: {model_grade}, test_set_grade: {test_set_grade}")
     print("#"*50)
 
-    #os.environ["WANDB_PROJECT"] = "Graded text simplification evaluation"  # name your W&B project ###
-    os.environ["WANDB_PROJECT"] = "Graded text simplification HF model tampering"  # name your W&B project
+    os.environ["WANDB_PROJECT"] = "Graded text simplification evaluation"  # name your W&B project ###
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-
 
     model_name = "openai-community/gpt2"
     config = AutoConfig.from_pretrained(model_name)
@@ -58,18 +56,17 @@ def main(model_grade, test_set_grade):
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
     else:
-        adapters = f"williamplacroix/gpt2-grade-{model_grade}"
-        model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
-
+        sys.exit("Invalid model grade")
+        ### We don't do this yet
+        # adapters = f"williamplacroix/gpt2-grade-{model_grade}"
+        # model = PeftModel.from_pretrained(model, adapters)
+        # current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
 
     wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
-    
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
-
     
     #model = model.merge_and_unload()
     print(model)
@@ -89,20 +86,17 @@ def main(model_grade, test_set_grade):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=f"./models/{current_model_name}",
+        output_dir=f"williamplacroix/text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
-        #hub_model_id="williamplacroix/text-simplification",  # save the model to the Hub after training
-        overwrite_output_dir=True,
+        # overwrite_output_dir=True,
         save_safetensors=False, # this is a kludge fix for a bug in the transformers library
-        #save_only_model=True,
-        save_total_limit=1,
-        fp16=True,
+        # save_total_limit=1,
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=5,
+        num_train_epochs=3, 
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
