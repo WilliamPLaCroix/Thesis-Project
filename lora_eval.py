@@ -40,26 +40,35 @@ def main(model_grade, test_set_grade):
 
     model_name = "openai-community/gpt2"
     config = AutoConfig.from_pretrained(model_name)
+
     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config,
                                                 quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
                                                 )
+    print("#"*50)
+    print("Loaded base model")
     
     if model_grade == -1:
         current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
     elif model_grade == 0:
-        adapters = "williamplacroix/gpt2-2-12-all"
+        adapters = "williamplacroix/text-simplification/gpt2-2-12-all"
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-2-12-all_eval-on-grade-{test_set_grade}"
     elif model_grade == 1:
-        adapters = "williamplacroix/gpt2-2-12-evens"
+        adapters = "williamplacroix/text-simplification/gpt2-2-12-evens"
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
     else: ### here's where the magic happens
-        adapters = f"williamplacroix/gpt2-grade-{model_grade}"
-        model = PeftModel.from_pretrained(model, adapters)
+        baseline_adapter = "gpt2-2-12-evens"
+        baseline_adapter = "williamplacroix/text-simplification/gpt2-2-12-evens"
+        model = PeftModel.from_pretrained(model, baseline_adapter)
+        print("Loaded PeFT model")
+        #print(model)
+        model.merge_and_unload()
+        finetuned_adapter = f"williamplacroix/text-simplification/gpt2-2-12-{model_grade}-4module"
+        model = PeftModel.from_pretrained(model, finetuned_adapter)
         current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
 
     wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
@@ -71,7 +80,6 @@ def main(model_grade, test_set_grade):
     print(model)
 
     model.config.pad_token_id = tokenizer.eos_token_id
-
 
     tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{test_set_grade}")
 
