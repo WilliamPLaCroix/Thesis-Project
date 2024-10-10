@@ -53,7 +53,7 @@ def main(model_grade):
                                                 low_cpu_mem_usage=True,
                                                 )
     print("#"*50)
-    print("Loaded base model:")
+    print("Loaded base model")
     #print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
@@ -73,11 +73,11 @@ def main(model_grade):
                                       )
 
     #print("#"*50)
-    print("Loaded PeFT model:")
+    print("Loaded PeFT model")
     #print(model)
     model.merge_and_unload()
     #print("#"*50)
-    print("Merged PeFT model with base:")
+    print("Merged PeFT model with base")
     #print(model)
     model.print_trainable_parameters()
     current_model_name = f"gpt2-grade-{model_grade}-4module"
@@ -86,7 +86,7 @@ def main(model_grade):
 
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
     #print("#"*50)
-    print("Loaded trainable PeFT model:")
+    print("Loaded trainable PeFT model")
     print(model)
     model.print_trainable_parameters()
     print("#"*50)
