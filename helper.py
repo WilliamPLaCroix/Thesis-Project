@@ -49,13 +49,22 @@ def merge_eval():
         print(f"Evaluation complete")
         print("#"*50)
 
+def train_baseline():
+    import lora_baseline_adapter
+    for mode in ["all", "evens"]:
+        print("#"*50)
+        print(f"Training baseline {mode}")
+        lora_baseline_adapter.main(mode)
+        print("#"*50)
+        print(f"Training complete")
+        print("#"*50)
 
 def main():
     parser = argparse.ArgumentParser(
                     prog='Text simplification helper script',
                     description='Helper script for training and evaluating text simplification models',
                     epilog='Enjoy the program! :)')
-    parser.add_argument('-m', '--mode', type=str, help='Must be "t", "e", or "em"', dest='mode', required=True)
+    parser.add_argument('-m', '--mode', type=str, help='Must be "b", "t", "e", or "em"', dest='mode', required=True)
     args = parser.parse_args()
 
 
@@ -65,6 +74,8 @@ def main():
         eval()
     elif args.mode == "em":
         merge_eval()
+    elif args.mode == "b":
+        train_baseline()
     else:
         print("Invalid mode. Must be 'train', train_merge, 'eval', or 'eval_merge'")
     
