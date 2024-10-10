@@ -51,7 +51,6 @@ def main(model_grade):
                                                 config=config,
                                                 quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
-                                                torch_dtype=torch.float16,
                                                 )
     print("#"*50)
     print("Loaded base model:")

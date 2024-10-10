@@ -45,7 +45,6 @@ def main(model_grade, test_set_grade):
                                                 config=config,
                                                 quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
-                                                torch_dtype=torch.float16,
                                                 )
     
     if model_grade == -1:

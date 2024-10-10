@@ -85,7 +85,6 @@ def main(mode):
                                                 config=config,
                                                 quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
-                                                torch_dtype=torch.float16,
                                                 )
     print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
