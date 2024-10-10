@@ -40,9 +40,15 @@ def main(mode):
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
     
-    train_texts = train_texts[train_texts['target_grade'] != 0]
-    train_texts = train_texts[train_texts['target_grade'] %2 == 0]
-    print("dropped rows for odd grades and 0")
+    if mode == "evens":
+        train_texts = train_texts[train_texts['target_grade'] != 0]
+        train_texts = train_texts[train_texts['target_grade'] %2 == 0]
+        print("dropped rows for odd grades and 0")
+    elif mode == "all":
+        train_texts = train_texts[train_texts['target_grade'] != 0]
+        train_texts = train_texts[train_texts['target_grade'] != 1]
+        train_texts = train_texts[train_texts['target_grade'] != 13]
+        print("dropped rows for grades 0, 1, 13")
 
     grade_groups = train_texts.groupby(['target_grade'])
 
@@ -87,7 +93,7 @@ def main(mode):
                             lora_dropout=0.01,
                             )
     
-    current_model_name = "gpt2-2-12-evens"
+    current_model_name = f"gpt2-2-12-{mode}"
 
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
