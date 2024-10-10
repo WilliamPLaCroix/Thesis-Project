@@ -50,7 +50,7 @@ def main(model_grade):
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config,
                                                 quantization_config=quantization_config,
-                                                low_cpu_mem_usage=True,
+                                                #low_cpu_mem_usage=True,
                                                 torch_dtype=torch.float16
                                                 )
     print("#"*50)
