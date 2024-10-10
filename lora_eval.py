@@ -1,5 +1,4 @@
-import pandas as pd
-from datasets import Dataset, load_dataset
+from datasets import load_dataset
 
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
@@ -7,14 +6,11 @@ from transformers import AutoConfig
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
-from transformers import GenerationConfig
 from peft import LoraConfig
 from peft import get_peft_model
 from peft import PeftModel
-# from peft import prepare_model_for_int8_training
 
 import sys
-import torch
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -61,11 +57,10 @@ def main(model_grade, test_set_grade):
 
     wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
     
-    #model = model.merge_and_unload()
     print(model)
 
     model.config.pad_token_id = tokenizer.eos_token_id
@@ -87,9 +82,7 @@ def main(model_grade, test_set_grade):
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
-        # overwrite_output_dir=True,
         save_safetensors=False, # this is a kludge fix for a bug in the transformers library
-        # save_total_limit=1,
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
