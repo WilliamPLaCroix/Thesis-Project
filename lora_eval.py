@@ -106,6 +106,8 @@ def main(model_grade, test_set_grade):
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
+
+    training_args = training_args.set_dataloader(train_batch_size=32, eval_batch_size=32)
     
     trainer = Trainer(
         model=model,

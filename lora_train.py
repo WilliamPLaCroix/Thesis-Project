@@ -106,6 +106,8 @@ def main(model_grade):
         #push_to_hub=True,
     )
     
+    training_args = training_args.set_dataloader(train_batch_size=32, eval_batch_size=32)
+
     trainer = Trainer(
         model=model,
         args=training_args,
