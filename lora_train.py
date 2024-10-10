@@ -64,9 +64,9 @@ def main(model_grade):
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
-    adapter_config = PeftConfig.from_pretrained("williamplacroix/text-simplification/gpt2-grade-2-4module")
+
     model = PeftModel.from_pretrained(model=model, 
-                                      model_id=adapter_config, 
+                                      model_id="./", 
                                       adapter_name="gpt2-grade-2-4module",
                                       is_trainable=False,
                                       )
