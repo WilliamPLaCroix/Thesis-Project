@@ -67,7 +67,7 @@ def main(model_grade, test_set_grade):
         print("Loaded PeFT model")
         #print(model)
         model.merge_and_unload()
-        finetuned_adapter = f"williamplacroix/text-simplification/gpt2-2-12-{model_grade}-4module"
+        finetuned_adapter = f"williamplacroix/text-simplification/gpt2-grade-{model_grade}-4module"
         model = PeftModel.from_pretrained(model, finetuned_adapter)
         current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
 
