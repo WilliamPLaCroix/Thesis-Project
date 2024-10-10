@@ -8,6 +8,8 @@ from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
 from transformers import GenerationConfig
+from transformers import BitsAndBytesConfig
+
 from peft import LoraConfig
 from peft import get_peft_model
 from peft import PeftModel
@@ -44,9 +46,11 @@ def main(model_grade):
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
     config = AutoConfig.from_pretrained(model_name)
+
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config,
-                                                load_in_8bit=True,
+                                                quantization_config=quantization_config,
                                                 torch_dtype=torch.float16)
     print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
