@@ -58,6 +58,7 @@ def main(mode):
     for grade, group in grade_groups:
         print(f"Creating dataset for grade {grade}")
         datasets.append(Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42))
+        break ###
     print("datasets created")
 
     train_sets = [dataset["train"] for dataset in datasets]
@@ -97,7 +98,7 @@ def main(mode):
                             lora_dropout=0.01,
                             )
     
-    current_model_name = f"gpt2-2-12-{mode}-test"
+    current_model_name = f"gpt2-2-12-{mode}-test" ###
 
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
@@ -133,7 +134,7 @@ def main(mode):
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=1,  ### testing
+        num_train_epochs=1,  ### test
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
@@ -150,7 +151,7 @@ def main(mode):
     )
 
     trainer.train()
-    trainer.push_to_hub(f"Finished 2-12 grades: {mode} pretraining")
+    trainer.push_to_hub(f"Finished 2-12 grades: {mode} pretraining test") ###
     wandb.finish()
     #shutil.rmtree("./williamplacroix/text-simplification")
     return
