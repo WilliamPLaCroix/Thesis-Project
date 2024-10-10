@@ -57,7 +57,7 @@ def main(model_grade, test_set_grade):
         adapters = "williamplacroix/gpt2-2-12-evens"
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
-    else:
+    else: ### here's where the magic happens
         adapters = f"williamplacroix/gpt2-grade-{model_grade}"
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
