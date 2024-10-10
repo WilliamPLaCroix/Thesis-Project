@@ -64,7 +64,7 @@ def main():
                     prog='Text simplification helper script',
                     description='Helper script for training and evaluating text simplification models',
                     epilog='Enjoy the program! :)')
-    parser.add_argument('-m', '--mode', type=str, help='Must be "b", "t", "e", or "em"', dest='mode', required=True)
+    parser.add_argument('-m', '--mode', type=str, help='Must be "b", "t", "ta", "e", or "em"', dest='mode', required=True)
     args = parser.parse_args()
 
 
@@ -80,7 +80,7 @@ def main():
         pretrain_baseline()
         finetune_adapters()
     else:
-        print("Invalid mode. Must be 'train', train_merge, 'eval', or 'eval_merge'")
+        print('Invalid mode. Must be "b", "t", "ta", "e", or "em"')
     
 
 if __name__ == "__main__":
