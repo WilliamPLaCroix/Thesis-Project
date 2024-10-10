@@ -61,7 +61,7 @@ def main(mode):
     merged_dataset = DatasetDict({'train': train_dataset, 'test': test_dataset})
     print("datasets merged: ", merged_dataset)
     
-    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
@@ -119,9 +119,7 @@ def main(mode):
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
-        # overwrite_output_dir=True,
         save_safetensors=False, # this is a kludge fix for a bug in the transformers library
-        # save_total_limit=1,
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
