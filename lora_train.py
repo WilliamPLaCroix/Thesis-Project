@@ -66,7 +66,7 @@ def main(model_grade):
                             )
     adapter_config = PeftConfig.from_pretrained("./")
     model = PeftModel.from_pretrained(model=model, 
-                                      model_id="williamplacroix/text-simplification",
+                                      model_id="williamplacroix/text-simplification/gpt2-2-12-evens",
                                       config=adapter_config,
                                       adapter_name="gpt2-2-12-evens",
                                       is_trainable=False,
