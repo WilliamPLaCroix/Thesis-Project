@@ -13,10 +13,10 @@ from transformers import GenerationConfig
 from peft import LoraConfig
 from peft import get_peft_model
 
+import sys
 import torch
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
 import warnings
@@ -31,7 +31,7 @@ wandb.login(key=os.getenv("wandb"))
 from huggingface_hub import login
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
-def main():
+def main(mode):
 
     data_location = './data/wikilarge/'
 
@@ -39,6 +39,7 @@ def main():
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
+    
     train_texts = train_texts[train_texts['target_grade'] != 0]
     train_texts = train_texts[train_texts['target_grade'] %2 == 0]
     print("dropped rows for odd grades and 0")
@@ -91,7 +92,6 @@ def main():
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
-    # model.merge_adapter()
     print(model)
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
@@ -142,11 +142,12 @@ def main():
     )
 
     trainer.train()
-    # model.unmerge_adapter()
     trainer.push_to_hub(f"Finished 2-12 evens pretraining")
     wandb.finish()
     shutil.rmtree("./williamplacroix/text-simplification")
     return
 
 if __name__ == "__main__":
-    main()
+    mode = sys.argv[1]
+    assert mode in {"all", "evens"}, "Invalid mode. Must be 'all' or 'evens'"
+    main(mode)
