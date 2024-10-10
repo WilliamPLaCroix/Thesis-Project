@@ -120,7 +120,7 @@ def main():
         logging_steps=1,  # how often to log to W&B
         overwrite_output_dir=True,
         save_safetensors=False, # this is a kludge fix for a bug in the transformers library
-        save_total_limit=1,
+        #save_total_limit=1,
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
