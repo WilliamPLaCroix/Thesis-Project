@@ -51,7 +51,6 @@ def main(model_grade):
                                                 config=config,
                                                 quantization_config=quantization_config,
                                                 #low_cpu_mem_usage=True,
-                                                torch_dtype=torch.float16
                                                 )
     print("#"*50)
     print("Loaded base model:")
@@ -66,7 +65,7 @@ def main(model_grade):
                             lora_dropout=0.01,
                             )
     baseline_adapter = "gpt2-2-12-evens"
-    model_id = "williamplacroix/text-simplification/gpt2-2-12-evens"
+    model_id = "williamplacroix/text-simplification/gpt2-2-12-evens-test"
     model = PeftModel.from_pretrained(model=model, 
                                       model_id=model_id, 
                                       adapter_name=baseline_adapter,
