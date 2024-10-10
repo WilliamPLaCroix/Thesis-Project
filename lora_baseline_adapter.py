@@ -139,7 +139,7 @@ def main():
     )
 
     trainer.train()
-    model.unmerge_adapter()
+    # model.unmerge_adapter()
     trainer.push_to_hub(f"Finished 2-12 evens pretraining")
     wandb.finish()
 
