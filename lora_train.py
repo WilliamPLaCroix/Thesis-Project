@@ -10,6 +10,7 @@ from transformers import Trainer
 from transformers import GenerationConfig
 from peft import LoraConfig
 from peft import get_peft_model
+from peft import PeftModel
 # from peft import prepare_model_for_int8_training
 
 import sys
@@ -58,7 +59,8 @@ def main(model_grade):
                             lora_dropout=0.01,
                             )
     baseline_adapter = "williamplacroix/gpt2-2-12-evens"
-    model = get_peft_model(model=model, peft_config=lora_config, adapter_name=baseline_adapter)
+    model = PeftModel.from_pretrained(model=model, model_id=lora_config, adapter_name=baseline_adapter)
+    #model = get_peft_model(model=model, peft_config=lora_config, adapter_name=baseline_adapter)
     print(model)
     model.merge_and_unload()
     print(model)
