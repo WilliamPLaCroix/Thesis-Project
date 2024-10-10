@@ -65,7 +65,7 @@ def main():
         train()
     elif args.mode == "e":
         eval()
-    elif args.mode == "e":
+    elif args.mode == "em":
         merge_eval()
     else:
         print("Invalid mode. Must be 'train', train_merge, 'eval', or 'eval_merge'")
