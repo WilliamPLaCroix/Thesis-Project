@@ -64,8 +64,8 @@ def main(model_grade):
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
-    baseline_adapter = "gpt2-2-12-evens-test" ###
-    model_id = "williamplacroix/text-simplification/gpt2-2-12-evens-test" ###
+    baseline_adapter = "gpt2-2-12-evens-test"
+    model_id = "williamplacroix/text-simplification/gpt2-2-12-evens"
     model = PeftModel.from_pretrained(model=model, 
                                       model_id=model_id, 
                                       adapter_name=baseline_adapter,
