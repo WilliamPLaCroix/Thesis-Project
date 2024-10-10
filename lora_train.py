@@ -64,7 +64,11 @@ def main(model_grade):
                             )
     baseline_adapter = "gpt2-2-12-evens"
     model_id = "williamplacroix/text-simplification/gpt2-2-12-evens"
-    model = PeftModel.from_pretrained(model=model, model_id=model_id, adapter_name=baseline_adapter)
+    model = PeftModel.from_pretrained(model=model, 
+                                      model_id=model_id, 
+                                      adapter_name=baseline_adapter,
+                                      is_trainable=False,
+                                      )
     #model = get_peft_model(model=model, peft_config=lora_config, adapter_name=baseline_adapter)
     print(model)
     model.merge_and_unload()
