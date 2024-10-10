@@ -68,7 +68,7 @@ def main(model_grade):
     model = PeftModel.from_pretrained(model=model, 
                                       #model_id="williamplacroix/text-simplification/gpt2-2-12-evens",
                                       config=adapter_config,
-                                      adapter_name="gpt2-grade-2-4module",
+                                      adapter_name="williamplacroix/text-simplification/gpt2-2-12-evens",
                                       is_trainable=False,
                                       )
 
