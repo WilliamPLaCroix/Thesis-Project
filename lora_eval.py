@@ -44,7 +44,9 @@ def main(model_grade, test_set_grade):
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config,
                                                 quantization_config=quantization_config,
-                                                torch_dtype=torch.float16)
+                                                low_cpu_mem_usage=True,
+                                                torch_dtype=torch.float16,
+                                                )
     
     if model_grade == -1:
         current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
