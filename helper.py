@@ -63,7 +63,7 @@ def main():
     parser = argparse.ArgumentParser(
                     prog='Text simplification helper script',
                     description='Helper script for training and evaluating text simplification models',
-                    epilog='Enjoy the program! :)')
+                    epilog='Enjoy training! :)')
     parser.add_argument('-m', '--mode', type=str, help='Must be "b", "t", "ta", "e", or "em"', dest='mode', required=True)
     args = parser.parse_args()
 
