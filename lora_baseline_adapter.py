@@ -85,7 +85,7 @@ def main(mode):
                                                 quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
                                                 )
-    print(model)
+    #print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
     lora_config = LoraConfig(
