@@ -52,6 +52,8 @@ def main(model_grade):
                                                 config=config,
                                                 quantization_config=quantization_config,
                                                 torch_dtype=torch.float16)
+    print("#"*50)
+    print("Loaded base model:")
     print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
@@ -70,8 +72,12 @@ def main(model_grade):
                                       is_trainable=False,
                                       )
     #model = get_peft_model(model=model, peft_config=lora_config, adapter_name=baseline_adapter)
+    print("#"*50)
+    print("Loaded PeFT model:")
     print(model)
     model.merge_and_unload()
+    print("#"*50)
+    print("Merged PeFT model with base:")
     print(model)
     model.print_trainable_parameters()
     current_model_name = f"gpt2-grade-{model_grade}-4module"
@@ -79,8 +85,9 @@ def main(model_grade):
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
-    print(model) 
-    model.merge_and_unload() ###
+    print("#"*50)
+    print("Loaded trainable PeFT model:")
+    print(model)
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
 
