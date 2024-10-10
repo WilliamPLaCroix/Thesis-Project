@@ -1,6 +1,7 @@
 import pandas as pd
 from datasets import Dataset, DatasetDict
 from datasets import concatenate_datasets
+import shutil
 
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
@@ -144,6 +145,7 @@ def main():
     # model.unmerge_adapter()
     trainer.push_to_hub(f"Finished 2-12 evens pretraining")
     wandb.finish()
+    shutil.rmtree("./williamplacroix/text-simplification")
     return
 
 if __name__ == "__main__":
