@@ -65,10 +65,13 @@ def main(model_grade, test_set_grade):
         baseline_adapter = "williamplacroix/text-simplification/gpt2-2-12-evens"
         model = PeftModel.from_pretrained(model, baseline_adapter)
         print("Loaded PeFT model")
-        #print(model)
         model.merge_and_unload()
+        print("Merged PeFT model with base")
         finetuned_adapter = f"williamplacroix/text-simplification/gpt2-grade-{model_grade}-4module"
         model = PeftModel.from_pretrained(model, finetuned_adapter)
+        print("Loaded trainable PeFT model")
+        print(model)
+        print("#"*50)
         current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
 
     wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
@@ -76,18 +79,14 @@ def main(model_grade, test_set_grade):
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
-    
-    print(model)
 
     model.config.pad_token_id = tokenizer.eos_token_id
 
     tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{test_set_grade}")
 
-    print(tokenized_dataset)
+    print(f"Grade {model_grade}:", tokenized_dataset)
     
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
-
-    print("data collated")
  
     training_args = TrainingArguments(
         logging_strategy="epoch",
@@ -116,7 +115,7 @@ def main(model_grade, test_set_grade):
         data_collator=data_collator,
         tokenizer=tokenizer,
     )
-
+    print("Begin evaluation :)")
     trainer.evaluate()
     wandb.finish()
     return
