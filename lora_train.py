@@ -13,7 +13,6 @@ from transformers import BitsAndBytesConfig
 from peft import LoraConfig
 from peft import get_peft_model
 from peft import PeftModel
-# from peft import prepare_model_for_int8_training
 
 import sys
 import torch
@@ -71,7 +70,7 @@ def main(model_grade):
                                       adapter_name=baseline_adapter,
                                       is_trainable=False,
                                       )
-    #model = get_peft_model(model=model, peft_config=lora_config, adapter_name=baseline_adapter)
+
     print("#"*50)
     print("Loaded PeFT model:")
     print(model)
