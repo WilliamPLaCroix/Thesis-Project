@@ -110,7 +110,7 @@ def main(model_grade):
         eval_strategy="epoch",
         output_dir=f"williamplacroix/text-simplification",
         #overwrite_output_dir=True,
-        save_total_limit=1,
+        #save_total_limit=1,
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
