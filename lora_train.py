@@ -64,7 +64,7 @@ def main(model_grade):
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
-    adapter_config = PeftConfig.from_pretrained("./adapter_config.json")
+    adapter_config = PeftConfig.from_pretrained("~/Thesis-Project/adapter_config.json")
     model = PeftModel.from_pretrained(model=model, 
                                       #model_id="williamplacroix/text-simplification/gpt2-2-12-evens",
                                       config=adapter_config,
