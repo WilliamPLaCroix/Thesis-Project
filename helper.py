@@ -1,12 +1,8 @@
 from itertools import product
 import argparse
 
-import lora_train
-import lora_eval
-import lora_merge_eval
-
-
 def train():
+    import lora_train
     model_grades = [2, 4, 6, 8, 10, 12]
     for grade in model_grades:
         print("#"*50)
@@ -17,6 +13,7 @@ def train():
         print("#"*50)
 
 def eval():
+    import lora_eval
     model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
     test_set_grades = {3, 5, 7, 9, 11}
     #model_test_combos = []
@@ -39,6 +36,7 @@ def eval():
         print("#"*50)
     
 def merge_eval():
+    import lora_merge_eval
     test_set_grades = {3, 5, 7, 9, 11}
     mixing_proportions = {2, 4, 6, 8}
     model_test_combos = product(test_set_grades, mixing_proportions)
