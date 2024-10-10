@@ -97,7 +97,7 @@ def main(mode):
                             lora_dropout=0.01,
                             )
     
-    current_model_name = f"gpt2-2-12-{mode}"
+    current_model_name = f"gpt2-2-12-{mode}-test"
 
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
@@ -133,7 +133,7 @@ def main(mode):
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=5, 
+        num_train_epochs=1,  ### testing
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
@@ -152,7 +152,7 @@ def main(mode):
     trainer.train()
     trainer.push_to_hub(f"Finished 2-12 grades: {mode} pretraining")
     wandb.finish()
-    shutil.rmtree("./williamplacroix/text-simplification")
+    #shutil.rmtree("./williamplacroix/text-simplification")
     return
 
 if __name__ == "__main__":
