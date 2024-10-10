@@ -57,7 +57,12 @@ def main(model_grade):
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
-    baseline_adapter = "williamplacroix/gpt2-2-12-all"
+    baseline_adapter = "williamplacroix/gpt2-2-12-evens"
+    model = get_peft_model(model=model, peft_config=lora_config, adapter_name=baseline_adapter)
+    print(model)
+    model.merge_and_unload()
+    print(model)
+    model.print_trainable_parameters()
     current_model_name = f"gpt2-grade-{model_grade}-4module"
 
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
@@ -65,7 +70,6 @@ def main(model_grade):
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
     print(model) 
     model.merge_and_unload() ###
-
     model.print_trainable_parameters()
     model.config.pad_token_id = tokenizer.eos_token_id
 
@@ -79,7 +83,6 @@ def main(model_grade):
 
     print(f"Grade {model_grade}:", tokenized_dataset)
 
-    
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
  
     training_args = TrainingArguments(
