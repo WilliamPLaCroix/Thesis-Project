@@ -59,7 +59,7 @@ def main(model_grade):
                             lora_dropout=0.01,
                             )
     baseline_adapter = "gpt2-2-12-evens"
-    model_id = "williamplacroix/text-simplification"
+    model_id = "williamplacroix/text-simplification/gpt2-2-12-evens"
     model = PeftModel.from_pretrained(model=model, model_id=model_id, adapter_name=baseline_adapter)
     #model = get_peft_model(model=model, peft_config=lora_config, adapter_name=baseline_adapter)
     print(model)
