@@ -36,7 +36,7 @@ def main(model_grade, test_set_grade):
 
     print(f"Running evaluation on model_grade: {model_grade}, test_set_grade: {test_set_grade}")
     print("#"*50)
-    
+
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
     model_name = "openai-community/gpt2"
@@ -53,14 +53,11 @@ def main(model_grade, test_set_grade):
     elif model_grade == 1:
         adapters = "williamplacroix/gpt2-2-12-evens"
         model = PeftModel.from_pretrained(model, adapters)
-        #current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
-        current_model_name = "gpt2-2-12-evens-after-grade-2-tuning"
+        current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
     else:
-        sys.exit("Invalid model grade")
-        ### We don't do this yet
-        # adapters = f"williamplacroix/gpt2-grade-{model_grade}"
-        # model = PeftModel.from_pretrained(model, adapters)
-        # current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
+        adapters = f"williamplacroix/gpt2-grade-{model_grade}"
+        model = PeftModel.from_pretrained(model, adapters)
+        current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
 
     wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
