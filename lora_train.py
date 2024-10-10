@@ -86,26 +86,19 @@ def main(model_grade):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=f"./williamplacroix/text-simplification",
-        #push_to_hub_model_id=f"williamplacroix/text-simplification"
+        output_dir=f"williamplacroix/text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
-        #hub_model_id="williamplacroix/text-simplification",  # save the model to the Hub after training
-        overwrite_output_dir=True,
         save_safetensors=False, # this is a kludge fix for a bug in the transformers library
-        #save_only_model=True,
-        save_total_limit=1,
-        #fp16=True,
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
         num_train_epochs=3, 
         load_best_model_at_end=True,
         remove_unused_columns=False,
-        #push_to_hub=True,
     )
-    
+
     training_args = training_args.set_dataloader(train_batch_size=32, eval_batch_size=32)
 
     trainer = Trainer(
