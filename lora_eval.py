@@ -6,10 +6,13 @@ from transformers import AutoConfig
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
+from transformers import BitsAndBytesConfig
+
 from peft import LoraConfig
 from peft import get_peft_model
 from peft import PeftModel
 
+import torch
 import sys
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -37,8 +40,11 @@ def main(model_grade, test_set_grade):
 
     model_name = "openai-community/gpt2"
     config = AutoConfig.from_pretrained(model_name)
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
-                                                config=config)
+                                                config=config,
+                                                quantization_config=quantization_config,
+                                                torch_dtype=torch.float16)
     
     if model_grade == -1:
         current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"

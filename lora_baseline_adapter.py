@@ -10,6 +10,8 @@ from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
 from transformers import GenerationConfig
+from transformers import BitsAndBytesConfig
+
 from peft import LoraConfig
 from peft import get_peft_model
 
@@ -78,9 +80,10 @@ def main(mode):
         return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
 
     config = AutoConfig.from_pretrained(model_name)
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config,
-                                                load_in_8bit=True,
+                                                quantization_config=quantization_config,
                                                 torch_dtype=torch.float16)
     print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
@@ -146,7 +149,7 @@ def main(mode):
     )
 
     trainer.train()
-    trainer.push_to_hub(f"Finished 2-12 evens pretraining")
+    trainer.push_to_hub(f"Finished 2-12 grades: {mode} pretraining")
     wandb.finish()
     shutil.rmtree("./williamplacroix/text-simplification")
     return
