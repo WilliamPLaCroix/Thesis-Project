@@ -40,17 +40,22 @@ def main(model_grade):
 
     model_name = "openai-community/gpt2"
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
+    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
+    config = AutoConfig.from_pretrained(model_name)
+
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
-                                                config=AutoConfig.from_pretrained(model_name),
-                                                quantization_config=BitsAndBytesConfig(load_in_4bit=True),
+                                                config=config,
+                                                quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
+                                                torch_dtype=torch.float16
                                                 )
     print("#"*50)
     print("Loaded base model:")
+    #print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
     lora_config = LoraConfig(
@@ -61,9 +66,9 @@ def main(model_grade):
                             lora_dropout=0.01,
                             )
     adapter_config = PeftConfig.from_pretrained("./")
-    model = PeftModel.from_pretrained(model, 
-                                      "williamplacroix/text-simplification/gpt2-2-12-evens",
-                                      #config=adapter_config,
+    model = PeftModel.from_pretrained(model=model, 
+                                      model_id="williamplacroix/text-simplification/gpt2-2-12-evens",
+                                      config=adapter_config,
                                       adapter_name="gpt2-2-12-evens",
                                       is_trainable=False,
                                       )
