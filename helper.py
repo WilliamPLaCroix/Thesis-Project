@@ -1,7 +1,7 @@
 from itertools import product
 import argparse
 
-def train():
+def finetune_adapters():
     import lora_train
     model_grades = [2, 4, 6, 8, 10, 12]
     for grade in model_grades:
@@ -49,7 +49,7 @@ def merge_eval():
         print(f"Evaluation complete")
         print("#"*50)
 
-def train_baseline():
+def pretrain_baseline():
     import lora_baseline_adapter
     for mode in ["all", "evens"]:
         print("#"*50)
@@ -69,13 +69,16 @@ def main():
 
 
     if args.mode == "t":
-        train()
+        finetune_adapters()
     elif args.mode == "e":
         eval()
     elif args.mode == "em":
         merge_eval()
     elif args.mode == "b":
-        train_baseline()
+        pretrain_baseline()
+    elif args.mode == "ta":
+        pretrain_baseline()
+        finetune_adapters()
     else:
         print("Invalid mode. Must be 'train', train_merge, 'eval', or 'eval_merge'")
     
