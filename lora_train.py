@@ -57,13 +57,13 @@ def main(model_grade):
     #print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
-    lora_config = LoraConfig(
-                            r=8,
-                            lora_alpha=32,
-                            target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'],
-                            task_type="CAUSAL_LM",
-                            lora_dropout=0.01,
-                            )
+    # lora_config = LoraConfig(
+    #                         r=8,
+    #                         lora_alpha=32,
+    #                         target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'],
+    #                         task_type="CAUSAL_LM",
+    #                         lora_dropout=0.01,
+    #                         )
     adapter_name = f"gpt2-2-12-grade-{model_grade}-finetuned"
     model_id = "williamplacroix/text-simplification/gpt2-2-12-evens"
     model = PeftModel.from_pretrained(model=model, 
