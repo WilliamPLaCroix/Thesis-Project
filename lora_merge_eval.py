@@ -72,7 +72,7 @@ def main(test_set_grade, model_a_proportion):
     
     adapter_name = f"{test_set_grade-1}({int(model_a_proportion*100)})+{test_set_grade+1}({int(model_b_proportion*100)})={test_set_grade}"
     #density = 0.2
-    model.add_weighted_adapter(adapters, weights, adapter_name)
+    model.add_weighted_adapter(adapters, weights, adapter_name, combination="linear")
     model.set_adapter(adapter_name)
 
     print("Merged weighted adapters")
