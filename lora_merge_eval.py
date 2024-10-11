@@ -62,9 +62,9 @@ def main(test_set_grade, model_a_proportion):
     wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
     
-    model = PeftModel.from_pretrained(model, f"williamplacroix/gpt2-grade-{test_set_grade-1}-4module", adapter_name="-1")
+    model = PeftModel.from_pretrained(model, f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade-1}-4module", adapter_name="-1")
     print("Loaded trainable PeFT adapter -1")
-    _ = model.load_adapter(f"williamplacroix/gpt2-grade-{test_set_grade+1}-4module", adapter_name="+1")
+    _ = model.load_adapter(f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade+1}-4module", adapter_name="+1")
     print("Loaded secondary PeFT adapter +1")
 
     adapters = ["+1", "-1"]
@@ -117,7 +117,7 @@ def main(test_set_grade, model_a_proportion):
         data_collator=data_collator,
         tokenizer=tokenizer,
     )
-    
+
     print("Begin evaluation :)")
     trainer.evaluate()
     wandb.finish()
