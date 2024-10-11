@@ -8,9 +8,10 @@ from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
 from transformers import BitsAndBytesConfig
 
-from peft import LoraConfig
+from peft import LoraModel, LoraConfig
 from peft import get_peft_model
 from peft import PeftModel
+
 
 import sys
 import torch
@@ -72,7 +73,7 @@ def main(test_set_grade, model_a_proportion):
     
     adapter_name = f"{test_set_grade-1}({int(model_a_proportion*100)})+{test_set_grade+1}({int(model_b_proportion*100)})={test_set_grade}"
     #density = 0.2
-    model.add_weighted_adapter(adapters, weights, adapter_name, combination="linear")
+    model.add_weighted_adapter(adapters, weights, adapter_name, combination_type="linear")
     model.set_adapter(adapter_name)
 
     print("Merged weighted adapters")
