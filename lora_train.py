@@ -69,9 +69,10 @@ def main(model_grade):
     model = PeftModel.from_pretrained(model=model, 
                                       model_id=model_id, 
                                       adapter_name=adapter_name,
+                                      is_trainable=True,
                                       )
     
-    print("Loaded PeFT model for fine-tuning")
+    print("Loaded PeFT model for finetuning")
     current_model_name = f"gpt2-grade-{model_grade}-finetuned"
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
