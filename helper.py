@@ -15,7 +15,8 @@ def finetune_adapters():
 
 def eval():
     import lora_eval
-    model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
+    #model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
+    model_grades = {2, 4, 6, 8, 10, 12}
     test_set_grades = {3, 5, 7, 9, 11}
     #model_test_combos = []
     # for grade in test_set_grades:
@@ -74,6 +75,9 @@ def main():
     elif args.mode == "e":
         eval()
     elif args.mode == "em":
+        merge_eval()
+    elif args.mode == "ea":
+        eval()
         merge_eval()
     elif args.mode == "b":
         pretrain_baseline()
