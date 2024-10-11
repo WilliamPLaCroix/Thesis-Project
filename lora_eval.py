@@ -41,8 +41,8 @@ def main(model_grade, test_set_grade):
     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config,
-                                                quantization_config=quantization_config,
-                                                low_cpu_mem_usage=True,
+                                                #quantization_config=quantization_config,
+                                                #low_cpu_mem_usage=True,
                                                 )
     print("#"*50)
     print("Loaded base model")
@@ -112,7 +112,7 @@ def main(model_grade, test_set_grade):
         data_collator=data_collator,
         tokenizer=tokenizer,
     )
-    
+
     print("Begin evaluation :)")
     trainer.evaluate()
     wandb.finish()
