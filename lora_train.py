@@ -64,7 +64,7 @@ def main(model_grade):
     #                         task_type="CAUSAL_LM",
     #                         lora_dropout=0.01,
     #                         )
-    adapter_name = f"gpt2-2-12-grade-{model_grade}-finetuned"
+    adapter_name = f"gpt2-grade-{model_grade}-finetuned"
     model_id = "williamplacroix/text-simplification/gpt2-2-12-evens"
     model = PeftModel.from_pretrained(model=model, 
                                       model_id=model_id, 
@@ -101,7 +101,7 @@ def main(model_grade):
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=5, 
+        num_train_epochs=1, 
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
