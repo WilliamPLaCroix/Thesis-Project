@@ -38,7 +38,7 @@ def eval():
 def merge_eval():
     import lora_merge_eval
     test_set_grades = {3, 5, 7, 9, 11}
-    mixing_proportions = {2, 4, 6, 8}
+    mixing_proportions = {1, 3, 5, 7, 9}
     model_test_combos = product(test_set_grades, mixing_proportions)
     runs = len(test_set_grades) * len(mixing_proportions)
     for i, (test_set_grades, mixing_proportions) in enumerate(model_test_combos):
