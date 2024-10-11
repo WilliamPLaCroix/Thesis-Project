@@ -72,7 +72,7 @@ def main(test_set_grade, model_a_proportion):
                                weights, 
                                adapter_name, 
                                combination_type="dare_ties", 
-                               density=1)
+                               density=0.2)
     model.set_adapter(adapter_name)
 
     print("Merged weighted adapters")
