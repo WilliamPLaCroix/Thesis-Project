@@ -64,38 +64,22 @@ def main(model_grade):
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
-    baseline_adapter = "gpt2-2-12-evens"
+    adapter_name = f"gpt2-2-12-grade-{model_grade}-finetuned"
     model_id = "williamplacroix/text-simplification/gpt2-2-12-evens"
     model = PeftModel.from_pretrained(model=model, 
                                       model_id=model_id, 
-                                      adapter_name=baseline_adapter,
-                                      is_trainable=False,
+                                      adapter_name=adapter_name,
                                       )
-
-    #print("#"*50)
-    print("Loaded PeFT model")
-    #print(model)
-    model.merge_and_unload()
-    #print("#"*50)
-    print("Merged PeFT model with base")
-    #print(model)
-    model.print_trainable_parameters()
+    
+    print("Loaded PeFT model for fine-tuning")
     current_model_name = f"gpt2-grade-{model_grade}-finetuned"
-
     wandb.init(project=f"Graded text simplification training", name=current_model_name)
 
-    model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
-    #print("#"*50)
-    print("Loaded trainable PeFT model")
     print(model)
     model.print_trainable_parameters()
     print("#"*50)
-    model.config.pad_token_id = tokenizer.eos_token_id
 
-    generation_config = GenerationConfig(max_length=256, 
-                                            max_new_tokens=256,
-                                            pad_token_id=tokenizer.eos_token_id,)
-    generation_config.save_pretrained("./generation_config")
+    model.config.pad_token_id = tokenizer.eos_token_id
     model.generation_config.pad_token_id = tokenizer.pad_token_id
 
     tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{model_grade}")
@@ -109,8 +93,6 @@ def main(model_grade):
         save_strategy="epoch",
         eval_strategy="epoch",
         output_dir=f"williamplacroix/text-simplification",
-        #overwrite_output_dir=True,
-        #save_total_limit=1,
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
@@ -135,7 +117,7 @@ def main(model_grade):
     )
 
     trainer.train()
-    trainer.push_to_hub(f"Finished training grade {model_grade}")
+    trainer.push_to_hub(f"Finished finetuning grade {model_grade}")
     wandb.finish()
     return
 
