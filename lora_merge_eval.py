@@ -50,7 +50,7 @@ def main(test_set_grade, model_a_proportion):
     print("#"*50)
     print("Loaded base model")
     
-    current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_merge_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
+    current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_dare-ties_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
     print(f"Model name: {current_model_name}")
     print(f"Model proportions: {weights[0]}:{weights[1]}")
     print("#"*50)
