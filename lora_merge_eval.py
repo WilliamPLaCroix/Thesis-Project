@@ -36,6 +36,7 @@ def main(test_set_grade, model_a_proportion):
     
     model_a_proportion = round(model_a_proportion/10, 1)
     model_b_proportion = round(1 - model_a_proportion, 1)
+    weights = [model_a_proportion, model_b_proportion]
     
     model_name = "openai-community/gpt2"
     config = AutoConfig.from_pretrained(model_name)
@@ -55,7 +56,7 @@ def main(test_set_grade, model_a_proportion):
     
     current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_merge_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
     print(f"Model name: {current_model_name}")
-    print(f"Model proportions: {model_a_proportion}:{model_b_proportion}")
+    print(f"Model proportions: {weights[0]}:{weights[1]}")
     print("#"*50)
 
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
@@ -64,11 +65,11 @@ def main(test_set_grade, model_a_proportion):
     
     model = PeftModel.from_pretrained(model, f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade-1}-4module", adapter_name="-1")
     print("Loaded trainable PeFT adapter -1")
-    _ = model.load_adapter(f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade+1}-4module", adapter_name="+1")
+    model.load_adapter(f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade+1}-4module", adapter_name="+1")
     print("Loaded secondary PeFT adapter +1")
 
     adapters = ["+1", "-1"]
-    weights = [model_a_proportion, model_b_proportion]
+    
     adapter_name = f"{test_set_grade-1}({int(model_a_proportion*100)})+{test_set_grade+1}({int(model_b_proportion*100)})={test_set_grade}"
     #density = 0.2
     model.add_weighted_adapter(adapters, weights, adapter_name)
