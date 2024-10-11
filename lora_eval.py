@@ -32,10 +32,6 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(model_grade, test_set_grade):
 
-    print(f"Running evaluation on model_grade: {model_grade}, test_set_grade: {test_set_grade}")
-    print("#"*50)
-
-    
     model_name = "openai-community/gpt2"
     config = AutoConfig.from_pretrained(model_name)
     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
@@ -99,6 +95,9 @@ def main(model_grade, test_set_grade):
 
     training_args = training_args.set_dataloader(train_batch_size=32, eval_batch_size=32)
     
+    print(f"Running evaluation on model_grade: {model_grade}, test_set_grade: {test_set_grade}")
+    print("#"*50)
+
     trainer = Trainer(
         model=model,
         args=training_args,

@@ -33,7 +33,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(test_set_grade, model_a_proportion):
     
-    print(f"Running merge evaluation on test_set_grade: {test_set_grade}")
+    
     
     model_a_proportion = round(model_a_proportion/10, 1)
     model_b_proportion = round(1 - model_a_proportion, 1)
@@ -105,7 +105,8 @@ def main(test_set_grade, model_a_proportion):
     )
     
     training_args = training_args.set_dataloader(train_batch_size=32, eval_batch_size=32)
-    
+    print(f"Running merge evaluation on test_set_grade: {test_set_grade}")
+    print("#"*50)
     trainer = Trainer(
         model=model,
         args=training_args,
