@@ -58,14 +58,9 @@ def main(model_grade, test_set_grade):
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
     else: ### here's where the magic happens
-        baseline_adapter = "williamplacroix/text-simplification/gpt2-2-12-evens"
-        model = PeftModel.from_pretrained(model, baseline_adapter)
-        print("Loaded PeFT model")
-        model.merge_and_unload()
-        print("Merged PeFT model with base")
-        finetuned_adapter = f"williamplacroix/text-simplification/gpt2-grade-{model_grade}-4module"
+        finetuned_adapter = f"williamplacroix/text-simplification/gpt2-grade-{model_grade}-finetuned"
         model = PeftModel.from_pretrained(model, finetuned_adapter)
-        print("Loaded trainable PeFT model")
+        print("Loaded PeFT model")
         print(model)
         print("#"*50)
         current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
