@@ -15,7 +15,7 @@ def finetune_adapters():
 def eval():
     import lora_eval
     #model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
-    model_grades = {-1, 2, 4, 6, 8, 10, 12} # temporary to skip baseline evals for late night ruyn
+    model_grades = {-1} # temporary to skip baseline evals for late night ruyn
     test_set_grades = {3, 5, 7, 9, 11}
     #model_test_combos = []
     # for grade in test_set_grades:
