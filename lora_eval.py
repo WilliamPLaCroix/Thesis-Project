@@ -112,6 +112,7 @@ def main(model_grade, test_set_grade):
         data_collator=data_collator,
         tokenizer=tokenizer,
     )
+    
     print("Begin evaluation :)")
     trainer.evaluate()
     wandb.finish()
