@@ -17,7 +17,6 @@ import sys
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -36,11 +35,9 @@ def main(model_grade, test_set_grade):
     print(f"Running evaluation on model_grade: {model_grade}, test_set_grade: {test_set_grade}")
     print("#"*50)
 
-    os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-
+    
     model_name = "openai-community/gpt2"
     config = AutoConfig.from_pretrained(model_name)
-
     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config,
@@ -61,7 +58,6 @@ def main(model_grade, test_set_grade):
         model = PeftModel.from_pretrained(model, adapters)
         current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
     else: ### here's where the magic happens
-        baseline_adapter = "gpt2-2-12-evens"
         baseline_adapter = "williamplacroix/text-simplification/gpt2-2-12-evens"
         model = PeftModel.from_pretrained(model, baseline_adapter)
         print("Loaded PeFT model")
@@ -73,7 +69,8 @@ def main(model_grade, test_set_grade):
         print(model)
         print("#"*50)
         current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
-
+    
+    os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
     wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
@@ -84,7 +81,7 @@ def main(model_grade, test_set_grade):
 
     tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{test_set_grade}")
 
-    print(f"Grade {model_grade}:", tokenized_dataset)
+    print(f"Grade {test_set_grade}:", tokenized_dataset)
     
     data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
  
