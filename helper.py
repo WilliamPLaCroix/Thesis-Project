@@ -3,8 +3,7 @@ import argparse
 
 def finetune_adapters():
     import lora_train
-    #model_grades = [2, 4, 6, 8, 10, 12]
-    model_grades = [4, 6, 8, 10, 12]
+    model_grades = [2, 4, 6, 8, 10, 12]
     for grade in model_grades:
         print("#"*50)
         print(f"LoRA run {grade}")
@@ -18,13 +17,6 @@ def eval():
     #model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
     model_grades = {2, 4, 6, 8, 10, 12}
     test_set_grades = {3, 5, 7, 9, 11}
-    #model_test_combos = []
-    # for grade in test_set_grades:
-    #     model_test_combos.append((-1, grade))
-    #     model_test_combos.append((0, grade))
-    #     model_test_combos.append((1, grade))
-    #     model_test_combos.append((grade - 1, grade))
-    #     model_test_combos.append((grade + 1, grade))
     
     model_test_combos = product(model_grades, test_set_grades)
     runs = len(model_grades) * len(test_set_grades)
