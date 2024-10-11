@@ -49,11 +49,6 @@ def main(test_set_grade, model_a_proportion):
                                                 )
     print("#"*50)
     print("Loaded base model")
-    baseline_adapter = "williamplacroix/text-simplification/gpt2-2-12-evens"
-    model = PeftModel.from_pretrained(model, baseline_adapter)
-    print("Loaded PeFT model")
-    model.merge_and_unload()
-    print("Merged PeFT model with base")
     
     current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_merge_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
     print(f"Model name: {current_model_name}")
@@ -64,9 +59,9 @@ def main(test_set_grade, model_a_proportion):
     wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
     
-    model = PeftModel.from_pretrained(model, f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade-1}-4module", adapter_name="-1")
+    model = PeftModel.from_pretrained(model, f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade-1}-finetuned", adapter_name="-1")
     print("Loaded trainable PeFT adapter -1")
-    model.load_adapter(f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade+1}-4module", adapter_name="+1")
+    model.load_adapter(f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade+1}-finetuned", adapter_name="+1")
     print("Loaded secondary PeFT adapter +1")
 
     adapters = ["+1", "-1"]
