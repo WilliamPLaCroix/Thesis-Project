@@ -1,3 +1,11 @@
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["WANDB_PROJECT"] = "Graded text simplification HF model tampering"  # name your W&B project
+os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+import warnings
+warnings.filterwarnings("ignore")
+import sys
+
 import pandas as pd
 from datasets import Dataset, load_dataset
 
@@ -12,15 +20,12 @@ from peft import LoraConfig
 from peft import get_peft_model
 # from peft import prepare_model_for_int8_training
 
-import sys
-import torch
-import os
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["WANDB_PROJECT"] = "Graded text simplification HF model tampering"  # name your W&B project
-os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
-import warnings
-warnings.filterwarnings("ignore")
+import torch
+
+
+
+
 
 from dotenv import load_dotenv
 load_dotenv()
