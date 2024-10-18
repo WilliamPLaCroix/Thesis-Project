@@ -1,9 +1,6 @@
 import os
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["WANDB_PROJECT"] = "Graded text simplification HF model tampering"  # name your W&B project
-os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 import warnings
-warnings.filterwarnings("ignore")
+
 import sys
 
 import pandas as pd
@@ -19,23 +16,20 @@ from transformers import GenerationConfig
 from peft import LoraConfig
 from peft import get_peft_model
 # from peft import prepare_model_for_int8_training
-
-
+from huggingface_hub import login
 import torch
-
-
-
-
+import wandb
 
 from dotenv import load_dotenv
 load_dotenv()
 
-import wandb
+
 wandb.login(key=os.getenv("wandb"))
-
-from huggingface_hub import login
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
-
+warnings.filterwarnings("ignore")
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["WANDB_PROJECT"] = "Graded text simplification HF model tampering"  # name your W&B project
+os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
 def main(N):
 
