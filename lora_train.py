@@ -64,7 +64,7 @@ def main(model_grade):
     #                         task_type="CAUSAL_LM",
     #                         lora_dropout=0.01,
     #                         )
-    adapter_name = f"gpt2-grade-{model_grade}-finetuned"
+    adapter_name = f"llama37b-grade-{model_grade}-finetuned"
     model_id = "williamplacroix/text-simplification/gpt2-2-12-evens"
     model = PeftModel.from_pretrained(model=model, 
                                       model_id=model_id, 
