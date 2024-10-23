@@ -31,11 +31,14 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 
 def main(model_grade):
+    """
+    :)
+    """
 
     os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
-    model_name = "openai-community/gpt2"
+    model_name = "meta-llama/Meta-Llama-3-8B"
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
     tokenizer.pad_token = tokenizer.eos_token
@@ -121,5 +124,5 @@ def main(model_grade):
 
 if __name__ == "__main__":
     assert int(sys.argv[1]) in {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, "Must include an integer grade as an argument"
-    model_grade = int(sys.argv[1])
-    main(model_grade)
+    grade = int(sys.argv[1])
+    main(grade)
