@@ -2,12 +2,12 @@ from itertools import product
 import argparse
 
 def finetune_adapters():
-    import lora_train
+    import lora_finetune
     model_grades = [2, 4, 6, 8, 10, 12]
     for grade in model_grades:
         print("#"*50)
         print(f"LoRA run {grade}")
-        lora_train.main(grade)
+        lora_finetune.main(grade)
         print("#"*50)
         print(f"Training complete")
         print("#"*50)
