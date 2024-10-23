@@ -90,7 +90,8 @@ def main(mode):
     lora_config = LoraConfig(
                             r=8,
                             lora_alpha=32,
-                            target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'],
+                            # target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'], # only valid for gpt2
+                            target_modules=['mlp', 'self_attn', 'lm_head', 'q_proj', 'k_proj', 'v_proj', 'c_proj', 'c_attn'],
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
@@ -102,6 +103,7 @@ def main(mode):
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
     print(model)
     model.print_trainable_parameters()
+    return
     model.config.pad_token_id = tokenizer.eos_token_id
 
     generation_config = GenerationConfig(max_length=256, 
