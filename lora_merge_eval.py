@@ -34,7 +34,6 @@ def main(test_set_grade, model_a_proportion):
     :) Docstring goes here
     """
     
-    
     model_a_proportion = round(model_a_proportion/10, 1)
     model_b_proportion = round(1 - model_a_proportion, 1)
     weights = [model_a_proportion, model_b_proportion]
@@ -43,14 +42,13 @@ def main(test_set_grade, model_a_proportion):
     model_name = "openai-community/gpt2"
     config = AutoConfig.from_pretrained(model_name)
     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
-    model = AutoModelForCausalLM.from_pretrained(model_name, 
+    model = AutoModelForCausalLM.from_pretrained(model_name,
                                                 config=config,
                                                 quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
                                                 )
     print("#"*50)
     print("Loaded base model")
-    
     current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_dare-ties-d{density}_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
     print(f"Model name: {current_model_name}")
     print(f"Model proportions: {weights[0]}:{weights[1]}")
@@ -59,14 +57,12 @@ def main(test_set_grade, model_a_proportion):
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
     wandb.init(project="Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
-    
     model = PeftModel.from_pretrained(model, f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade-1}-finetuned", adapter_name="-1")
     print("Loaded trainable PeFT adapter -1")
     model.load_adapter(f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade+1}-finetuned", adapter_name="+1")
     print("Loaded secondary PeFT adapter +1")
 
     adapters = ["+1", "-1"]
-    
     adapter_name = f"{test_set_grade-1}({int(model_a_proportion*100)})+{test_set_grade+1}({int(model_b_proportion*100)})={test_set_grade}"
 
     model.add_weighted_adapter(adapters, 
@@ -108,7 +104,7 @@ def main(test_set_grade, model_a_proportion):
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
-    
+
     training_args = training_args.set_dataloader(train_batch_size=32, eval_batch_size=32)
     print(f"Running merge evaluation on test_set_grade: {test_set_grade}")
     print("#"*50)
@@ -124,7 +120,6 @@ def main(test_set_grade, model_a_proportion):
     print("Begin evaluation :)")
     trainer.evaluate()
     wandb.finish()
-    return
 
 if __name__ == "__main__":
     t_grade = int(sys.argv[1])
