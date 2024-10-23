@@ -91,7 +91,7 @@ def main(mode):
                             r=8,
                             lora_alpha=32,
                             # target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'], # only valid for gpt2
-                            target_modules=['mlp', 'self_attn', 'lm_head'], #, 'q_proj', 'k_proj', 'v_proj', 'c_proj', 'c_attn'],
+                            target_modules=['lm_head', 'q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj'],
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
