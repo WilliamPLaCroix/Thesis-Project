@@ -83,6 +83,7 @@ def main(mode):
                                                 config=config,
                                                 quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
+                                                device_map="auto",
                                                 )
     #print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
@@ -154,6 +155,6 @@ def main(mode):
     return
 
 if __name__ == "__main__":
-    mode = sys.argv[1]
-    assert mode in {"all", "evens"}, "Invalid mode. Must be 'all' or 'evens'"
-    main(mode)
+    all_evens = sys.argv[1]
+    assert all_evens in {"all", "evens"}, "Invalid mode. Must be 'all' or 'evens'"
+    main(all_evens)
