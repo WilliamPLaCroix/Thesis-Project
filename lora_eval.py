@@ -1,3 +1,10 @@
+"""
+:)
+"""
+import sys
+import os
+import warnings
+
 from datasets import load_dataset
 
 from transformers import TrainingArguments
@@ -11,23 +18,15 @@ from transformers import BitsAndBytesConfig
 # from peft import LoraConfig
 # from peft import get_peft_model
 from peft import PeftModel
-
-import sys
-import os
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-import warnings
-warnings.filterwarnings("ignore")
-
 from dotenv import load_dotenv
-load_dotenv()
-
 import wandb
-wandb.login(key=os.getenv("wandb"))
-
 from huggingface_hub import login
-login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+warnings.filterwarnings("ignore")
+load_dotenv()
+wandb.login(key=os.getenv("wandb"))
+login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(model_grade, test_set_grade):
 
@@ -61,7 +60,7 @@ def main(model_grade, test_set_grade):
         current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
     
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-    wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
+    wandb.init(project="Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
     tokenizer.pad_token = tokenizer.eos_token
@@ -79,7 +78,7 @@ def main(model_grade, test_set_grade):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=f"williamplacroix/text-simplification",
+        output_dir="williamplacroix/text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
@@ -112,6 +111,6 @@ def main(model_grade, test_set_grade):
     return
 
 if __name__ == "__main__":
-    model_grade = int(sys.argv[1])
-    test_set_grade = int(sys.argv[2])
-    main(model_grade, test_set_grade)
+    m_grade = int(sys.argv[1])
+    t_grade = int(sys.argv[2])
+    main(m_grade, t_grade)

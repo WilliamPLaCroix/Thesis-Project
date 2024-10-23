@@ -1,3 +1,10 @@
+"""
+:)
+"""
+import sys
+import os
+import warnings
+
 from datasets import load_dataset
 
 from transformers import TrainingArguments
@@ -11,27 +18,21 @@ from transformers import BitsAndBytesConfig
 # from peft import LoraModel, LoraConfig
 # from peft import get_peft_model
 from peft import PeftModel
-
-
-import sys
-import os
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-import warnings
-warnings.filterwarnings("ignore")
-
 from dotenv import load_dotenv
-load_dotenv()
-
 import wandb
-wandb.login(key=os.getenv("wandb"))
-
 from huggingface_hub import login
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+warnings.filterwarnings("ignore")
+load_dotenv()
+wandb.login(key=os.getenv("wandb"))
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 
 def main(test_set_grade, model_a_proportion):
-    
+    """
+    :) Docstring goes here
+    """
     
     
     model_a_proportion = round(model_a_proportion/10, 1)
@@ -56,7 +57,7 @@ def main(test_set_grade, model_a_proportion):
     print("#"*50)
 
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-    wandb.init(project=f"Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
+    wandb.init(project="Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
 
     
     model = PeftModel.from_pretrained(model, f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade-1}-finetuned", adapter_name="-1")
@@ -95,7 +96,7 @@ def main(test_set_grade, model_a_proportion):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=f"williamplacroix/text-simplification",
+        output_dir="williamplacroix/text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
@@ -126,6 +127,6 @@ def main(test_set_grade, model_a_proportion):
     return
 
 if __name__ == "__main__":
-    test_set_grade = int(sys.argv[1])
-    model_a_proportion = round(int(sys.argv[2])/10, 1)
-    main(test_set_grade, model_a_proportion)
+    t_grade = int(sys.argv[1])
+    proportion = round(int(sys.argv[2])/10, 1)
+    main(t_grade, proportion)

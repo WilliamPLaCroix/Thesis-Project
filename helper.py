@@ -9,10 +9,10 @@ def finetune_adapters():
         print(f"LoRA run {grade}")
         lora_finetune.main(grade)
         print("#"*50)
-        print(f"Training complete")
+        print("Training complete")
         print("#"*50)
 
-def eval():
+def evaluate():
     import lora_eval
     #model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
     model_grades = {0, 1, 2, 4, 6, 8, 10, 12}
@@ -26,7 +26,7 @@ def eval():
         print(f"LoRA run {i+1}/{runs}")
         lora_eval.main(model_grade, test_set_grade)
         print("#"*50)
-        print(f"Evaluation complete")
+        print("Evaluation complete")
         print("#"*50)
     
 def merge_eval():
@@ -40,7 +40,7 @@ def merge_eval():
         print(f"Merge LoRA run {i+1}/{runs}")
         lora_merge_eval.main(test_set_grades, mixing_proportions)
         print("#"*50)
-        print(f"Evaluation complete")
+        print("Evaluation complete")
         print("#"*50)
 
 def pretrain_baseline():
@@ -50,7 +50,7 @@ def pretrain_baseline():
         print(f"Training baseline {mode}")
         lora_baseline_adapter.main(mode)
         print("#"*50)
-        print(f"Training complete")
+        print("Training complete")
         print("#"*50)
 
 def main():
@@ -65,11 +65,11 @@ def main():
     if args.mode == "t":
         finetune_adapters()
     elif args.mode == "e":
-        eval()
+        evaluate()
     elif args.mode == "em":
         merge_eval()
     elif args.mode == "ea":
-        eval()
+        evaluate()
         merge_eval()
     elif args.mode == "b":
         pretrain_baseline()
