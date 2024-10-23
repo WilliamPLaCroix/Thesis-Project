@@ -1,3 +1,9 @@
+"""
+Hi:)
+"""
+import sys
+import os
+import warnings
 import pandas as pd
 from datasets import Dataset, DatasetDict
 from datasets import concatenate_datasets
@@ -13,22 +19,16 @@ from transformers import BitsAndBytesConfig
 
 from peft import LoraConfig
 from peft import get_peft_model
+from dotenv import load_dotenv
+import wandb
+from huggingface_hub import login
 
-import sys
-import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-
-import warnings
 warnings.filterwarnings("ignore")
-
-from dotenv import load_dotenv
 load_dotenv()
-
-import wandb
 wandb.login(key=os.getenv("wandb"))
 
-from huggingface_hub import login
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(mode):
