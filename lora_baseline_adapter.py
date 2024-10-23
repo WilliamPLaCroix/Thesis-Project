@@ -35,7 +35,7 @@ def main(mode):
 
     data_location = './data/wikilarge/'
 
-    model_name = "openai-community/gpt2"
+    model_name = "meta-llama/Meta-Llama-3-8B" # llama37b
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
@@ -71,9 +71,9 @@ def main(mode):
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
-    """
-    Below function tokenizes parallel corpus into target only inputs for fine-tuning
-    """
+    
+    # * Below function tokenizes parallel corpus into target only inputs for fine-tuning
+    
     def tokenize_function(examples):
         return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
 
@@ -95,9 +95,9 @@ def main(mode):
                             lora_dropout=0.01,
                             )
     
-    current_model_name = f"gpt2-2-12-{mode}"
+    current_model_name = f"llama37b-2-12-{mode}"
 
-    wandb.init(project=f"Graded text simplification training", name=current_model_name)
+    wandb.init(project="Graded text simplification training", name=current_model_name)
 
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
     print(model)
@@ -123,7 +123,7 @@ def main(mode):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=f"williamplacroix/text-simplification",
+        output_dir="williamplacroix/text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
@@ -148,7 +148,7 @@ def main(mode):
     )
 
     trainer.train()
-    trainer.push_to_hub(f"Finished 2-12 grades: {mode} pretraining")
+    trainer.push_to_hub(f"Finished llama37b 2-12 grades: {mode} pretraining")
     wandb.finish()
     return
 
