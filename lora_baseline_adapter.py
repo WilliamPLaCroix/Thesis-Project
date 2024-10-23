@@ -35,7 +35,7 @@ def main(mode):
 
     data_location = './data/wikilarge/'
 
-    model_name = "meta-llama/Meta-Llama-3-8B" # llama37b
+    model_name = "meta-llama/Meta-Llama-3-8B" # llama38b
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
@@ -91,19 +91,18 @@ def main(mode):
                             r=8,
                             lora_alpha=32,
                             # target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'], # only valid for gpt2
-                            target_modules=['lm_head', 'q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj'],
+                            target_modules=['lm_head', 'q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj'], # only valid for llama38b
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
     
-    current_model_name = f"llama37b-2-12-{mode}"
+    current_model_name = f"llama38b-2-12-{mode}"
 
     wandb.init(project="Graded text simplification training", name=current_model_name)
 
     model = get_peft_model(model=model, peft_config=lora_config, adapter_name=current_model_name)
     print(model)
     model.print_trainable_parameters()
-    return
     model.config.pad_token_id = tokenizer.eos_token_id
 
     generation_config = GenerationConfig(max_length=256, 
