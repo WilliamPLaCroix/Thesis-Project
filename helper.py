@@ -1,3 +1,6 @@
+"""
+:)
+"""
 from itertools import product
 import argparse
 
@@ -58,7 +61,12 @@ def main():
                     prog='Text simplification helper script',
                     description='Helper script for training and evaluating text simplification models',
                     epilog='Enjoy training! :)')
-    parser.add_argument('-m', '--mode', type=str, help='Must be "b", "t", "ta", "e", or "em"', dest='mode', required=True)
+    parser.add_argument('-m', '--mode',
+                        type=str,
+                        help='Must be "b", "t", "ta", "e", or "em"',
+                        dest='mode',
+                        required=True,
+                        )
     args = parser.parse_args()
 
 
@@ -78,7 +86,6 @@ def main():
         finetune_adapters()
     else:
         print('Invalid mode. Must be "b", "t", "ta", "e", or "em"')
-    
 
 if __name__ == "__main__":
     main()
