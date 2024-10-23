@@ -1,5 +1,11 @@
-from datasets import load_dataset
+"""
+:)
+"""
+import sys
+import os
+import warnings
 
+from datasets import load_dataset
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
 from transformers import AutoConfig
@@ -11,24 +17,15 @@ from transformers import BitsAndBytesConfig
 # from peft import LoraConfig
 # from peft import get_peft_model
 from peft import PeftModel#, PeftConfig
-
-import sys
-import os
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-
-import warnings
-warnings.filterwarnings("ignore")
-
 from dotenv import load_dotenv
-load_dotenv()
-
 import wandb
-wandb.login(key=os.getenv("wandb"))
-
 from huggingface_hub import login
-login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+warnings.filterwarnings("ignore")
+load_dotenv()
+wandb.login(key=os.getenv("wandb"))
+login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(model_grade):
     """
@@ -120,7 +117,6 @@ def main(model_grade):
     trainer.train()
     trainer.push_to_hub(f"Finished finetuning grade {model_grade}")
     wandb.finish()
-    return
 
 if __name__ == "__main__":
     assert int(sys.argv[1]) in {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, "Must include an integer grade as an argument"
