@@ -8,11 +8,10 @@ from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
 from transformers import BitsAndBytesConfig
 
-from peft import LoraConfig
-from peft import get_peft_model
+# from peft import LoraConfig
+# from peft import get_peft_model
 from peft import PeftModel
 
-import torch
 import sys
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"

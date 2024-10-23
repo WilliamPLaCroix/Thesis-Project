@@ -15,7 +15,6 @@ from peft import LoraConfig
 from peft import get_peft_model
 
 import sys
-import torch
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints

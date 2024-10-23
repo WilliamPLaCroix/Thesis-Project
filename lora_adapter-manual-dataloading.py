@@ -3,8 +3,7 @@ import warnings
 
 import sys
 
-import pandas as pd
-from datasets import Dataset, load_dataset
+from datasets import load_dataset
 
 from transformers import TrainingArguments
 from transformers import AutoTokenizer

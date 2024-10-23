@@ -1,5 +1,4 @@
-import pandas as pd
-from datasets import Dataset, load_dataset
+from datasets import load_dataset
 
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
@@ -7,15 +6,13 @@ from transformers import AutoConfig
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
-from transformers import GenerationConfig
 from transformers import BitsAndBytesConfig
 
-from peft import LoraConfig
-from peft import get_peft_model
-from peft import PeftModel, PeftConfig
+# from peft import LoraConfig
+# from peft import get_peft_model
+from peft import PeftModel#, PeftConfig
 
 import sys
-import torch
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -74,7 +71,7 @@ def main(model_grade):
     
     print("Loaded PeFT model for finetuning")
     current_model_name = f"gpt2-grade-{model_grade}-finetuned"
-    wandb.init(project=f"Graded text simplification training", name=current_model_name)
+    wandb.init(project="Graded text simplification training", name=current_model_name)
 
     print(model)
     model.print_trainable_parameters()
@@ -93,7 +90,7 @@ def main(model_grade):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=f"williamplacroix/text-simplification",
+        output_dir="williamplacroix/text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B

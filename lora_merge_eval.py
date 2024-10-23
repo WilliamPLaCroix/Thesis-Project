@@ -1,4 +1,4 @@
-from datasets import Dataset, load_dataset
+from datasets import load_dataset
 
 from transformers import TrainingArguments
 from transformers import AutoTokenizer
@@ -8,13 +8,12 @@ from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
 from transformers import BitsAndBytesConfig
 
-from peft import LoraModel, LoraConfig
-from peft import get_peft_model
+# from peft import LoraModel, LoraConfig
+# from peft import get_peft_model
 from peft import PeftModel
 
 
 import sys
-import torch
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
