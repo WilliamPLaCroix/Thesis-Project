@@ -31,11 +31,15 @@ wandb.login(key=os.getenv("wandb"))
 
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
-def main(mode):
+def main(mode, model_to_use="llama38b"):
 
     data_location = './data/wikilarge/'
-
-    model_name = "meta-llama/Meta-Llama-3-8B" # llama38b
+    if model_to_use == "llama38b":
+        model_name = "meta-llama/Meta-Llama-3-8B" # llama38b
+        modules = ['lm_head', 'q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj']
+    else: # model_to_use == "gpt2":
+        model_name = "openai-community/gpt2"
+        modules = ['lm_head', 'c_attn', 'c_fc', 'c_proj']
 
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
@@ -91,8 +95,7 @@ def main(mode):
     lora_config = LoraConfig(
                             r=8,
                             lora_alpha=32,
-                            # target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'], # only valid for gpt2
-                            target_modules=['lm_head', 'q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj'], # only valid for llama38b
+                            target_modules=modules,
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
@@ -150,7 +153,7 @@ def main(mode):
     )
 
     trainer.train()
-    trainer.push_to_hub(f"Finished llama37b 2-12 grades: {mode} pretraining")
+    trainer.push_to_hub(f"Finished llama38b 2-12 grades: {mode} pretraining")
     wandb.finish()
     return
 
