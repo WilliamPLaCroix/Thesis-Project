@@ -90,11 +90,11 @@ def main():
     #                         lora_dropout=0.01,
     #                         )
 
-    adapter_name = "llama38b-2-12-evens"
-    model_id = "./williamplacroix/text-simplification/checkpoint-6044"
+    #adapter_name = "llama38b-2-12-evens"
+    model_id = "./williamplacroix/text-simplification/checkpoint-6044/llama38b-2-12-evens"
     model = PeftModel.from_pretrained(model=model, 
                                       model_id=model_id, 
-                                      adapter_name=adapter_name,
+                                      #adapter_name=adapter_name,
                                       is_trainable=True,
                                       )
     
