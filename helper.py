@@ -48,7 +48,7 @@ def merge_eval():
 
 def pretrain_baseline():
     import lora_baseline_adapter
-    for mode in ["all", "evens"]:
+    for mode in ["evens"]:
         print("#"*50)
         print(f"Training baseline {mode}")
         lora_baseline_adapter.main(mode)
