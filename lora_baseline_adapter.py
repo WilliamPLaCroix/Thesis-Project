@@ -31,10 +31,12 @@ wandb.login(key=os.getenv("wandb"))
 
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
-def main(mode, model_to_use="llama38b"):
+def main(mode, model_to_use="llama"):
+
+    assert model_to_use in {"llama", "gpt2"}, "Invalid model. Must be 'llama' or 'gpt2'"
 
     data_location = './data/wikilarge/'
-    if model_to_use == "llama38b":
+    if model_to_use == "llama":
         model_name = "meta-llama/Meta-Llama-3-8B" # llama38b
         modules = ['lm_head', 'q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj']
     else: # model_to_use == "gpt2":
@@ -128,7 +130,7 @@ def main(mode, model_to_use="llama38b"):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir="williamplacroix/text-simplification",
+        output_dir="williamplacroix/llama-text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
