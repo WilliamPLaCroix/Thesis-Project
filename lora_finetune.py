@@ -103,7 +103,7 @@ def main(model_grade):
         remove_unused_columns=False,
     )
 
-    training_args = training_args.set_dataloader(train_batch_size=32, eval_batch_size=32)
+    training_args = training_args.set_dataloader(train_batch_size=16, eval_batch_size=16)
 
     trainer = Trainer(
         model=model,
