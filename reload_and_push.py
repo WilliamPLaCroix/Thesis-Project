@@ -91,7 +91,7 @@ def main():
     #                         )
 
     adapter_name = "llama38b-2-12-evens"
-    model_id = "williamplacroix/text-simplification/checkpoint-6044 "
+    model_id = "williamplacroix/text-simplification/checkpoint-6044"
     model = PeftModel.from_pretrained(model=model, 
                                       model_id=model_id, 
                                       adapter_name=adapter_name,
