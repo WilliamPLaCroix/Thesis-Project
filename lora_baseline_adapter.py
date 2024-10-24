@@ -136,7 +136,7 @@ def main(mode, model_to_use="llama38b"):
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=5,
+        num_train_epochs=1,
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
