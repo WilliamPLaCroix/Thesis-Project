@@ -18,7 +18,7 @@ def finetune_adapters():
 def evaluate():
     import lora_eval
     #model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
-    model_grades = {0, 1, 2, 4, 6, 8, 10, 12}
+    model_grades = {1, 2, 4, 6, 8, 10, 12}
     test_set_grades = {3, 5, 7, 9, 11}
     
     model_test_combos = product(model_grades, test_set_grades)
