@@ -91,6 +91,7 @@ def main(model_grade):
         save_strategy="epoch",
         eval_strategy="epoch",
         output_dir="williamplacroix/llama-text-simplification",
+        overwrite_output_dir=True,
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
@@ -98,7 +99,7 @@ def main(model_grade):
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=1, 
+        num_train_epochs=5, 
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
