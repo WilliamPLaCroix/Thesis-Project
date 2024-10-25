@@ -30,7 +30,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(model_grade, test_set_grade):
 
-    model_name = "openai-community/gpt2"
+    model_name = "meta-llama/Meta-Llama-3-8B"
     config = AutoConfig.from_pretrained(model_name)
     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
