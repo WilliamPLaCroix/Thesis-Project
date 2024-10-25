@@ -41,23 +41,23 @@ def main(model_grade, test_set_grade):
     print("#"*50)
     print("Loaded base model")
     
-    if model_grade == -1:
-        current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
-    elif model_grade == 0:
-        adapters = "williamplacroix/text-simplification/gpt2-2-12-all"
+    # if model_grade == -1: # ! deprecated with new llama model
+    #     current_model_name = f"gpt2-base-eval-on-grade-{test_set_grade}"
+    # elif model_grade == 0: # ! deprecated with new llama model
+    #     adapters = "williamplacroix/text-simplification/gpt2-2-12-all"
+    #     model = PeftModel.from_pretrained(model, adapters)
+    #     current_model_name = f"gpt2-2-12-all_eval-on-grade-{test_set_grade}"
+    if model_grade == 1:
+        adapters = "williamplacroix/llama-text-simplification/llama38b-2-12-evens"
         model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-2-12-all_eval-on-grade-{test_set_grade}"
-    elif model_grade == 1:
-        adapters = "williamplacroix/text-simplification/gpt2-2-12-evens"
-        model = PeftModel.from_pretrained(model, adapters)
-        current_model_name = f"gpt2-2-12-evens_eval-on-grade-{test_set_grade}"
-    else: ### here's where the magic happens
-        finetuned_adapter = f"williamplacroix/text-simplification/gpt2-grade-{model_grade}-finetuned"
+        current_model_name = f"llama38b-2-12-evens_eval-on-grade-{test_set_grade}"
+    else: # * here's where the magic happens
+        finetuned_adapter = f"williamplacroix/llama-text-simplification/llama38b-grade-{model_grade}-finetuned"
         model = PeftModel.from_pretrained(model, finetuned_adapter)
         print("Loaded PeFT model")
         print(model)
         print("#"*50)
-        current_model_name = f"gpt2-grade-{model_grade}_eval-on-grade-{test_set_grade}"
+        current_model_name = f"llama38b-grade-{model_grade}_eval-on-grade-{test_set_grade}"
     
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
     wandb.init(project="Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
@@ -78,7 +78,7 @@ def main(model_grade, test_set_grade):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir="williamplacroix/text-simplification",
+        output_dir="williamplacroix/llama-text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
