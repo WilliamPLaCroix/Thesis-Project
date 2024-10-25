@@ -62,7 +62,7 @@ def main(model_grade):
     #                         lora_dropout=0.01,
     #                         )
     adapter_name = f"llama38b-grade-{model_grade}-finetuned"
-    model_id = "williamplacroix/text-simplification/llama38b-2-12-evens"
+    model_id = "williamplacroix/llama-text-simplification/llama38b-2-12-evens"
     model = PeftModel.from_pretrained(model=model, 
                                       model_id=model_id, 
                                       adapter_name=adapter_name,
@@ -90,7 +90,7 @@ def main(model_grade):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir="williamplacroix/text-simplification",
+        output_dir="williamplacroix/llama-text-simplification",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
