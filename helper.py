@@ -3,6 +3,7 @@
 """
 from itertools import product
 import argparse
+from importlib import reload
 
 def finetune_adapters():
     import lora_finetune
@@ -14,6 +15,7 @@ def finetune_adapters():
         print("#"*50)
         print("Training complete")
         print("#"*50)
+        #reload(lora_finetune)
 
 def evaluate():
     import lora_eval
