@@ -21,12 +21,6 @@ from dotenv import load_dotenv
 import wandb
 from huggingface_hub import login
 
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-warnings.filterwarnings("ignore")
-load_dotenv()
-wandb.login(key=os.getenv("wandb"))
-login(token=os.getenv("huggingface"), add_to_git_credential=True)
-
 def main(model_grade):
     """
     TODO Add docstring
@@ -119,6 +113,13 @@ def main(model_grade):
     wandb.finish()
 
 if __name__ == "__main__":
+
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    warnings.filterwarnings("ignore")
+    load_dotenv()
+    wandb.login(key=os.getenv("wandb"))
+    login(token=os.getenv("huggingface"), add_to_git_credential=True)
+
     assert int(sys.argv[1]) in {
                                 -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
                                 }, "Must include an integer grade as an argument"

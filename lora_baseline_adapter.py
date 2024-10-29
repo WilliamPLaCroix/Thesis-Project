@@ -23,14 +23,6 @@ from dotenv import load_dotenv
 import wandb
 from huggingface_hub import login
 
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-warnings.filterwarnings("ignore")
-load_dotenv()
-wandb.login(key=os.getenv("wandb"))
-
-login(token=os.getenv("huggingface"), add_to_git_credential=True)
-
 def main(mode, model_to_use="llama"):
     """
     TODO: Add docstring
@@ -182,6 +174,14 @@ def main(mode, model_to_use="llama"):
     wandb.finish()
 
 if __name__ == "__main__":
+
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+    warnings.filterwarnings("ignore")
+    load_dotenv()
+    wandb.login(key=os.getenv("wandb"))
+    login(token=os.getenv("huggingface"), add_to_git_credential=True)
+
     all_evens = sys.argv[1]
     assert all_evens in {"all", "evens"}, "Invalid mode. Must be 'all' or 'evens'"
     main(all_evens)

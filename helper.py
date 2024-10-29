@@ -12,6 +12,11 @@ Tasks include:
 args: -m / --mode = {"b", "t", "ta", "e", "ea", "em"}
 return: None
 """
+import os
+import warnings
+from dotenv import load_dotenv
+from huggingface_hub import login
+import wandb
 from itertools import product
 from argparse import ArgumentParser
 from argparse import Namespace
@@ -129,6 +134,14 @@ def main() -> None:
     args: None
     return: None
     """
+
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+    warnings.filterwarnings("ignore")
+    load_dotenv()
+    wandb.login(key=os.getenv("wandb"))
+    login(token=os.getenv("huggingface"), add_to_git_credential=True)
+
     parser: ArgumentParser = ArgumentParser(
                 prog='Text simplification helper script',
                 description='Helper script for training and evaluating text simplification models',
