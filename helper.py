@@ -5,7 +5,7 @@ from itertools import product
 import argparse
 # from importlib import reload
 
-def finetune_adapters():
+def finetune_adapters() -> None:
     import lora_finetune
     """
     Function finetunes adapters() takes the even level pretrained baseline
@@ -26,7 +26,7 @@ def finetune_adapters():
         print("#"*50)
         #reload(lora_finetune)
 
-def evaluate():
+def evaluate() -> None:
     import lora_eval
     """
     Function evaluate() plots loss on unseen odd grade level datasets
@@ -54,7 +54,7 @@ def evaluate():
         print("Evaluation complete")
         print("#"*50)
     
-def merge_eval():
+def merge_eval() -> None:
     import lora_merge_eval
     """
     Function merge_eval() evaluates adjacent merged models against their respective test sets.
@@ -79,7 +79,7 @@ def merge_eval():
         print("Evaluation complete")
         print("#"*50)
 
-def pretrain_baseline():
+def pretrain_baseline() -> None:
     import lora_baseline_adapter
     """
     Function pretrain_baseline() trains the even level baseline model.
@@ -103,7 +103,7 @@ def pretrain_baseline():
         print("Training complete")
         print("#"*50)
 
-def main():
+def main() -> None:
     """
     Responsible for parsing command line arguments and calling the appropriate function.
     argparse _should_ prevent invalid arguments from being passed.
