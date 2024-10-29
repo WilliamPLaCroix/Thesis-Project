@@ -119,7 +119,7 @@ def merge_eval() -> None:
     for i, (test_set_grades, mixing_proportions) in enumerate(model_test_combos):
         print("#"*50)
         print(f"Merge LoRA run {i+1}/{runs}")
-        eval.main(test_set_grades, mixing_proportions)
+        eval.main(test_set_grades, mixing_proportions) # TODO: Fix this function to accept the correct arguments
         print("#"*50)
         print("Evaluation complete")
         print("#"*50)
@@ -191,12 +191,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
-
-model_grade: int=2,
-test_set_grade: int=3,
-model_a_proportion: int=5,
-base_model: str="llama38b",
-merge: bool=False,
-merge_method: str="dare_ties"
