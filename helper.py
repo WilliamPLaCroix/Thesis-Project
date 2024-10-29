@@ -1,5 +1,14 @@
 """
-:)
+Helper script for training and evaluating LoRA models.
+Useful for running multiple training and evaluation runs in sequence.
+Tasks include:
+- Pretraining the baseline model on even grade levels 2-12
+- Finetuning adapters on even grade levels 2-12
+- Evaluating models on unseen odd grade levels 3-11
+- Merging adjacent models and evaluating the merged models
+
+args: -m / --mode = {"b", "t", "ta", "e", "ea", "em"}
+return: None
 """
 from itertools import product
 from argparse import ArgumentParser
@@ -142,7 +151,7 @@ def main() -> None:
             pretrain_baseline()
             finetune_adapters()
         case _:
-            print('Invalid mode. Must be "b", "t", "ta", "e", or "em"')
+            print('Invalid mode. Must be "b", "t", "ta", "e", "ea", or "em"')
 
     # if args.mode == "t":
     #     finetune_adapters()
