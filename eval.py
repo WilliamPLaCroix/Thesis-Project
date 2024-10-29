@@ -6,15 +6,10 @@ import os
 import warnings
 
 from datasets import load_dataset
-
-from transformers import TrainingArguments
-from transformers import AutoTokenizer
-from transformers import AutoConfig
-from transformers import AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
+from transformers import Trainer, TrainingArguments
 from transformers import DataCollatorForSeq2Seq
-from transformers import Trainer
 from transformers import BitsAndBytesConfig
-
 # from peft import LoraModel, LoraConfig
 # from peft import get_peft_model
 from peft import PeftModel
@@ -145,6 +140,10 @@ def main(model_grade: int=2,
     )
 
     print("Begin evaluation :3")
+    # ! test line
+    print("Mission accomplished")
+    return
+    # ! end test line
     trainer.evaluate()
     wandb.finish()
 
