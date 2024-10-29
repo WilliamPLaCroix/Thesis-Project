@@ -22,24 +22,23 @@ from dotenv import load_dotenv
 import wandb
 from huggingface_hub import login
 
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-warnings.filterwarnings("ignore")
-load_dotenv()
-wandb.login(key=os.getenv("wandb"))
-login(token=os.getenv("huggingface"), add_to_git_credential=True)
-
-
-def main(test_set_grade, model_a_proportion):
+def main(model_grade: int=2,
+         test_set_grade: int=3,
+         model_a_proportion: int=5,
+         base_model: str="llama38b",
+         merge: bool=False,
+         merge_method: str="dare_ties") -> None:
     """
     TODO: Add docstring
     """
-    
-    model_a_proportion = round(model_a_proportion/10, 1)
-    model_b_proportion = round(1 - model_a_proportion, 1)
-    weights = [model_a_proportion, model_b_proportion]
-    density = 0.5
-    
-    model_name = "openai-community/gpt2"
+    base_model_aliases: dict[str] = {"llama38b": "meta-llama/Meta-Llama-3-8B",
+                                    "gpt2": "openai-community/gpt2",
+                                    }
+    repo: dict = {"llama38b": "williamplacroix/llama-text-simplification",
+                  "gpt2": "williamplacroix/text-simplification",
+                  }
+    repo_name: str = repo[base_model]
+    model_name: str = base_model_aliases[base_model]
     config = AutoConfig.from_pretrained(model_name)
     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name,
@@ -49,38 +48,50 @@ def main(test_set_grade, model_a_proportion):
                                                 )
     print("#"*50)
     print("Loaded base model")
-    # TODO: refactor with model aliases for longterm maintainability
-    # TODO: find a way to condense model name declaration
-    current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_dare-ties-d{density}_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
-    print(f"Model name: {current_model_name}")
-    print(f"Model proportions: {weights[0]}:{weights[1]}")
-    print("#"*50)
 
-    os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-    wandb.init(project="Graded text simplification evaluation",
-               group=f"Grade: {test_set_grade}",
-               name=current_model_name)
-
-    model = PeftModel.from_pretrained(model,
-                                      f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade-1}-finetuned",
+    if merge is True:
+        model_a_grade: int = test_set_grade-1
+        model_a_proportion: float = round(model_a_proportion/10, 1)
+        model_b_grade: int = test_set_grade+1
+        model_b_proportion: float = round(1 - model_a_proportion, 1)
+        weights: list[float] = [model_a_proportion, model_b_proportion]
+        density: float = 0.5
+        model_a_proportion: int = int(model_a_proportion*100)
+        model_b_proportion: int = int(model_b_proportion*100)
+        current_model_name: str = f"g{model_a_grade}-{model_a_proportion}_{merge_method}-d{density}_g{model_b_grade}-{model_b_proportion}_eval-on-g{test_set_grade}"
+        print(f"Model name: {current_model_name}")
+        print(f"Model proportions: {weights[0]}:{weights[1]}")
+        model: PeftModel = PeftModel.from_pretrained(model,
+                                      f"{repo_name}/{base_model}-grade-{test_set_grade-1}-finetuned",
                                       adapter_name="-1")
-    print("Loaded trainable PeFT adapter -1")
-    model.load_adapter(f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade+1}-finetuned",
-                       adapter_name="+1")
-    print("Loaded secondary PeFT adapter +1")
+        print("Loaded trainable PeFT adapter -1")
+        model.load_adapter(f"{repo_name}/{base_model}-grade-{test_set_grade+1}-finetuned",
+                        adapter_name="+1")
+        print("Loaded secondary PeFT adapter +1")
+        adapters: list[str] = ["-1", "+1"]
+        
 
-    adapters = ["+1", "-1"]
-    # TODO: find a way to condense model name declaration
-    adapter_name = f"{test_set_grade-1}({int(model_a_proportion*100)})+{test_set_grade+1}({int(model_b_proportion*100)})={test_set_grade}"
+        adapter_name: str = f"{model_a_grade}({model_a_proportion})+{model_b_grade}({model_b_proportion})={test_set_grade}"
 
-    model.add_weighted_adapter(adapters,
-                               weights,
-                               adapter_name,
-                               combination_type="dare_ties", # TODO abstract this to a variable
-                               density=density)
-    model.set_adapter(adapter_name)
+        model.add_weighted_adapter(adapters,
+                                weights,
+                                adapter_name,
+                                combination_type=merge_method,
+                                density=density)
+        model.set_adapter(adapter_name)
 
-    print("Merged weighted adapters")
+        print("Merged weighted adapters")
+    elif model_grade == 1:
+        adapters: str = f"{repo_name}/{base_model}-2-12-evens"
+        model: PeftModel = PeftModel.from_pretrained(model, adapters)
+        current_model_name: str = f"{base_model}-2-12-evens_eval-on-grade-{test_set_grade}"
+    else: # * here's where the magic happens
+        finetuned_adapter: str = f"{repo_name}/{base_model}-grade-{model_grade}-finetuned"
+        model: PeftModel = PeftModel.from_pretrained(model, finetuned_adapter)
+        print("Loaded PeFT model")
+        current_model_name: str = f"{base_model}-grade-{model_grade}_eval-on-grade-{test_set_grade}"
+
+    print("#"*50)
     print(model)
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
@@ -100,14 +111,17 @@ def main(test_set_grade, model_a_proportion):
                                            label_pad_token_id=tokenizer.eos_token_id)
 
     print("data collated")
-
+    wandb.init(project="Graded text simplification evaluation",
+               group=f"Grade: {test_set_grade}",
+               name=current_model_name)
+    
     training_args = TrainingArguments(
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir="williamplacroix/text-simplification",
+        output_dir=repo_name,
         report_to="wandb",  # enable logging to W&B
-        run_name=current_model_name,  # name of the W&B run (optional)
+        run_name=current_model_name,  # name of the W&B run for logging
         logging_steps=1,  # how often to log to W&B
         save_safetensors=False, # this is a kludge fix for a bug in the transformers library
         learning_rate=1e-5,
@@ -117,9 +131,9 @@ def main(test_set_grade, model_a_proportion):
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )
-
-    training_args = training_args.set_dataloader(train_batch_size=32, eval_batch_size=32)
-    print(f"Running merge evaluation on test_set_grade: {test_set_grade}")
+    training_args = training_args.set_dataloader(train_batch_size=16, eval_batch_size=16)
+    
+    print(f"Running evaluation on test_set_grade: {test_set_grade}, model: {current_model_name}")
     print("#"*50)
     trainer = Trainer(
         model=model,
@@ -130,11 +144,18 @@ def main(test_set_grade, model_a_proportion):
         tokenizer=tokenizer,
     )
 
-    print("Begin evaluation :)")
+    print("Begin evaluation :3")
     trainer.evaluate()
     wandb.finish()
 
 if __name__ == "__main__":
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+    warnings.filterwarnings("ignore")
+    load_dotenv()
+    wandb.login(key=os.getenv("wandb"))
+    login(token=os.getenv("huggingface"), add_to_git_credential=True)
+
     t_grade = int(sys.argv[1])
     proportion = round(int(sys.argv[2])/10, 1)
     main(t_grade, proportion)

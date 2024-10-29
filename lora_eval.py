@@ -22,18 +22,16 @@ from dotenv import load_dotenv
 import wandb
 from huggingface_hub import login
 
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-warnings.filterwarnings("ignore")
-load_dotenv()
-wandb.login(key=os.getenv("wandb"))
-login(token=os.getenv("huggingface"), add_to_git_credential=True)
-
-def main(model_grade: int, test_set_grade: int) -> None:
+def main(model_grade: int=2, test_set_grade: int=3, model_a_proportion: int=5, base_model: str="llama38b", merge: bool=False) -> None:
     """
     TODO: Add docstring
     """
-    model_name = "meta-llama/Meta-Llama-3-8B"
-    config = AutoConfig.from_pretrained(model_name)
+    base_model_aliases: dict[str] = {"llama38b": "meta-llama/Meta-Llama-3-8B",
+                            "gpt2": "openai-community/gpt2",
+                            }
+                           
+    model_name = base_model_aliases[base_model]
+    config = AutoConfig.from_pretrained(model_name) 
     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name,
                                                 config=config,
@@ -62,10 +60,7 @@ def main(model_grade: int, test_set_grade: int) -> None:
         print("#"*50)
         current_model_name = f"llama38b-grade-{model_grade}_eval-on-grade-{test_set_grade}"
 
-    os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-    wandb.init(project="Graded text simplification evaluation",
-               group=f"Grade: {test_set_grade}",
-               name=current_model_name)
+    
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
     tokenizer.pad_token = tokenizer.eos_token
@@ -84,6 +79,10 @@ def main(model_grade: int, test_set_grade: int) -> None:
                                            max_length=128,
                                            label_pad_token_id=tokenizer.eos_token_id)
 
+    wandb.init(project="Graded text simplification evaluation",
+               group=f"Grade: {test_set_grade}",
+               name=current_model_name)
+
     training_args = TrainingArguments(
         logging_strategy="epoch",
         save_strategy="epoch",
@@ -101,9 +100,9 @@ def main(model_grade: int, test_set_grade: int) -> None:
         remove_unused_columns=False,
     )
 
-    training_args = training_args.set_dataloader(train_batch_size=32, eval_batch_size=32)
+    training_args = training_args.set_dataloader(train_batch_size=16, eval_batch_size=16)
 
-    print(f"Running evaluation on model_grade: {model_grade}, test_set_grade: {test_set_grade}")
+    print(f"Running evaluation on model_grade: {model_grade}, model: {current_model_name}")
     print("#"*50)
 
     trainer = Trainer(
@@ -115,11 +114,19 @@ def main(model_grade: int, test_set_grade: int) -> None:
         tokenizer=tokenizer,
     )
 
-    print("Begin evaluation :)")
+    print("Begin evaluation :3")
     trainer.evaluate()
     wandb.finish()
 
 if __name__ == "__main__":
+
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+    warnings.filterwarnings("ignore")
+    load_dotenv()
+    wandb.login(key=os.getenv("wandb"))
+    login(token=os.getenv("huggingface"), add_to_git_credential=True)
+
     m_grade = int(sys.argv[1])
     t_grade = int(sys.argv[2])
     main(m_grade, t_grade)
