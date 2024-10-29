@@ -3,10 +3,19 @@
 """
 from itertools import product
 import argparse
-from importlib import reload
+# from importlib import reload
 
 def finetune_adapters():
     import lora_finetune
+    """
+    Function finetunes adapters() takes the even level pretrained baseline
+    and further finetunes it on the specified grade level.
+    Runs the function for all even grade levels 2-12: 6 full training runs
+
+    args: None
+    return: None
+    """
+    
     model_grades = [2, 4, 6, 8, 10, 12]
     for grade in model_grades:
         print("#"*50)
@@ -19,6 +28,17 @@ def finetune_adapters():
 
 def evaluate():
     import lora_eval
+    """
+    Function evaluate() plots loss on unseen odd grade level datasets
+    for all even grade levels 2-12. Model grade 1 is the all-evens baseline.
+    Model grade 0 is the all-grades baseline, which is deprecated.
+    Model grade -1 is the gpt2/llama3 base model.
+    Runs the function for all even grade levels 2-12 against all odd grade levels 3-11
+    model_grades * test_grades = 7 * 5 = 35 eval runs, in current iteration
+
+    args: None
+    return: None
+    """
     #model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
     model_grades = {1, 2, 4, 6, 8, 10, 12}
     test_set_grades = {3, 5, 7, 9, 11}
@@ -36,6 +56,17 @@ def evaluate():
     
 def merge_eval():
     import lora_merge_eval
+    """
+    Function merge_eval() evaluates adjacent merged models against their respective test sets.
+    eg. when evaluating test set grade 3, model grades 2 and 4 are merged and evaluated.
+    Current iteration also sets linear mixing proportions for the two models, 
+    at ratios of 10:90, 30:70, 50:50, 70:30, 90:10.
+    Runs the function for all odd grade levels 3-11, at 5 mixing proportions each
+    test_grades * mix_proportion = 5 * 5 = 25 eval runs, in current iteration
+
+    args: None
+    return: None
+    """
     test_set_grades = {3, 5, 7, 9, 11}
     mixing_proportions = {1, 3, 5, 7, 9}
     model_test_combos = product(test_set_grades, mixing_proportions)
@@ -50,6 +81,20 @@ def merge_eval():
 
 def pretrain_baseline():
     import lora_baseline_adapter
+    """
+    Function pretrain_baseline() trains the even level baseline model.
+    Calls lora_baseline_adapter.main(), which finetunes the pretrained LLM baseline
+    (gpt2/llama3) on the even grade levels 2-12.
+    "mode" currently only accepts "evens" as an argument, but lora_baseline_adapter.py
+    also supports "all", which trains the model on odd and even grades 2-12.
+    This mode is not being used in the current iteration, since reserving the odd datasets as 
+    unseen test sets allows a sort of "out of domain" evaluation.
+    args: None
+    Only a single run, but with the full concatenated dataset, so it's a long one.
+
+    args: None
+    return: None
+    """
     for mode in ["evens"]:
         print("#"*50)
         print(f"Training baseline {mode}")
@@ -59,6 +104,15 @@ def pretrain_baseline():
         print("#"*50)
 
 def main():
+    """
+    Responsible for parsing command line arguments and calling the appropriate function.
+    argparse _should_ prevent invalid arguments from being passed.
+    --mode ta pretrains a baseline model, followed immediately by the finetuned adapters.
+    --mode ea evaluates all models individually, as well as merged.
+
+    args: None
+    return: None
+    """
     parser = argparse.ArgumentParser(
                     prog='Text simplification helper script',
                     description='Helper script for training and evaluating text simplification models',
