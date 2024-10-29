@@ -5,6 +5,8 @@ import sys
 import os
 import warnings
 
+from argparse import ArgumentParser, Namespace
+
 from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from transformers import Trainer, TrainingArguments
@@ -17,15 +19,17 @@ from dotenv import load_dotenv
 import wandb
 from huggingface_hub import login
 
-def main(model_grade: int=2,
-         test_set_grade: int=3,
-         model_a_proportion: int=5,
-         base_model: str="llama38b",
-         merge: bool=False,
-         merge_method: str="dare_ties") -> None:
+def main(args) -> None:
     """
     TODO: Add docstring
     """
+    model_grade: int = args[model_grade]
+    test_set_grade: int = args[test_set_grade]
+    model_a_proportion: int = args[model_a_proportion]
+    base_model: str = args[base_model]
+    merge: bool = args[merge]
+    merge_method: str = args[merge_method]
+
     base_model_aliases: dict[str] = {"llama38b": "meta-llama/Meta-Llama-3-8B",
                                     "gpt2": "openai-community/gpt2",
                                     }
@@ -144,7 +148,7 @@ def main(model_grade: int=2,
     print("Mission accomplished")
     return
     # ! end test line
-    trainer.evaluate()
+    trainer.evaluate() #pylint: disable=this is a temporary fix
     wandb.finish()
 
 if __name__ == "__main__":
@@ -155,6 +159,53 @@ if __name__ == "__main__":
     wandb.login(key=os.getenv("wandb"))
     login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
-    t_grade = int(sys.argv[1])
-    proportion = round(int(sys.argv[2])/10, 1)
-    main(t_grade, proportion)
+    parser: ArgumentParser = ArgumentParser(
+                prog='Text simplification helper script',
+                description='Helper script for training and evaluating text simplification models',
+                epilog='Enjoy training! :)')
+    parser.add_argument('--model_grade',
+                        type=int,
+                        help='Must be in {2, 4, 6, 8, 10, 12}',
+                        dest='model_grade',
+                        required=False,
+                        default=2,
+                        )
+    parser.add_argument('--test_set_grade',
+                        type=int,
+                        help='Must be in {3, 5, 7, 9, 11}',
+                        dest='test_set_grade',
+                        required=False,
+                        default=3,
+                        )
+    parser.add_argument('--model_a_proportion',
+                        type=int,
+                        help='Must be in {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}',
+                        dest='model_a_proportion',
+                        required=False,
+                        default=5,
+                        )
+    parser.add_argument('--base_model',
+                        type=str,
+                        help='Must be "llama38b" or "gpt2"',
+                        dest='base_model',
+                        required=False,
+                        default="llama38b",
+                        )
+    parser.add_argument('--merge',
+                        type=bool,
+                        help='Must be True or False',
+                        dest='merge',
+                        required=False,
+                        default=False,
+                        )
+    parser.add_argument('--merge_method',
+                        type=str,
+                        help='Merge method to be used (eg. "linear", "dare_ties", etc.)',
+                        dest='merge_method',
+                        required=False,
+                        default="dare_ties",
+                        )
+
+    args: Namespace = parser.parse_args()
+
+    main(vars(args))

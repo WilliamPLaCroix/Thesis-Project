@@ -14,13 +14,13 @@ return: None
 """
 import os
 import warnings
+from itertools import product
+from argparse import ArgumentParser, Namespace
 from dotenv import load_dotenv
 from huggingface_hub import login
 import wandb
-from itertools import product
-from argparse import ArgumentParser
-from argparse import Namespace
 # from importlib import reload # Sometimes useful for rerunning modules for weird CUDA memory issues
+
 # TODO refactor imports so that redundant imports are removed from the individual scripts and moved here
 
 def pretrain_baseline() -> None:
@@ -40,7 +40,7 @@ def pretrain_baseline() -> None:
     """
 
     import lora_baseline_adapter
-    modes: set = {"evens"}#, "all"}
+    modes: set = {"evens"}#, "all"
     for mode in modes:
         print("#"*50)
         print(f"Training baseline {mode}")
@@ -82,8 +82,8 @@ def evaluate() -> None:
     return: None
     """
 
-    import lora_eval
-    #model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
+    import old_lora_eval
+    # model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
     model_grades: set = {1, 2, 4, 6, 8, 10, 12}
     test_set_grades: set = {3, 5, 7, 9, 11}
 
@@ -93,7 +93,7 @@ def evaluate() -> None:
     for i, (model_grade, test_set_grade) in enumerate(model_test_combos):
         print("#"*50)
         print(f"LoRA run {i+1}/{runs}")
-        lora_eval.main(model_grade, test_set_grade)
+        old_lora_eval.main(model_grade, test_set_grade)
         print("#"*50)
         print("Evaluation complete")
         print("#"*50)
@@ -111,7 +111,7 @@ def merge_eval() -> None:
     return: None
     """
 
-    import lora_merge_eval
+    import eval
     test_set_grades: set = {3, 5, 7, 9, 11}
     mixing_proportions: set = {1, 3, 5, 7, 9}
     model_test_combos: product = product(test_set_grades, mixing_proportions)
@@ -119,7 +119,7 @@ def merge_eval() -> None:
     for i, (test_set_grades, mixing_proportions) in enumerate(model_test_combos):
         print("#"*50)
         print(f"Merge LoRA run {i+1}/{runs}")
-        lora_merge_eval.main(test_set_grades, mixing_proportions)
+        eval.main(test_set_grades, mixing_proportions)
         print("#"*50)
         print("Evaluation complete")
         print("#"*50)
@@ -145,16 +145,16 @@ def main() -> None:
     parser: ArgumentParser = ArgumentParser(
                 prog='Text simplification helper script',
                 description='Helper script for training and evaluating text simplification models',
-                epilog='Enjoy training! :)')
-    parser.add_argument('-m', '--mode',
+                epilog='Enjoy training! :3')
+    parser.add_argument('--helper',
                         type=str,
                         help='Must be "b", "t", "ta", "e", or "em"',
-                        dest='mode',
+                        dest='helper_mode',
                         required=True,
                         )
     args: Namespace = parser.parse_args()
 
-    match args.mode:
+    match args.helper_mode:
         case "t":
             finetune_adapters()
         case "e":
@@ -191,3 +191,12 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+
+model_grade: int=2,
+test_set_grade: int=3,
+model_a_proportion: int=5,
+base_model: str="llama38b",
+merge: bool=False,
+merge_method: str="dare_ties"
