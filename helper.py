@@ -2,21 +2,21 @@
 :)
 """
 from itertools import product
-import argparse
+from argparse import ArgumentParser
+from argparse import Namespace
 # from importlib import reload
 
 def finetune_adapters() -> None:
     import lora_finetune
-    """
-    Function finetunes adapters() takes the even level pretrained baseline
-    and further finetunes it on the specified grade level.
-    Runs the function for all even grade levels 2-12: 6 full training runs
-
-    args: None
-    return: None
-    """
+    # """
+    # Function finetunes adapters() takes the even level pretrained baseline
+    # and further finetunes it on the specified grade level.
+    # Runs the function for all even grade levels 2-12: 6 full training runs
+    # args: None
+    # return: None
+    # """
     
-    model_grades = [2, 4, 6, 8, 10, 12]
+    model_grades: set = {1, 2, 4, 6, 8, 10, 12}
     for grade in model_grades:
         print("#"*50)
         print(f"LoRA run {grade}")
@@ -40,11 +40,11 @@ def evaluate() -> None:
     return: None
     """
     #model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
-    model_grades = {1, 2, 4, 6, 8, 10, 12}
-    test_set_grades = {3, 5, 7, 9, 11}
+    model_grades: set = {1, 2, 4, 6, 8, 10, 12}
+    test_set_grades: set = {3, 5, 7, 9, 11}
     
-    model_test_combos = product(model_grades, test_set_grades)
-    runs = len(model_grades) * len(test_set_grades)
+    model_test_combos: product = product(model_grades, test_set_grades)
+    runs: int = len(model_grades) * len(test_set_grades)
 
     for i, (model_grade, test_set_grade) in enumerate(model_test_combos):
         print("#"*50)
@@ -67,10 +67,10 @@ def merge_eval() -> None:
     args: None
     return: None
     """
-    test_set_grades = {3, 5, 7, 9, 11}
-    mixing_proportions = {1, 3, 5, 7, 9}
-    model_test_combos = product(test_set_grades, mixing_proportions)
-    runs = len(test_set_grades) * len(mixing_proportions)
+    test_set_grades: set = {3, 5, 7, 9, 11}
+    mixing_proportions: set = {1, 3, 5, 7, 9}
+    model_test_combos: product = product(test_set_grades, mixing_proportions)
+    runs: int = len(test_set_grades) * len(mixing_proportions)
     for i, (test_set_grades, mixing_proportions) in enumerate(model_test_combos):
         print("#"*50)
         print(f"Merge LoRA run {i+1}/{runs}")
@@ -95,7 +95,8 @@ def pretrain_baseline() -> None:
     args: None
     return: None
     """
-    for mode in ["evens"]:
+    modes: set = {"evens"}#, "all"}
+    for mode in modes:
         print("#"*50)
         print(f"Training baseline {mode}")
         lora_baseline_adapter.main(mode)
@@ -113,7 +114,7 @@ def main() -> None:
     args: None
     return: None
     """
-    parser = argparse.ArgumentParser(
+    parser: ArgumentParser = ArgumentParser(
                     prog='Text simplification helper script',
                     description='Helper script for training and evaluating text simplification models',
                     epilog='Enjoy training! :)')
@@ -123,25 +124,42 @@ def main() -> None:
                         dest='mode',
                         required=True,
                         )
-    args = parser.parse_args()
+    args: Namespace = parser.parse_args()
 
+    match args.mode:
+        case "t":
+            finetune_adapters()
+        case "e":
+            evaluate()
+        case "em":
+            merge_eval()
+        case "ea":
+            evaluate()
+            merge_eval()
+        case "b":
+            pretrain_baseline()
+        case "ta":
+            pretrain_baseline()
+            finetune_adapters()
+        case _:
+            print('Invalid mode. Must be "b", "t", "ta", "e", or "em"')
 
-    if args.mode == "t":
-        finetune_adapters()
-    elif args.mode == "e":
-        evaluate()
-    elif args.mode == "em":
-        merge_eval()
-    elif args.mode == "ea":
-        evaluate()
-        merge_eval()
-    elif args.mode == "b":
-        pretrain_baseline()
-    elif args.mode == "ta":
-        pretrain_baseline()
-        finetune_adapters()
-    else:
-        print('Invalid mode. Must be "b", "t", "ta", "e", or "em"')
+    # if args.mode == "t":
+    #     finetune_adapters()
+    # elif args.mode == "e":
+    #     evaluate()
+    # elif args.mode == "em":
+    #     merge_eval()
+    # elif args.mode == "ea":
+    #     evaluate()
+    #     merge_eval()
+    # elif args.mode == "b":
+    #     pretrain_baseline()
+    # elif args.mode == "ta":
+    #     pretrain_baseline()
+    #     finetune_adapters()
+    # else:
+    #     print('Invalid mode. Must be "b", "t", "ta", "e", or "em"')
 
 if __name__ == "__main__":
     main()
