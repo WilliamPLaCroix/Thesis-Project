@@ -1,5 +1,5 @@
 """
-:)
+### TODO: Add docstring
 """
 import sys
 import os
@@ -31,7 +31,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(test_set_grade, model_a_proportion):
     """
-    :) Docstring goes here
+    ### TODO: Add docstring
     """
     
     model_a_proportion = round(model_a_proportion/10, 1)
@@ -49,45 +49,58 @@ def main(test_set_grade, model_a_proportion):
                                                 )
     print("#"*50)
     print("Loaded base model")
+    ### TODO: refactor with model aliases for longterm maintainability
+    ### TODO: find a way to condense model name declaration
     current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_dare-ties-d{density}_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
     print(f"Model name: {current_model_name}")
     print(f"Model proportions: {weights[0]}:{weights[1]}")
     print("#"*50)
 
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
-    wandb.init(project="Graded text simplification evaluation", group=f"Grade: {test_set_grade}", name=current_model_name)
+    wandb.init(project="Graded text simplification evaluation",
+               group=f"Grade: {test_set_grade}",
+               name=current_model_name)
 
-    model = PeftModel.from_pretrained(model, f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade-1}-finetuned", adapter_name="-1")
+    model = PeftModel.from_pretrained(model,
+                                      f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade-1}-finetuned",
+                                      adapter_name="-1")
     print("Loaded trainable PeFT adapter -1")
-    model.load_adapter(f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade+1}-finetuned", adapter_name="+1")
+    model.load_adapter(f"williamplacroix/text-simplification/gpt2-grade-{test_set_grade+1}-finetuned",
+                       adapter_name="+1")
     print("Loaded secondary PeFT adapter +1")
 
     adapters = ["+1", "-1"]
+    ### TODO: find a way to condense model name declaration
     adapter_name = f"{test_set_grade-1}({int(model_a_proportion*100)})+{test_set_grade+1}({int(model_b_proportion*100)})={test_set_grade}"
 
-    model.add_weighted_adapter(adapters, 
-                               weights, 
-                               adapter_name, 
-                               combination_type="dare_ties", 
+    model.add_weighted_adapter(adapters,
+                               weights,
+                               adapter_name,
+                               combination_type="dare_ties", # TODO abstract this to a variable
                                density=density)
     model.set_adapter(adapter_name)
 
     print("Merged weighted adapters")
     print(model)
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
     model.config.pad_token_id = tokenizer.eos_token_id
 
     tokenized_dataset = load_dataset("williamplacroix/wikilarge-graded", f"grade-{test_set_grade}")
-    
+
     print(f"Grade {test_set_grade}:", tokenized_dataset)
-    
-    data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
+
+    data_collator = DataCollatorForSeq2Seq(model=model,
+                                           tokenizer=tokenizer,
+                                           padding="max_length",
+                                           pad_to_multiple_of=8,
+                                           max_length=128,
+                                           label_pad_token_id=tokenizer.eos_token_id)
 
     print("data collated")
- 
+
     training_args = TrainingArguments(
         logging_strategy="epoch",
         save_strategy="epoch",
@@ -100,7 +113,7 @@ def main(test_set_grade, model_a_proportion):
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
-        num_train_epochs=5, 
+        num_train_epochs=5,
         load_best_model_at_end=True,
         remove_unused_columns=False,
     )

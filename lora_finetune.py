@@ -1,5 +1,5 @@
 """
-:)
+### TODO: Add docstring
 """
 import sys
 import os
@@ -37,7 +37,7 @@ def main(model_grade):
 
     model_name = "meta-llama/Meta-Llama-3-8B"
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")#, pad_token="eos_token") #pad_token_id=tokenizer.pad_token_id)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
@@ -54,13 +54,6 @@ def main(model_grade):
     #print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
-    # lora_config = LoraConfig(
-    #                         r=8,
-    #                         lora_alpha=32,
-    #                         target_modules=['lm_head', 'c_attn', 'c_fc', 'c_proj'],
-    #                         task_type="CAUSAL_LM",
-    #                         lora_dropout=0.01,
-    #                         )
     adapter_name = f"llama38b-grade-{model_grade}-finetuned"
     model_id = "williamplacroix/llama-text-simplification/llama38b-2-12-evens"
     model = PeftModel.from_pretrained(model=model, 
@@ -68,7 +61,7 @@ def main(model_grade):
                                       adapter_name=adapter_name,
                                       is_trainable=True,
                                       )
-    
+
     print("Loaded PeFT model for finetuning")
     current_model_name = f"llama38b-grade-{model_grade}-finetuned"
     wandb.init(project="Graded text simplification training", name=current_model_name)
@@ -84,8 +77,13 @@ def main(model_grade):
 
     print(f"Grade {model_grade}:", tokenized_dataset)
 
-    data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
- 
+    data_collator = DataCollatorForSeq2Seq(model=model, 
+                                           tokenizer=tokenizer, 
+                                           padding="max_length", 
+                                           pad_to_multiple_of=8, 
+                                           max_length=128, 
+                                           label_pad_token_id=tokenizer.eos_token_id)
+
     training_args = TrainingArguments(
         logging_strategy="epoch",
         save_strategy="epoch",
@@ -121,6 +119,8 @@ def main(model_grade):
     wandb.finish()
 
 if __name__ == "__main__":
-    assert int(sys.argv[1]) in {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, "Must include an integer grade as an argument"
+    assert int(sys.argv[1]) in {
+                                -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+                                }, "Must include an integer grade as an argument"
     grade = int(sys.argv[1])
     main(grade)

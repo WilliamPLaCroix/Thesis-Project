@@ -15,7 +15,7 @@ return: None
 from itertools import product
 from argparse import ArgumentParser
 from argparse import Namespace
-# from importlib import reload # Sometimes useful for rerunning modules, with weird CUDA memory issues
+# from importlib import reload # Sometimes useful for rerunning modules for weird CUDA memory issues
 
 def pretrain_baseline() -> None:
     """

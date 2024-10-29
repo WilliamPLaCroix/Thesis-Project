@@ -1,5 +1,5 @@
 """
-Hi:)
+### TODO: Add docstring
 """
 import sys
 import os
@@ -32,23 +32,27 @@ wandb.login(key=os.getenv("wandb"))
 login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(mode, model_to_use="llama"):
+    """
+    ### TODO: Add docstring
+    """
 
     assert model_to_use in {"llama", "gpt2"}, "Invalid model. Must be 'llama' or 'gpt2'"
 
-    data_location = './data/wikilarge/'
     if model_to_use == "llama":
         model_name = "meta-llama/Meta-Llama-3-8B" # llama38b
-        modules = ['lm_head', 'q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj']
+        modules = ['lm_head', 'q_proj', 'k_proj', 'v_proj', 
+                   'o_proj', 'gate_proj', 'up_proj', 'down_proj']
     else: # model_to_use == "gpt2":
         model_name = "openai-community/gpt2"
         modules = ['lm_head', 'c_attn', 'c_fc', 'c_proj']
 
+    data_location = './data/wikilarge/'
     train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     print("train texts read in")
-    
+
     if mode == "evens":
         train_texts = train_texts[train_texts['target_grade'] != 0]
-        train_texts = train_texts[train_texts['target_grade'] %2 == 0]
+        train_texts = train_texts[train_texts['target_grade'] % 2 == 0]
         print("dropped rows for odd grades and 0")
     elif mode == "all":
         train_texts = train_texts[train_texts['target_grade'] != 0]
@@ -61,7 +65,9 @@ def main(mode, model_to_use="llama"):
     datasets = []
     for grade, group in grade_groups:
         print(f"Creating dataset for grade {grade}")
-        datasets.append(Dataset.from_pandas(group[['source', 'target', 'target_grade']]).train_test_split(test_size=0.1, seed=42))
+        dataset = Dataset.from_pandas(group[['source', 'target', 'target_grade']])
+        dataset = dataset.train_test_split(test_size=0.1, seed=42)
+        datasets.append(dataset)
     print("datasets created")
 
     train_sets = [dataset["train"] for dataset in datasets]
@@ -72,20 +78,27 @@ def main(mode, model_to_use="llama"):
     test_dataset = test_dataset.shuffle(seed=42)
     merged_dataset = DatasetDict({'train': train_dataset, 'test': test_dataset})
     print("datasets merged: ", merged_dataset)
-    
+
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
-    
     # * Below function tokenizes parallel corpus into target only inputs for fine-tuning
-    
+
     def tokenize_function(examples):
-        return tokenizer(text=examples["target"], text_target=examples["target"], padding=True, truncation=True, max_length=1024, return_tensors="pt")
+        """
+        ### TODO: Add docstring
+        """
+        return tokenizer(text=examples["target"],
+                         text_target=examples["target"],
+                         padding=True,
+                         truncation=True,
+                         max_length=1024,
+                         return_tensors="pt")
 
     config = AutoConfig.from_pretrained(model_name)
     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
-    model = AutoModelForCausalLM.from_pretrained(model_name, 
+    model = AutoModelForCausalLM.from_pretrained(model_name,
                                                 config=config,
                                                 quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
@@ -101,7 +114,7 @@ def main(mode, model_to_use="llama"):
                             task_type="CAUSAL_LM",
                             lora_dropout=0.01,
                             )
-    
+
     current_model_name = f"llama38b-2-12-{mode}"
 
     wandb.init(project="Graded text simplification training", name=current_model_name)
@@ -117,12 +130,22 @@ def main(mode, model_to_use="llama"):
     generation_config.save_pretrained("./generation_config")
     model.generation_config.pad_token_id = tokenizer.pad_token_id
 
-    tokenized_dataset = merged_dataset.map(tokenize_function, batched=True, batch_size=32,
-                                    remove_columns=['target_grade','target', 'source', '__index_level_0__'])
+    tokenized_dataset = merged_dataset.map(tokenize_function,
+                                           batched=True,
+                                           batch_size=32,
+                                            remove_columns=['target_grade',
+                                                            'target', 
+                                                            'source', 
+                                                            '__index_level_0__'])
 
     print(tokenized_dataset)
-    
-    data_collator = DataCollatorForSeq2Seq(model=model, tokenizer=tokenizer, padding="max_length", pad_to_multiple_of=8, max_length=128, label_pad_token_id=tokenizer.eos_token_id)
+
+    data_collator = DataCollatorForSeq2Seq(model=model,
+                                           tokenizer=tokenizer,
+                                           padding="max_length",
+                                           pad_to_multiple_of=8,
+                                           max_length=128,
+                                           label_pad_token_id=tokenizer.eos_token_id)
 
     print(f"Beginning training {current_model_name}")
 
