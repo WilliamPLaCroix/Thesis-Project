@@ -1,5 +1,5 @@
 """
-### TODO: Add docstring
+TODO: Add docstring
 """
 import sys
 import os
@@ -31,7 +31,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(test_set_grade, model_a_proportion):
     """
-    ### TODO: Add docstring
+    TODO: Add docstring
     """
     
     model_a_proportion = round(model_a_proportion/10, 1)
@@ -49,8 +49,8 @@ def main(test_set_grade, model_a_proportion):
                                                 )
     print("#"*50)
     print("Loaded base model")
-    ### TODO: refactor with model aliases for longterm maintainability
-    ### TODO: find a way to condense model name declaration
+    # TODO: refactor with model aliases for longterm maintainability
+    # TODO: find a way to condense model name declaration
     current_model_name = f"g{test_set_grade-1}-{int(model_a_proportion*100)}_dare-ties-d{density}_g{test_set_grade+1}-{int(model_b_proportion*100)}_eval-on-g{test_set_grade}"
     print(f"Model name: {current_model_name}")
     print(f"Model proportions: {weights[0]}:{weights[1]}")
@@ -70,7 +70,7 @@ def main(test_set_grade, model_a_proportion):
     print("Loaded secondary PeFT adapter +1")
 
     adapters = ["+1", "-1"]
-    ### TODO: find a way to condense model name declaration
+    # TODO: find a way to condense model name declaration
     adapter_name = f"{test_set_grade-1}({int(model_a_proportion*100)})+{test_set_grade+1}({int(model_b_proportion*100)})={test_set_grade}"
 
     model.add_weighted_adapter(adapters,

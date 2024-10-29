@@ -1,5 +1,5 @@
 """
-### TODO: Add docstring
+TODO: Add docstring
 """
 import sys
 import os
@@ -29,7 +29,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(model_grade):
     """
-    :)
+    TODO Add docstring
     """
 
     os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project

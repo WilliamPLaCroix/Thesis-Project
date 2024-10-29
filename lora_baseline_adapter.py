@@ -1,5 +1,5 @@
 """
-### TODO: Add docstring
+TODO: Add docstring
 """
 import sys
 import os
@@ -33,7 +33,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(mode, model_to_use="llama"):
     """
-    ### TODO: Add docstring
+    TODO: Add docstring
     """
 
     assert model_to_use in {"llama", "gpt2"}, "Invalid model. Must be 'llama' or 'gpt2'"
@@ -87,7 +87,7 @@ def main(mode, model_to_use="llama"):
 
     def tokenize_function(examples):
         """
-        ### TODO: Add docstring
+        TODO: Add docstring
         """
         return tokenizer(text=examples["target"],
                          text_target=examples["target"],
@@ -180,7 +180,6 @@ def main(mode, model_to_use="llama"):
     trainer.train()
     trainer.push_to_hub(f"Finished llama38b 2-12 grades: {mode} pretraining")
     wandb.finish()
-    return
 
 if __name__ == "__main__":
     all_evens = sys.argv[1]

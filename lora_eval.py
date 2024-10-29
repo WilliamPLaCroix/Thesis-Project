@@ -1,5 +1,5 @@
 """
-### TODO: Add docstring
+TODO: Add docstring
 """
 import sys
 import os
@@ -30,7 +30,7 @@ login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
 def main(model_grade: int, test_set_grade: int) -> None:
     """
-    ### TODO: Add docstring
+    TODO: Add docstring
     """
     model_name = "meta-llama/Meta-Llama-3-8B"
     config = AutoConfig.from_pretrained(model_name)
@@ -49,7 +49,7 @@ def main(model_grade: int, test_set_grade: int) -> None:
     #     adapters = "williamplacroix/text-simplification/gpt2-2-12-all"
     #     model = PeftModel.from_pretrained(model, adapters)
     #     current_model_name = f"gpt2-2-12-all_eval-on-grade-{test_set_grade}"
-    ### TODO refactor with model aliases for longterm maintainability
+    # TODO refactor with model aliases for longterm maintainability
     if model_grade == 1:
         adapters = "williamplacroix/llama-text-simplification/llama38b-2-12-evens"
         model = PeftModel.from_pretrained(model, adapters)
@@ -118,7 +118,6 @@ def main(model_grade: int, test_set_grade: int) -> None:
     print("Begin evaluation :)")
     trainer.evaluate()
     wandb.finish()
-    return
 
 if __name__ == "__main__":
     m_grade = int(sys.argv[1])

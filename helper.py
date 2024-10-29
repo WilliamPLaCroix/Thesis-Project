@@ -16,6 +16,7 @@ from itertools import product
 from argparse import ArgumentParser
 from argparse import Namespace
 # from importlib import reload # Sometimes useful for rerunning modules for weird CUDA memory issues
+# TODO refactor imports so that redundant imports are removed from the individual scripts and moved here
 
 def pretrain_baseline() -> None:
     """
