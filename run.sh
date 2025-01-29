@@ -1,1 +1,2 @@
-python helloworld.py
+#!/bin/sh
+python ./helloworld.py
