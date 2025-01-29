@@ -6,8 +6,8 @@
 initialdir              = /nethome/wlacroix/
 executable              = /nethome/wlacroix/Thesis-Project/run.sh
 output                  = /scratch/wlacroix/logs/run.sh.$(ClusterId).$(Year)_$(Month)_$(Day)_$(SUBMIT_TIME).out
-error                   = /scratch/wlacroix/logs/run.sh.$(ClusterId).$(Year)_$(Month)_$(Day)_$(SUBMIT_TIME).err
-log                     = /scratch/wlacroix/logs/run.sh.$(ClusterId).$(Year)_$(Month)_$(Day)_$(SUBMIT_TIME).log
+error                   = /scratch/wlacroix/logs/err/run.sh.$(ClusterId).$(Year)_$(Month)_$(Day)_$(SUBMIT_TIME).err
+log                     = /scratch/wlacroix/logs/log/run.sh.$(ClusterId).$(Year)_$(Month)_$(Day)_$(SUBMIT_TIME).log
 request_CPUs            = 1
 request_memory          = 10G
 request_GPUs            = 1
