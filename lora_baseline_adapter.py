@@ -182,6 +182,7 @@ if __name__ == "__main__":
     wandb.login(key=os.getenv("wandb"))
     login(token=os.getenv("huggingface"), add_to_git_credential=True)
 
-    all_evens = sys.argv[1]
+    #all_evens = sys.argv[1]
+    all_evens = "all"
     assert all_evens in {"all", "evens"}, "Invalid mode. Must be 'all' or 'evens'"
     main(all_evens, model_to_use="gpt2")
