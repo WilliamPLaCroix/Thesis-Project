@@ -2,7 +2,7 @@
 # Everything with a leading # is a comment
 
 universe                = docker
-docker_image            = docker.coli.uni-saarland.de/wlacroix/thesis:helloworld
+docker_image            = docker.coli.uni-saarland.de/wlacroix/thesis:lora_finetune
 initialdir              = /nethome/wlacroix/
 executable              = /nethome/wlacroix/Thesis-Project/run.sh
 output                  = /scratch/wlacroix/logs/run.sh.$(ClusterId).$(Year)_$(Month)_$(Day)_$(SUBMIT_TIME).out
