@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 Thesis-Project/lora_baseline_adapter.py all
+python3 Thesis-Project/helloworld.py
