@@ -177,6 +177,7 @@ if __name__ == "__main__":
 
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+    os.environ["HF_HOME"] = "/nethome/wlacroix/.cache/huggingface"
     warnings.filterwarnings("ignore")
     load_dotenv()
     wandb.login(key=os.getenv("wandb"))
