@@ -177,10 +177,11 @@ if __name__ == "__main__":
 
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+    os.environ["HF_HOME"] = "/nethome/wlacroix/.cache/"
     warnings.filterwarnings("ignore")
     load_dotenv()
     wandb.login(key=os.getenv("wandb"))
-    login(token=os.getenv("huggingface"), add_to_git_credential=False)
+    login(token=os.getenv("huggingface"))#, add_to_git_credential=True)
 
     #all_evens = sys.argv[1]
     all_evens = "all"
