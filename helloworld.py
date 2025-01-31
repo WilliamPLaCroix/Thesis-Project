@@ -1,5 +1,15 @@
+print("Here is a list")
+list = [1,2,3,4,5]
+print(list)
+
 import pandas as pd
-print("hello world")
-print("updated to include error and log folders")
-raise Exception("This is an exception")
-print("This is the end of the script")
+print("pandas imported, converting list to dataframe")
+dataframe = pd.DataFrame(list)
+print(dataframe)
+
+import numpy as np
+print("numpy imported, converting list to array")
+array = np.array(list)
+print(array)
+
+print("completed without issue")
