@@ -43,7 +43,6 @@ def main(mode, model_to_use="llama"):
     #train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
     data_location = hf_hub_download(repo_id="williamplacroix/wikilarge-graded", filename="train_texts.pkl", repo_type="dataset")
     train_texts = pd.read_pickle(data_location)
-    dataset
     print("train texts read in")
 
     if mode == "evens":
