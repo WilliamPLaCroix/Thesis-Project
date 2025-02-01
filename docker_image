@@ -54,6 +54,8 @@ RUN useradd -l -m -d /home/$USER_NAME -u $USER_UID -g $USER_GROUP $USER_NAME
 # this will fix a wandb issue
 RUN mkdir /home/$USER_NAME/.local 
 
+COPY ./data/wikilarge/ /home/$USER_NAME/data/wikilarge/
+
 # Change owner of home dir (Note: this is not the lsv nethome)
 RUN chown -R ${USER_UID}:${USER_GID} /home/$USER_NAME/
 
