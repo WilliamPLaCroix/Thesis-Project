@@ -24,19 +24,25 @@ import wandb
 from huggingface_hub import login
 from huggingface_hub import hf_hub_download
 
-def main(mode, model_to_use="llama"):
+def main(mode, base_model="llama38b"):
     """
     TODO: Add docstring
     """
 
-    assert model_to_use in {"llama", "gpt2"}, "Invalid model. Must be 'llama' or 'gpt2'"
-
-    if model_to_use == "llama":
-        model_name = "meta-llama/Meta-Llama-3-8B" # llama38b
+    assert base_model in {"llama38b", "gpt2"}, "Invalid model. Must be 'llama' or 'gpt2'"
+    
+    base_model_aliases: dict[str] = {"llama38b": "meta-llama/Meta-Llama-3-8B",
+                                    "gpt2": "openai-community/gpt2",
+                                    }
+    repo: dict = {"llama38b": "williamplacroix/llama-text-simplification",
+                  "gpt2": "williamplacroix/text-simplification",
+                  }
+    repo_name: str = repo[base_model]
+    model_name: str = base_model_aliases[base_model]
+    if base_model == "llama38b":
         modules = ['lm_head', 'q_proj', 'k_proj', 'v_proj', 
                    'o_proj', 'gate_proj', 'up_proj', 'down_proj']
     else: # model_to_use == "gpt2":
-        model_name = "openai-community/gpt2"
         modules = ['lm_head', 'c_attn', 'c_fc', 'c_proj']
 
     #data_location = './data/wikilarge/'
@@ -110,7 +116,7 @@ def main(mode, model_to_use="llama"):
                             lora_dropout=0.01,
                             )
 
-    current_model_name = f"llama38b-2-12-{mode}"
+    current_model_name = f"{base_model}-2-12-{mode}"
 
     wandb.init(project="Graded text simplification training", name=current_model_name)
 
@@ -148,7 +154,7 @@ def main(mode, model_to_use="llama"):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir="williamplacroix/llama-text-simplification",
+        output_dir=repo_name,
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
@@ -173,7 +179,7 @@ def main(mode, model_to_use="llama"):
     )
 
     trainer.train()
-    trainer.push_to_hub(f"Finished llama38b 2-12 grades: {mode} pretraining")
+    trainer.push_to_hub(f"Finished {base_model} 2-12 grades: {mode} pretraining")
     wandb.finish()
 
 if __name__ == "__main__":
