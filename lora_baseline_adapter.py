@@ -22,6 +22,7 @@ from peft import get_peft_model
 from dotenv import load_dotenv
 import wandb
 from huggingface_hub import login
+from huggingface_hub import hf_hub_download
 
 def main(mode, model_to_use="llama"):
     """
@@ -38,8 +39,11 @@ def main(mode, model_to_use="llama"):
         model_name = "openai-community/gpt2"
         modules = ['lm_head', 'c_attn', 'c_fc', 'c_proj']
 
-    data_location = './data/wikilarge/'
-    train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
+    #data_location = './data/wikilarge/'
+    #train_texts = pd.read_pickle(f'{data_location}train_texts.pkl')
+    data_location = hf_hub_download(repo_id="williamplacroix/wikilarge-graded", filename="train_texts.pkl", repo_type="dataset")
+    train_texts = pd.read_pickle(data_location)
+    dataset
     print("train texts read in")
 
     if mode == "evens":
