@@ -42,6 +42,7 @@ RUN python3 -m pip install python-dotenv
 RUN python3 -m pip install wandb
 RUN python3 -m pip install huggingface-hub
 RUN python3 -m pip install argparse
+RUN python3 -m pip install -U bitsandbytes
 
 # Specify a new user (USER_NAME and USER_UID are specified via --build-arg)
 ARG USER_UID
