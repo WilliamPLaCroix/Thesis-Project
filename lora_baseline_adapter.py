@@ -92,7 +92,7 @@ def main(mode, model_to_use="llama"):
                          return_tensors="pt")
 
     config = AutoConfig.from_pretrained(model_name)
-    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+    quantization_config = BitsAndBytesConfig()#load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name,
                                                 config=config,
                                                 quantization_config=quantization_config,
