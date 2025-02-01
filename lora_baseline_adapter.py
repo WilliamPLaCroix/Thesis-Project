@@ -196,4 +196,4 @@ if __name__ == "__main__":
     #all_evens = sys.argv[1]
     all_evens = "all"
     assert all_evens in {"all", "evens"}, "Invalid mode. Must be 'all' or 'evens'"
-    main(all_evens, model_to_use="gpt2")
+    main(all_evens, base_model="gpt2")
