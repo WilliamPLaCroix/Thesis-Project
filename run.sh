@@ -5,4 +5,4 @@
 
 conda activate thesis
 
-HF_HOME=./.config python3 lora_baseline_adapter.py
+HF_HOME=./.config python3 /Thesis-project/lora_baseline_adapter.py
