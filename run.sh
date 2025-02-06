@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /nethome/wlacroix/anaconda3/bin/
+cd /nethome/wlacroix/miniconda3/bin/
 source activate thesis
 cd /nethome/wlacroix/Thesis-Project/
 pwd
