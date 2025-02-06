@@ -1,6 +1,7 @@
 #!/bin/sh
 cd /nethome/wlacroix/miniconda3/bin/
-source activate thesis
+. $env_name/bin/activate
+# source activate thesis
 cd /nethome/wlacroix/Thesis-Project/
 pwd
 # conda activate thesis
