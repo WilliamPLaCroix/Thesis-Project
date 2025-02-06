@@ -1,6 +1,6 @@
 #!/bin/sh
 cd /nethome/wlacroix/miniconda3/bin/
-. $env_name/bin/activate
+. thesis/bin/activate
 # source activate thesis
 cd /nethome/wlacroix/Thesis-Project/
 pwd
