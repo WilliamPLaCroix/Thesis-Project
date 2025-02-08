@@ -1,5 +1,5 @@
 #!/bin/sh
-. /nethome/wlacroix/miniconda3/bin/activate thesis
+#. /nethome/wlacroix/miniconda3/bin/activate thesis
 # source activate thesis
 cd /nethome/wlacroix/Thesis-Project/
 # conda activate thesis
