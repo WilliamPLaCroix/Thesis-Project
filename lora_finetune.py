@@ -25,11 +25,25 @@ def main(model_grade):
     """
     TODO Add docstring
     """
+    #base_model = "llama38b"
+    base_model = "gpt2"
+    baseline_adapter = "all" # "evens"
+
+    assert base_model in {"llama38b", "gpt2"}, "Invalid model. Must be 'llama' or 'gpt2'"
+    
+    base_model_aliases: dict[str] = {"llama38b": "meta-llama/Meta-Llama-3-8B",
+                                    "gpt2": "openai-community/gpt2",
+                                    }
+    repo: dict = {"llama38b": "williamplacroix/llama-text-simplification",
+                  "gpt2": "williamplacroix/text-simplification",
+                  }
+    repo_name: str = repo[base_model]
+    model_name: str = base_model_aliases[base_model]
 
     os.environ["WANDB_PROJECT"] = "Graded text simplification training"  # name your W&B project
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 
-    model_name = "meta-llama/Meta-Llama-3-8B"
+    model_name = base_model_aliases[base_model]
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
     tokenizer.pad_token = tokenizer.eos_token
@@ -48,8 +62,8 @@ def main(model_grade):
     #print(model)
     model.config.pad_token_id = tokenizer.eos_token_id
 
-    adapter_name = f"llama38b-grade-{model_grade}-finetuned"
-    model_id = "williamplacroix/llama-text-simplification/llama38b-2-12-evens"
+    adapter_name = f"{base_model}-grade-{model_grade}-finetuned"
+    model_id = f"{repo_name}/{base_model}-2-12-{baseline_adapter}"
     model = PeftModel.from_pretrained(model=model, 
                                       model_id=model_id, 
                                       adapter_name=adapter_name,
@@ -57,7 +71,7 @@ def main(model_grade):
                                       )
 
     print("Loaded PeFT model for finetuning")
-    current_model_name = f"llama38b-grade-{model_grade}-finetuned"
+    current_model_name = f"{base_model}-grade-{model_grade}-finetuned"
     wandb.init(project="Graded text simplification training", name=current_model_name)
 
     print(model)
@@ -82,7 +96,7 @@ def main(model_grade):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir="williamplacroix/llama-text-simplification",
+        output_dir=repo_name,
         overwrite_output_dir=True,
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)

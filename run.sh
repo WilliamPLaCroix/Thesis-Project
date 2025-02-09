@@ -1,5 +1,6 @@
 #!/bin/sh
 . /nethome/wlacroix/miniconda3/bin/activate thesis
 cd /nethome/wlacroix/Thesis-Project/
-#HF_HOME=./.config python3 lora_baseline_adapter.py
-python3 helloworld.py
+export WANDB_CACHE_DIR=/scratch/wlacroix/.cache/wandb
+export HF_HOME=/scratch/wlacroix/.cache/huggingface
+python3 helper.py t
