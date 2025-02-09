@@ -51,10 +51,10 @@ def main(model_grade):
 
     config = AutoConfig.from_pretrained(model_name)
 
-    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+    #quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name, 
                                                 config=config,
-                                                quantization_config=quantization_config,
+                                                #quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
                                                 )
     print("#"*50)
