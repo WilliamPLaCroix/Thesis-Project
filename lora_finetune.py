@@ -102,7 +102,7 @@ def main(model_grade):
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
         save_safetensors=False, # this is a kludge fix for a bug in the transformers library
-        save_total_limit=1,
+        save_total_limit=10,
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
