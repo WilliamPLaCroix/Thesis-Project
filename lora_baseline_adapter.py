@@ -28,7 +28,7 @@ import wandb
 from huggingface_hub import login
 from huggingface_hub import hf_hub_download
 
-def main(mode, base_model="llama38b"):
+def main(mode, base_model):
     """
     TODO: Add docstring
     """
