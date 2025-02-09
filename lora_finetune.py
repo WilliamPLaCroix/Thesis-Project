@@ -127,7 +127,8 @@ def main(model_grade):
     wandb.finish()
 
 if __name__ == "__main__":
-
+    os.environ["WANDB_CACHE_DIR"]="/scratch/wlacroix/.cache/wandb/"
+    os.environ["HF_HOME"]="/scratch/wlacroix/.cache/huggingface/"
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
     warnings.filterwarnings("ignore")
     load_dotenv()
