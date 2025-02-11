@@ -59,13 +59,13 @@ def finetune_adapters() -> None:
     """
 
     import lora_finetune
-    odd_even = "odd"
+    odd_even = "even"
     grades = {"even": {2, 4, 6, 8, 10, 12},
                 "odd": {7, 9, 11},
                 "all": {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
                 }
     model_grades: set = grades[odd_even]
-
+ 
     for grade in model_grades:
         print("#"*50)
         print(f"LoRA run {grade}")
