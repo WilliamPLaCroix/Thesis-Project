@@ -4,7 +4,7 @@
 #universe                = docker
 #docker_image            = docker.coli.uni-saarland.de/wlacroix/thesis:lora_baseline
 initialdir              = /nethome/wlacroix/
-executable              = /nethome/wlacroix/Thesis-Project/run-even.sh
+executable              = /nethome/wlacroix/Thesis-Project/run.sh
 output                  = /scratch/wlacroix/logs/run.sh.$(ClusterId).out
 error                   = /scratch/wlacroix/logs/err/run.sh.$(ClusterId).err
 log                     = /scratch/wlacroix/logs/log/run.sh.$(ClusterId).log
