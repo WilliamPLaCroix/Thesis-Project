@@ -49,7 +49,7 @@ def pretrain_baseline() -> None:
         print("Training complete")
         print("#"*50)
 
-def finetune_adapters() -> None:
+def finetune_adapters(odd_even=None) -> None:
     """
     Function finetunes adapters() takes the even level pretrained baseline
     and further finetunes it on the specified grade level.
@@ -59,12 +59,15 @@ def finetune_adapters() -> None:
     """
 
     import lora_finetune
-    odd_even = "even"
+    
     grades = {"even": {2, 4, 6, 8, 10, 12},
                 "odd": {7, 9, 11},
                 "all": {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
                 }
-    model_grades: set = grades[odd_even]
+    if odd_even is None:
+        model_grades: set = grades["all"]
+    else:
+        model_grades: set = grades[odd_even]
  
     for grade in model_grades:
         print("#"*50)
@@ -157,13 +160,17 @@ def main() -> None:
                 epilog='Enjoy training! :3')
     parser.add_argument('--helper',
                         type=str,
-                        help='Must be "b", "t", "ta", "e", or "em"',
+                        help='Must be "b", "to", "te", "ta", "e", or "em"',
                         dest='helper_mode',
                         required=True,
                         )
     args: Namespace = parser.parse_args()
 
     match args.helper_mode:
+        case "to":
+            finetune_adapters(odd_even="odd")
+        case "te":
+            finetune_adapters(odd_even="even")
         case "t":
             finetune_adapters()
         case "e":
