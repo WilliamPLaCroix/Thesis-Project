@@ -12,8 +12,9 @@ from transformers import AutoConfig
 from transformers import AutoModelForCausalLM
 from transformers import DataCollatorForSeq2Seq
 from transformers import Trainer
-from transformers import BitsAndBytesConfig
+from transformers import EarlyStoppingCallback
 
+#from transformers import BitsAndBytesConfig
 # from peft import LoraConfig
 # from peft import get_peft_model
 from peft import PeftModel#, PeftConfig
@@ -97,6 +98,7 @@ def main(model_grade):
         save_strategy="epoch",
         eval_strategy="epoch",
         output_dir=f"/scratch/wlacroix/.cache/huggingface/hub/{repo_name}",
+        #hub_model_id=f"{repo_name}/{current_model_name}",
         overwrite_output_dir=True,
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
@@ -108,7 +110,7 @@ def main(model_grade):
         seed=42,
         num_train_epochs=10, 
         load_best_model_at_end=True,
-        metric_for_best_model="loss",
+        metric_for_best_model="eval_loss",
         remove_unused_columns=False,
     )
 
@@ -121,6 +123,7 @@ def main(model_grade):
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
         tokenizer=tokenizer,
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=2)]
     )
 
     trainer.train()
