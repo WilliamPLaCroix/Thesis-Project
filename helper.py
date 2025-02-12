@@ -57,15 +57,15 @@ def finetune_adapters(odd_even=None) -> None:
     args: None
     return: None
     """
-
+    assert odd_even in {"even", "odd", None}, "Invalid argument. Must be 'even' or 'odd'"
+    
     import lora_finetune
     
-    grades = {"even": {2, 4, 6, 8, 10, 12},
-                "odd": {7, 9, 11},
-                "all": {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+    grades = {"even": set(2, 4, 6, 8, 10, 12),
+                "odd": set(3, 5, 7, 9, 11),
                 }
     if odd_even is None:
-        model_grades: set = grades["all"]
+        model_grades: set = grades["even"] + grades["odd"]
     else:
         model_grades: set = grades[odd_even]
  
