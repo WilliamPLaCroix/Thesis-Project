@@ -13,3 +13,4 @@ request_memory          = 10G
 request_GPUs            = 1
 requirements            = (GPUs_GlobalMemoryMb >= 16000)
 queue 1
+#
