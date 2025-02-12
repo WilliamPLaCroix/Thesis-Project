@@ -58,7 +58,7 @@ def finetune_adapters(odd_even=None) -> None:
     return: None
     """
     assert odd_even in {"even", "odd", None}, "Invalid argument. Must be 'even' or 'odd'"
-    
+
     import lora_finetune
     
     grades = {"even": set(2, 4, 6, 8, 10, 12),
@@ -93,8 +93,10 @@ def evaluate() -> None:
 
     import old_lora_eval
     # model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
-    model_grades: set = {1, 2, 4, 6, 8, 10, 12}
-    test_set_grades: set = {3, 5, 7, 9, 11}
+    # model_grades: set = {1, 2, 4, 6, 8, 10, 12}
+    # test_set_grades: set = {3, 5, 7, 9, 11}
+    model_grades: set = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+    test_set_grades: set = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
     model_test_combos: product = product(model_grades, test_set_grades)
     runs: int = len(model_grades) * len(test_set_grades)
