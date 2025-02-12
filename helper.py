@@ -61,8 +61,8 @@ def finetune_adapters(odd_even=None) -> None:
 
     import lora_finetune
     
-    grades = {"even": set(2, 4, 6, 8, 10, 12),
-                "odd": set(3, 5, 7, 9, 11),
+    grades = {"even": set([2, 4, 6, 8, 10, 12]),
+                "odd": set([3, 5, 7, 9, 11]),
                 }
     if odd_even is None:
         model_grades: set = grades["even"] + grades["odd"]
