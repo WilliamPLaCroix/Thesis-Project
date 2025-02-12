@@ -65,7 +65,7 @@ def finetune_adapters(odd_even=None) -> None:
                 "odd": set([3, 5, 7, 9, 11]),
                 }
     if odd_even is None:
-        model_grades: set = grades["even"] + grades["odd"]
+        model_grades: set = grades["even"] | grades["odd"]
     else:
         model_grades: set = grades[odd_even]
  
