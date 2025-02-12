@@ -143,6 +143,9 @@ def main() -> None:
 
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
     os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
+    os.environ["WANDB_CACHE_DIR"]="/scratch/wlacroix/.cache/wandb/"
+    os.environ["HF_HOME"]="/scratch/wlacroix/.cache/huggingface/"
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
     warnings.filterwarnings("ignore")
     load_dotenv()
     wandb.login(key=os.getenv("wandb"))
