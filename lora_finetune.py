@@ -123,7 +123,7 @@ def main(model_grade):
         eval_dataset=tokenized_dataset['test'],
         data_collator=data_collator,
         tokenizer=tokenizer,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=2)]
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=1)]
     )
 
     trainer.train()
