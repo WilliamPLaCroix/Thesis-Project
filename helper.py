@@ -91,7 +91,7 @@ def evaluate() -> None:
     return: None
     """
 
-    import old_lora_eval
+    import eval
     # model_grades = {-1, 0, 1, 2, 4, 6, 8, 10, 12}
     # model_grades: set = {1, 2, 4, 6, 8, 10, 12}
     # test_set_grades: set = {3, 5, 7, 9, 11}
@@ -104,7 +104,7 @@ def evaluate() -> None:
     for i, (model_grade, test_set_grade) in enumerate(model_test_combos):
         print("#"*50)
         print(f"LoRA run {i+1}/{runs}")
-        old_lora_eval.main(model_grade, test_set_grade)
+        eval.main(model_grade, test_set_grade)
         print("#"*50)
         print("Evaluation complete")
         print("#"*50)

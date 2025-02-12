@@ -11,7 +11,7 @@ from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from transformers import Trainer, TrainingArguments
 from transformers import DataCollatorForSeq2Seq
-from transformers import BitsAndBytesConfig
+#from transformers import BitsAndBytesConfig
 # from peft import LoraModel, LoraConfig
 # from peft import get_peft_model
 from peft import PeftModel
@@ -19,16 +19,20 @@ from dotenv import load_dotenv
 import wandb
 from huggingface_hub import login
 
-def main(args) -> None:
+def main(model_grade, test_set_grade):#args) -> None:
     """
     TODO: Add docstring
     """
-    model_grade: int = args[model_grade]
-    test_set_grade: int = args[test_set_grade]
-    model_a_proportion: int = args[model_a_proportion]
-    base_model: str = args[base_model]
-    merge: bool = args[merge]
-    merge_method: str = args[merge_method]
+    # model_grade: int = args[model_grade]
+    # test_set_grade: int = args[test_set_grade]
+    # model_a_proportion: int = args[model_a_proportion]
+    # base_model: str = args[base_model]
+    # merge: bool = args[merge]
+    # merge_method: str = args[merge_method]
+    model_a_proportion: int = 5
+    base_model: str = "gpt2"
+    merge: bool = False
+    merge_method: str = "dare_ties"
 
     base_model_aliases: dict[str] = {"llama38b": "meta-llama/Meta-Llama-3-8B",
                                     "gpt2": "openai-community/gpt2",
@@ -39,10 +43,10 @@ def main(args) -> None:
     repo_name: str = repo[base_model]
     model_name: str = base_model_aliases[base_model]
     config = AutoConfig.from_pretrained(model_name)
-    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+    #quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(model_name,
                                                 config=config,
-                                                quantization_config=quantization_config,
+                                                #quantization_config=quantization_config,
                                                 low_cpu_mem_usage=True,
                                                 )
     print("#"*50)
@@ -144,10 +148,6 @@ def main(args) -> None:
     )
 
     print("Begin evaluation :3")
-    # ! test line
-    print("Mission accomplished")
-    return
-    # ! end test line
     trainer.evaluate() #pylint: disable=this is a temporary fix
     wandb.finish()
 
