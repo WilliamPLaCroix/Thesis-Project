@@ -96,18 +96,19 @@ def main(model_grade):
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=repo_name,
+        output_dir=f"/scratch/wlacroix/.cache/huggingface/hub/{repo_name}",
         overwrite_output_dir=True,
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
         logging_steps=1,  # how often to log to W&B
         save_safetensors=False, # this is a kludge fix for a bug in the transformers library
-        save_total_limit=10,
+        save_total_limit=1,
         learning_rate=1e-5,
         weight_decay=0.01,
         seed=42,
         num_train_epochs=10, 
         load_best_model_at_end=True,
+        metric_for_best_model="loss",
         remove_unused_columns=False,
     )
 
