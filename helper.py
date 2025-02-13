@@ -69,7 +69,7 @@ def finetune_adapters(odd_even=None) -> None:
     # else:
     #     model_grades: set = grades[odd_even]
 
-    model_grades: set = {10, 11, 12}
+    model_grades: set = {9}
  
     for grade in model_grades:
         print("#"*50)
