@@ -44,7 +44,7 @@ def pretrain_baseline() -> None:
     for mode in modes:
         print("#"*50)
         print(f"Training baseline {mode}")
-        lora_baseline_adapter.main(mode)
+        lora_baseline_adapter.main(mode, base_model="gpt2")
         print("#"*50)
         print("Training complete")
         print("#"*50)
@@ -61,13 +61,15 @@ def finetune_adapters(odd_even=None) -> None:
 
     import lora_finetune
     
-    grades = {"even": set([10, 12]),
-                "odd": set([9, 11]),
-                }
-    if odd_even is None:
-        model_grades: set = grades["even"] | grades["odd"]
-    else:
-        model_grades: set = grades[odd_even]
+    # grades = {"even": set([2, 4, 6, 8, 10, 12]),
+    #             "odd": set([3, 5, 7, 9, 11]),
+    #             }
+    # if odd_even is None:
+    #     model_grades: set = grades["even"] | grades["odd"]
+    # else:
+    #     model_grades: set = grades[odd_even]
+
+    model_grades: set = {10, 11, 12}
  
     for grade in model_grades:
         print("#"*50)
