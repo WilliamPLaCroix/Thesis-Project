@@ -98,7 +98,7 @@ def main(model_grade):
         save_strategy="epoch",
         eval_strategy="epoch",
         output_dir=f"/scratch/wlacroix/.cache/huggingface/hub/{repo_name}",
-        #hub_model_id=f"{repo_name}/{current_model_name}",
+        hub_model_id=f"{repo_name}/{current_model_name}",
         overwrite_output_dir=True,
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run (optional)
