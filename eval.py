@@ -122,7 +122,7 @@ def main(model_grade, test_set_grade):#args) -> None:
         logging_strategy="epoch",
         save_strategy="epoch",
         eval_strategy="epoch",
-        output_dir=repo_name,
+        output_dir=f"/scratch/wlacroix/.cache/huggingface/hub/{repo_name}",
         report_to="wandb",  # enable logging to W&B
         run_name=current_model_name,  # name of the W&B run for logging
         logging_steps=1,  # how often to log to W&B
