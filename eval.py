@@ -89,11 +89,11 @@ def main(model_grade, test_set_grade):#args) -> None:
         model: PeftModel = PeftModel.from_pretrained(model, adapters)
         current_model_name: str = f"{base_model}-2-12-evens_eval-on-grade-{test_set_grade}"
     else: # * here's where the magic happens
-        #finetuned_adapter: str = f"{repo_name}"#/{base_model}-grade-{model_grade}-finetuned"
-        model_id = f"williamplacroix/text-simplification/{base_model}-grade-{model_grade}-finetuned"
+        adapter_name: str = f"{base_model}-grade-{model_grade}-finetuned"
+        model_id = f"williamplacroix/text-simplification"
         model = PeftModel.from_pretrained(model=model, 
                                         model_id=model_id, 
-                                        #adapter_name=adapter_name,
+                                        adapter_name=adapter_name,
                                         is_trainable=False,
                                         )
         print("Loaded PeFT model")
