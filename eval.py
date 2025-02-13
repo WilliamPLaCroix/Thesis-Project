@@ -23,6 +23,8 @@ def main(model_grade, test_set_grade):#args) -> None:
     """
     TODO: Add docstring
     """
+
+    scratch_path = "/scratch/wlacroix/.cache/huggingface/hub/"
     # model_grade: int = args[model_grade]
     # test_set_grade: int = args[test_set_grade]
     # model_a_proportion: int = args[model_a_proportion]
@@ -90,7 +92,7 @@ def main(model_grade, test_set_grade):#args) -> None:
         current_model_name: str = f"{base_model}-2-12-evens_eval-on-grade-{test_set_grade}"
     else: # * here's where the magic happens
         adapter_name: str = f""
-        model_id = f"{repo_name}/{base_model}-grade-{model_grade}-finetuned"
+        model_id = f"{scratch_path}{repo_name}/{base_model}-grade-{model_grade}-finetuned/"
         model = PeftModel.from_pretrained(model=model, 
                                         model_id=model_id, 
                                         #adapter_name=adapter_name,
