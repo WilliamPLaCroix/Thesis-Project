@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # rename gpus
-source submit-files/rename_gpus.sh
+source rename_gpus.sh
 
-source /nethome/<username>/softwares_installed/miniconda3/etc/profile.d/conda.sh
-conda create -p /scratch/<username>/conda_envs/llama_factory_v2 python=3.10
+source /nethome/wlacroix/miniconda3/etc/profile.d/conda.sh
+conda create -p /nethome/wlacroix/miniconda3/envs/llama_factory_v2 python=3.10
 echo "Current conda environment: $CONDA_DEFAULT_ENV"
-conda activate /scratch/<username>/conda_envs/llama_factory_v2
+conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
 echo "Activated conda environment: $CONDA_DEFAULT_ENV"
 
-cd /scratch/<username>/projects/LLaMA-Factory
+cd /nethome/wlacroix/Thesis-Project/experiments_william/LLaMA-Factory
 pip install -e ".[torch,metrics,deepspeed,vllm,bitsandbytes]"
 
 conda install -c nvidia cuda-compiler  ##https://github.com/deepspeedai/DeepSpeed/issues/2772
