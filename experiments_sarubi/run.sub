@@ -1,0 +1,31 @@
+# HTCondor submit description file
+# Everything with a leading # is a comment
+
+universe                = vanilla
+initialdir              = /scratch/sarubi/projects/LLaMA-Factory
+executable              = PTA/experiments_william/run_sft_and_ppl_test.sh
+output                  = PTA/ht_condor_logs/run_sft_and_ppl_test.sh.$(ClusterId).$(Year)_$(Month)_$(Day)_$(SUBMIT_TIME).out
+error                   = PTA/ht_condor_logs/run_sft_and_ppl_test.sh.$(ClusterId).$(Year)_$(Month)_$(Day)_$(SUBMIT_TIME).err
+log                     = PTA/ht_condor_logs/run_sft_and_ppl_test.sh.$(ClusterId).$(Year)_$(Month)_$(Day)_$(SUBMIT_TIME).log
+# If all files are on the server, otherwise set to YES
+#should_transfer_files   = NO
+#when_to_transfer_output = ON_EXIT
+request_GPUs            = 1
+request_CPUs            = 10
+request_memory          = 50G
+getenv                  = True
+requirements            = (GPUs_GlobalMemoryMb >= 64000)
+#64000
++WantGPUHomeMounted     = true
++MaxWallTime = 604800
+
+queue 1
+
+
+# Pass seed as an argument to the script
+#arguments               = $(port) $(model_path) $(grade) $(line_to_skips) $(experiment_script)
+# Inline queue values
+#queue port, model_path, grade, line_to_skips, experiment_script from (
+#30048, /project/models/HF/meta-llama/Meta-Llama-3-8B-Instruct, -1, -1, phase_2_experiments/fvp_with_synthetic_data_creation_with_best_fitted_src_dis/syntactic_data_generation/run_eval_syntactic_data_creation.sh
+#)
+
