@@ -9,7 +9,7 @@ echo "Current conda environment: $CONDA_DEFAULT_ENV"
 conda activate /nethome/wlacroix/miniconda3/envs/llama_factory_v2
 echo "Activated conda environment: $CONDA_DEFAULT_ENV"
 
-cd /nethome/wlacroix/Thesis-Project/experiments_william/LLaMA-Factory
+cd /nethome/wlacroix/Thesis-Project/experiments_sarubi/LLaMA-Factory
 pip install -e ".[torch,metrics,deepspeed,vllm,bitsandbytes]"
 
 conda install -c nvidia cuda-compiler  ##https://github.com/deepspeedai/DeepSpeed/issues/2772
@@ -33,11 +33,11 @@ echo "Starting Main Experiment Workflow!"
 #Supervised Fine-Tuning cmd:
 #llamafactory-cli train examples/train_lora/llama3_lora_sft.yaml
 
-#PTA/experiments_william/llama3_lora_sft.yaml \
-#> PTA/experiments_william/logs_lora_sft  2>&1
+#PTA/experiments_sarubi/llama3_lora_sft.yaml \
+#> PTA/experiments_sarubi/logs_lora_sft  2>&1
 
 #or if you encounter error:
-#FORCE_TORCHRUN=1 PTA/experiments_william/llama3_lora_sft.yaml \
-#> PTA/experiments_william/logs_lora_sft  2>&1
+#FORCE_TORCHRUN=1 PTA/experiments_sarubi/llama3_lora_sft.yaml \
+#> PTA/experiments_sarubi/logs_lora_sft  2>&1
 
 echo "Main Experiment Workflow Completed!"
