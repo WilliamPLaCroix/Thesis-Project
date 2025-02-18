@@ -3,7 +3,7 @@
 
 universe                = vanilla
 initialdir              = /nethome/wlacroix/LLaMA-Factory
-executable              = /nethome/wlacroix/Thesis-Project/experiments_william/run_sft_and_ppl_test.sh
+executable              = /nethome/wlacroix/Thesis-Project/experiments_sarubi/run_sft_and_ppl_test.sh
 output                  = /scratch/wlacroix/logs/run.sh.$(ClusterId).out
 error                   = /scratch/wlacroix/logs/err/run.sh.$(ClusterId).err
 log                     = /scratch/wlacroix/logs/log/run.sh.$(ClusterId).log
