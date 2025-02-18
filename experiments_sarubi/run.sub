@@ -2,7 +2,7 @@
 # Everything with a leading # is a comment
 
 universe                = vanilla
-initialdir              = /nethome/wlacroix/Thesis-Project/experiments_william/LLaMA-Factory
+initialdir              = /nethome/wlacroix/LLaMA-Factory
 executable              = /nethome/wlacroix/Thesis-Project/experiments_william/run_sft_and_ppl_test.sh
 output                  = /scratch/wlacroix/logs/run.sh.$(ClusterId).out
 error                   = /scratch/wlacroix/logs/err/run.sh.$(ClusterId).err
